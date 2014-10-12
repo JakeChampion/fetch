@@ -123,15 +123,15 @@
   }
 
   function headers(xhr) {
-    var headers = new Headers()
-    var pairs = xhr.getAllResponseHeaders().trim().split("\n")
+    var head = new Headers()
+    var pairs = xhr.getAllResponseHeaders().trim().split('\n')
     pairs.forEach(function(header) {
       var split = header.trim().split(':')
       var key = split.shift().trim()
       var value = split.join(':').trim()
-      headers.append(key, value)
+      head.append(key, value)
     })
-    return headers
+    return head
   }
 
   Request.prototype.fetch = function() {
