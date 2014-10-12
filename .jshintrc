@@ -1,0 +1,22 @@
+{
+  "curly": true,
+  "eqeqeq": true,
+  "es3": true,
+  "immed": true,
+  "indent": 2,
+  "latedef": true,
+  "newcap": true,
+  "noarg": true,
+  "quotmark": true,
+  "undef": true,
+  "unused": true,
+  "strict": true,
+  "trailing": true,
+  "boss": true,
+  "asi": true,
+  "eqnull": true,
+  "browser": true,
+  "globals": {
+    "Promise": false
+  }
+}
