@@ -1,0 +1,16 @@
+{
+  "name": "fetch",
+  "version": "0.0.1",
+  "main": "fetch.js",
+  "devDependencies": {
+    "qunit": "1.14.0"
+  },
+  "ignore": [
+    ".*",
+    "*.md",
+    "examples/",
+    "Makefile",
+    "package.json",
+    "test/"
+  ]
+}
