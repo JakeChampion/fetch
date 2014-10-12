@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="../fetch.js"></script>
+</head>
+<body>
+  <script>
+    var result = fetch('https://github.com')
+
+    result.then(function(response) {
+      console.log('response', response)
+      console.log('header', response.headers.get('Content-Type'))
+      return response.text()
+    }).then(function(text) {
+      console.log('got text', text)
+    }).catch(function(ex) {
+      console.log('failed', ex)
+    })
+  </script>
+</body>
+</html>
