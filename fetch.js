@@ -8,16 +8,17 @@
   function Headers(headers) {
     this.map = {}
 
+    var self = this
     if (headers instanceof Headers) {
       headers.forEach(function(name, values) {
         values.forEach(function(value) {
-          this.append(name, value)
+          self.append(name, value)
         })
       })
 
     } else if (headers) {
       Object.getOwnPropertyNames(headers).forEach(function(name) {
-        this.append(name, headers[name])
+        self.append(name, headers[name])
       })
     }
   }
@@ -54,8 +55,9 @@
 
   // Instead of iterable for now.
   Headers.prototype.forEach = function(callback) {
+    var self = this
     Object.getOwnPropertyNames(this.map).forEach(function(name) {
-      callback(name, this.map[name])
+      callback(name, self.map[name])
     })
   }
 
