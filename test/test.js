@@ -23,6 +23,15 @@ asyncTest('populates response body', 2, function() {
   })
 })
 
+asyncTest('resolves text promise', 1, function() {
+  fetch('/hello').then(function(response) {
+    return response.text()
+  }).then(function(text) {
+    equal(text, 'hi')
+    start()
+  })
+})
+
 asyncTest('parses json response', 2, function() {
   fetch('/json').then(function(response) {
     return response.json()
