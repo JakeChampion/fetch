@@ -76,3 +76,20 @@ asyncTest('resolves blob promise', 2, function() {
     start()
   })
 })
+
+asyncTest('sends encoded post body', 2, function() {
+  fetch('/hello', {
+    method: 'post',
+    body: {
+      name: 'Hubot',
+      title: 'Hubot Robawt',
+      undef: undefined,
+      nil: null
+    }
+  }).then(function(response) {
+    var request = MockXHR.last()
+    equal(request.method, 'post')
+    equal(request.data, 'name=Hubot&title=Hubot+Robawt&nil=')
+    start()
+  })
+})
