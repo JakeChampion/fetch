@@ -105,12 +105,12 @@
   }
 
   function encode(params) {
-    var pairs = Object.getOwnPropertyNames(params).map(function(name) {
-      var key = encodeURIComponent(name)
-      var value = encodeURIComponent(params[name])
-      return [key, value].join('=')
-    })
-    return pairs.join('&')
+    return Object.getOwnPropertyNames(params).filter(function(name) {
+      return params[name] !== undefined
+    }).map(function(name) {
+      var value = (params[name] === null) ? '' : params[name]
+      return encodeURIComponent(name) + '=' + encodeURIComponent(value)
+    }).join('&').replace(/%20/g, '+')
   }
 
   function isObject(value) {
