@@ -53,6 +53,14 @@ asyncTest('parses response headers', 2, function() {
   })
 })
 
+asyncTest('resolves promise on 500 error', 2, function() {
+  fetch('/boom').then(function(response) {
+    equal(response.status, 500)
+    equal(response.body, 'boom')
+    start()
+  })
+})
+
 asyncTest('resolves text promise', 1, function() {
   fetch('/hello').then(function(response) {
     return response.text()
