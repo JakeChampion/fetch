@@ -1,4 +1,5 @@
 function MockXHR() {
+  MockXHR.requests.push(this)
   this.method = null
   this.url = null
   this.data = null
@@ -8,7 +9,12 @@ function MockXHR() {
   this.responseText = null
 }
 
+MockXHR.requests = []
 MockXHR.responses = {}
+
+MockXHR.last = function() {
+  return MockXHR.requests[MockXHR.requests.length - 1]
+}
 
 MockXHR.prototype.open = function(method, url) {
   this.method = method
