@@ -77,7 +77,7 @@ asyncTest('resolves blob promise', 2, function() {
   })
 })
 
-asyncTest('sends encoded post body', 2, function() {
+asyncTest('post sends encoded body', 2, function() {
   fetch('/hello', {
     method: 'post',
     body: {
@@ -90,6 +90,17 @@ asyncTest('sends encoded post body', 2, function() {
     var request = MockXHR.last()
     equal(request.method, 'post')
     equal(request.data, 'name=Hubot&title=Hubot+Robawt&nil=')
+    start()
+  })
+})
+
+asyncTest('post sets content-type header', 1, function() {
+  fetch('/hello', {
+    method: 'post',
+    body: {}
+  }).then(function(response) {
+    var request = MockXHR.last()
+    equal(request.headers['Content-Type'], 'application/x-www-form-urlencoded; charset=UTF-8')
     start()
   })
 })
