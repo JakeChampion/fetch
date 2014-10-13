@@ -51,3 +51,13 @@ asyncTest('handles json parse error', 2, function() {
     start()
   })
 })
+
+asyncTest('resolves blob promise', 2, function() {
+  fetch('/hello').then(function(response) {
+    return response.blob()
+  }).then(function(blob) {
+    ok(blob instanceof Blob, 'blob is a Blob instance')
+    equal(blob.size, 2)
+    start()
+  })
+})
