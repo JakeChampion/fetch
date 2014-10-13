@@ -15,8 +15,9 @@ MockXHR.responses = {
 
 window.XMLHttpRequest = MockXHR
 
-asyncTest('populates response body', 2, function() {
+asyncTest('populates response body', 3, function() {
   fetch('/hello').then(function(response) {
+    equal(MockXHR.last().method, 'GET')
     equal(response.status, 200)
     equal(response.body, 'hi')
     start()
