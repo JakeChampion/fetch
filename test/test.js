@@ -12,7 +12,7 @@ MockXHR.responses = {
     xhr.respond(200, 'not json {')
   },
   '/headers': function(xhr) {
-    headers = [
+    var headers = [
       'Date: Mon, 13 Oct 2014 21:02:27 GMT',
       'Content-Type: text/html; charset=utf-8'
     ].join('\r\n')
