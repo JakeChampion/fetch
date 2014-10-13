@@ -7,6 +7,7 @@ function MockXHR() {
   this.readyState = 0
   this.status = 0
   this.responseText = null
+  this.responseHeaders = ''
 }
 
 MockXHR.requests = []
@@ -22,7 +23,7 @@ MockXHR.prototype.open = function(method, url) {
 }
 
 MockXHR.prototype.getAllResponseHeaders = function() {
-  return ''
+  return this.responseHeaders
 }
 
 MockXHR.prototype.setRequestHeader = function (name, value) {
@@ -50,10 +51,11 @@ MockXHR.prototype.send = function(data) {
   }, 100);
 }
 
-MockXHR.prototype.respond = function(status, body) {
+MockXHR.prototype.respond = function(status, body, headers) {
   this.readyState = 4
   this.status = status
   this.responseText = body
+  this.responseHeaders = headers || ''
   var event = {}
   this.onload(event)
 }
