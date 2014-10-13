@@ -108,7 +108,7 @@
     var pairs = Object.getOwnPropertyNames(params).map(function(name) {
       var key = encodeURIComponent(name)
       var value = encodeURIComponent(params[name])
-      return [key, value].join('&')
+      return [key, value].join('=')
     })
     return pairs.join('&')
   }
