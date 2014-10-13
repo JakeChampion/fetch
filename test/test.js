@@ -24,6 +24,20 @@ asyncTest('populates response body', 3, function() {
   })
 })
 
+asyncTest('sends headers', 2, function() {
+  fetch('/hello', {
+    headers: {
+      'Accept': 'application/json',
+      'X-Test': '42'
+    }
+  }).then(function(response) {
+    var request = MockXHR.last()
+    equal(request.headers['Accept'], 'application/json')
+    equal(request.headers['X-Test'], '42')
+    start()
+  })
+})
+
 asyncTest('resolves text promise', 1, function() {
   fetch('/hello').then(function(response) {
     return response.text()
