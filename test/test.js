@@ -5,6 +5,9 @@ MockXHR.responses = {
   '/boom': function(xhr) {
     xhr.respond(500, 'boom')
   },
+  '/error': function(xhr) {
+    xhr.error()
+  },
   '/json': function(xhr) {
     xhr.respond(200, JSON.stringify({name: 'Hubot', login: 'hubot'}))
   },
@@ -57,6 +60,13 @@ asyncTest('resolves promise on 500 error', 2, function() {
   fetch('/boom').then(function(response) {
     equal(response.status, 500)
     equal(response.body, 'boom')
+    start()
+  })
+})
+
+asyncTest('rejects promise for network error', 1, function() {
+  fetch('/error').catch(function() {
+    ok(true)
     start()
   })
 })
