@@ -30,7 +30,7 @@ asyncTest('sends headers', 2, function() {
       'Accept': 'application/json',
       'X-Test': '42'
     }
-  }).then(function(response) {
+  }).then(function() {
     var request = MockXHR.last()
     equal(request.headers['Accept'], 'application/json')
     equal(request.headers['X-Test'], '42')
@@ -86,7 +86,7 @@ asyncTest('post sends encoded body', 2, function() {
       undef: undefined,
       nil: null
     }
-  }).then(function(response) {
+  }).then(function() {
     var request = MockXHR.last()
     equal(request.method, 'post')
     equal(request.data, 'name=Hubot&title=Hubot+Robawt&nil=')
@@ -98,7 +98,7 @@ asyncTest('post sets content-type header', 1, function() {
   fetch('/hello', {
     method: 'post',
     body: {}
-  }).then(function(response) {
+  }).then(function() {
     var request = MockXHR.last()
     equal(request.headers['Content-Type'], 'application/x-www-form-urlencoded; charset=UTF-8')
     start()
