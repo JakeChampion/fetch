@@ -10,6 +10,13 @@ MockXHR.responses = {
   },
   '/json-error': function(xhr) {
     xhr.respond(200, 'not json {')
+  },
+  '/headers': function(xhr) {
+    headers = [
+      'Date: Mon, 13 Oct 2014 21:02:27 GMT',
+      'Content-Type: text/html; charset=utf-8'
+    ].join('\r\n')
+    xhr.respond(200, 'hi', headers + '\r\n')
   }
 }
 
@@ -24,7 +31,7 @@ asyncTest('populates response body', 3, function() {
   })
 })
 
-asyncTest('sends headers', 2, function() {
+asyncTest('sends request headers', 2, function() {
   fetch('/hello', {
     headers: {
       'Accept': 'application/json',
@@ -34,6 +41,14 @@ asyncTest('sends headers', 2, function() {
     var request = MockXHR.last()
     equal(request.headers['Accept'], 'application/json')
     equal(request.headers['X-Test'], '42')
+    start()
+  })
+})
+
+asyncTest('parses response headers', 2, function() {
+  fetch('/headers').then(function(response) {
+    equal(response.headers.get('Date'), 'Mon, 13 Oct 2014 21:02:27 GMT')
+    equal(response.headers.get('Content-Type'), 'text/html; charset=utf-8')
     start()
   })
 })
