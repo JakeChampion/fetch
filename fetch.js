@@ -66,7 +66,7 @@
     this.bodyUsed = false
 
     this.arrayBuffer = function() {
-      throw 'Not implemented yet'
+      throw new Error('Not implemented yet')
     }
 
     this.blob = function() {
@@ -74,7 +74,7 @@
     }
 
     this.formData = function() {
-      throw 'Not implemented yet'
+      throw new Error('Not implemented yet')
     }
 
     this.json = function() {
