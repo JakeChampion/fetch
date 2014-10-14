@@ -26,9 +26,12 @@ example requests.
 ### HTML
 
 ```javascript
-fetch('/users.html').then(function(response) {
-  document.body.innerHTML = response.body
-})
+fetch('/users.html')
+  .then(function(response) {
+    return response.text()
+  }).then(function(body) {
+    document.body.innerHTML = body
+  })
 ```
 
 ### JSON
@@ -52,7 +55,6 @@ fetch('/users.json').then(function(response) {
   console.log(response.headers.get('Date'))
   console.log(response.status)
   console.log(response.statusText)
-  console.log(response.body)
 })
 ```
 
