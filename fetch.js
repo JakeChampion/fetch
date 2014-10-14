@@ -3,6 +3,8 @@
 
   if (window.fetch) {
     return
+  } else if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.exports === exports) {
+    // Do continue
   }
 
   function Headers(headers) {
@@ -184,6 +186,14 @@
   }
 
   Body.call(Response.prototype)
+
+  if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.exports === exports) {
+    module.exports = function (url, options) {
+      return new Request(url, options).fetch()
+    }
+
+    return
+  }
 
   window.fetch = function (url, options) {
     return new Request(url, options).fetch()
