@@ -1,36 +1,5 @@
-MockXHR.responses = {
-  '/hello': function(xhr) {
-    xhr.respond(200, 'hi')
-  },
-  '/boom': function(xhr) {
-    xhr.respond(500, 'boom')
-  },
-  '/error': function(xhr) {
-    xhr.error()
-  },
-  '/form': function(xhr) {
-    xhr.respond(200, 'number=1&space=one+two&empty=&encoded=a%2Bb&')
-  },
-  '/json': function(xhr) {
-    xhr.respond(200, JSON.stringify({name: 'Hubot', login: 'hubot'}))
-  },
-  '/json-error': function(xhr) {
-    xhr.respond(200, 'not json {')
-  },
-  '/headers': function(xhr) {
-    var headers = [
-      'Date: Mon, 13 Oct 2014 21:02:27 GMT',
-      'Content-Type: text/html; charset=utf-8'
-    ].join('\r\n')
-    xhr.respond(200, 'hi', headers + '\r\n')
-  }
-}
-
-window.XMLHttpRequest = MockXHR
-
-asyncTest('populates response body', 3, function() {
+asyncTest('populates response body', 2, function() {
   fetch('/hello').then(function(response) {
-    equal(MockXHR.last().method, 'GET')
     equal(response.status, 200)
     equal(response.body, 'hi')
     start()
@@ -38,15 +7,15 @@ asyncTest('populates response body', 3, function() {
 })
 
 asyncTest('sends request headers', 2, function() {
-  fetch('/hello', {
+  fetch('/request', {
     headers: {
       'Accept': 'application/json',
       'X-Test': '42'
     }
-  }).then(function() {
-    var request = MockXHR.last()
-    equal(request.headers['Accept'], 'application/json')
-    equal(request.headers['X-Test'], '42')
+  }).then(function(response) {
+    var headers = JSON.parse(response.body).headers
+    equal(headers['accept'], 'application/json')
+    equal(headers['x-test'], '42')
     start()
   })
 })
@@ -67,12 +36,12 @@ asyncTest('resolves promise on 500 error', 2, function() {
   })
 })
 
-asyncTest('rejects promise for network error', 1, function() {
-  fetch('/error').catch(function() {
-    ok(true)
-    start()
-  })
-})
+// asyncTest('rejects promise for network error', 1, function() {
+//   fetch('/error').catch(function() {
+//     ok(true)
+//     start()
+//   })
+// })
 
 asyncTest('resolves text promise', 1, function() {
   fetch('/hello').then(function(response) {
@@ -123,7 +92,7 @@ asyncTest('resolves blob promise', 2, function() {
 })
 
 asyncTest('post sends encoded body', 2, function() {
-  fetch('/hello', {
+  fetch('/request', {
     method: 'post',
     body: {
       name: 'Hubot',
@@ -131,21 +100,21 @@ asyncTest('post sends encoded body', 2, function() {
       undef: undefined,
       nil: null
     }
-  }).then(function() {
-    var request = MockXHR.last()
-    equal(request.method, 'post')
+  }).then(function(response) {
+    var request = JSON.parse(response.body);
+    equal(request.method, 'POST')
     equal(request.data, 'name=Hubot&title=Hubot+Robawt&nil=')
     start()
   })
 })
 
 asyncTest('post sets content-type header', 1, function() {
-  fetch('/hello', {
+  fetch('/request', {
     method: 'post',
     body: {}
-  }).then(function() {
-    var request = MockXHR.last()
-    equal(request.headers['Content-Type'], 'application/x-www-form-urlencoded; charset=UTF-8')
+  }).then(function(response) {
+    var request = JSON.parse(response.body);
+    equal(request.headers['content-type'], 'application/x-www-form-urlencoded; charset=UTF-8')
     start()
   })
 })

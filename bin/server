@@ -1,0 +1,68 @@
+#!/usr/bin/env node
+
+var fs = require('fs')
+var http = require('http');
+var url = require('url');
+
+var routes = {
+  '/request': function(res, req) {
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    var data = ''
+    req.on('data', function(c) { data += c })
+    req.on('end', function() {
+      res.end(JSON.stringify({
+        method: req.method,
+        url: req.url,
+        headers: req.headers,
+        data: data
+      }));
+    })
+  },
+  '/hello': function(res) {
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end('hi');
+  },
+  '/boom': function(res) {
+    res.writeHead(500, {'Content-Type': 'text/plain'});
+    res.end('boom');
+  },
+  '/form': function(res) {
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end('number=1&space=one+two&empty=&encoded=a%2Bb&');
+  },
+  '/json': function(res) {
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    res.end(JSON.stringify({name: 'Hubot', login: 'hubot'}));
+  },
+  '/json-error': function(res) {
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    res.end('not json {');
+  },
+  '/headers': function(res) {
+    var headers = [
+      'Date: Mon, 13 Oct 2014 21:02:27 GMT',
+      'Content-Type: text/html; charset=utf-8'
+    ].join('\r\n')
+
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.end(headers + '\r\n');
+  }
+};
+
+http.createServer(function(req, res) {
+  var pathname = url.parse(req.url).pathname;
+  var route = routes[pathname];
+  if (route) {
+    route(res, req);
+  } else {
+    fs.readFile(__dirname + '/..' + pathname, function(err, data) {
+      if (err) {
+        res.writeHead(404, {'Content-Type': 'text/plain'});
+        res.end('Not Found');
+      } else {
+        res.writeHead(200);
+        res.end(data);
+      }
+    });
+  }
+}).listen(3000);
