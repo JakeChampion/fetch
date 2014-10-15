@@ -12,6 +12,7 @@
   "trailing": true,
   "boss": true,
   "asi": true,
+  "sub": true,
   "eqnull": true,
   "browser": true,
   "globals": {
