@@ -137,3 +137,33 @@ asyncTest('post sets content-type header', 1, function() {
     start()
   })
 })
+
+asyncTest('rejects blob promise after body is consumed', 1, function() {
+  fetch('/hello').then(function(response) {
+    response.blob()
+    return response.blob()
+  }).catch(function(error) {
+    ok(error instanceof TypeError, 'Promise rejected after body consumed')
+    start()
+  })
+})
+
+asyncTest('rejects json promise after body is consumed', 1, function() {
+  fetch('/json').then(function(response) {
+    response.json()
+    return response.json()
+  }).catch(function(error) {
+    ok(error instanceof TypeError, 'Promise rejected after body consumed')
+    start()
+  })
+})
+
+asyncTest('rejects text promise after body is consumed', 1, function() {
+  fetch('/hello').then(function(response) {
+    response.text()
+    return response.text()
+  }).catch(function(error) {
+    ok(error instanceof TypeError, 'Promise rejected after body consumed')
+    start()
+  })
+})
