@@ -150,32 +150,35 @@ asyncTest('post sets content-type header', 1, function() {
   })
 })
 
-asyncTest('rejects blob promise after body is consumed', 1, function() {
+asyncTest('rejects blob promise after body is consumed', 2, function() {
   fetch('/hello').then(function(response) {
     response.blob()
     return response.blob()
   }).catch(function(error) {
     ok(error instanceof TypeError, 'Promise rejected after body consumed')
+    ok(error.message === 'Body already consumed', 'Promise rejected for incorrect reason')
     start()
   })
 })
 
-asyncTest('rejects json promise after body is consumed', 1, function() {
+asyncTest('rejects json promise after body is consumed', 2, function() {
   fetch('/json').then(function(response) {
     response.json()
     return response.json()
   }).catch(function(error) {
     ok(error instanceof TypeError, 'Promise rejected after body consumed')
+    ok(error.message === 'Body already consumed', 'Promise rejected for incorrect reason')
     start()
   })
 })
 
-asyncTest('rejects text promise after body is consumed', 1, function() {
+asyncTest('rejects text promise after body is consumed', 2, function() {
   fetch('/hello').then(function(response) {
     response.text()
     return response.text()
   }).catch(function(error) {
     ok(error instanceof TypeError, 'Promise rejected after body consumed')
+    ok(error.message === 'Body already consumed', 'Promise rejected for incorrect reason')
     start()
   })
 })

@@ -63,7 +63,7 @@
 
   function consumed(body) {
     if (body.bodyUsed) {
-      return new Promise.reject(new TypeError('Body already consumed'))
+      return Promise.reject(new TypeError('Body already consumed'))
     }
     body.bodyUsed = true
   }
