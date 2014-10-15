@@ -74,7 +74,7 @@
     }
 
     this.formData = function() {
-      throw new Error('Not implemented yet')
+      return Promise.resolve(decode(this.body))
     }
 
     this.json = function() {
@@ -113,6 +113,19 @@
       var value = (params[name] === null) ? '' : params[name]
       return encodeURIComponent(name) + '=' + encodeURIComponent(value)
     }).join('&').replace(/%20/g, '+')
+  }
+
+  function decode(body) {
+    var form = new FormData()
+    body.trim().split('&').forEach(function(bytes) {
+      if (bytes) {
+        var split = bytes.split('=')
+        var name = split.shift().replace(/\+/g, ' ')
+        var value = split.join('=').replace(/\+/g, ' ')
+        form.append(decodeURIComponent(name), decodeURIComponent(value))
+      }
+    })
+    return form
   }
 
   function isObject(value) {
