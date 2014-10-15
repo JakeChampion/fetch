@@ -77,8 +77,8 @@
     }
 
     this.blob = function() {
-      var error = consumed(this)
-      return error ? error : Promise.resolve(new Blob([this.body]))
+      var rejected = consumed(this)
+      return rejected ? rejected : Promise.resolve(new Blob([this.body]))
     }
 
     this.formData = function() {
@@ -86,9 +86,9 @@
     }
 
     this.json = function() {
-      var error = consumed(this)
-      if (error) {
-        return error
+      var rejected = consumed(this)
+      if (rejected) {
+        return rejected
       }
 
       var body = this.body
@@ -102,8 +102,8 @@
     }
 
     this.text = function() {
-      var error = consumed(this)
-      return error ? error : Promise.resolve(this.body)
+      var rejected = consumed(this)
+      return rejected ? rejected : Promise.resolve(this.body)
     }
 
     return this
