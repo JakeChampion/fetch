@@ -70,12 +70,8 @@
     }
 
     this.blob = function() {
-      if (this.bodyUsed) {
-        return new Promise.reject(new TypeError('Body already consumed'))
-      }
-
-      this.bodyUsed = true
-      return Promise.resolve(new Blob([this.body]))
+      var error = this.consumed()
+      return error ? error : Promise.resolve(new Blob([this.body]))
     }
 
     this.formData = function() {
@@ -83,11 +79,10 @@
     }
 
     this.json = function() {
-      if (this.bodyUsed) {
-        return new Promise.reject(new TypeError('Body already consumed'))
+      var error = this.consumed()
+      if (error) {
+        return error
       }
-
-      this.bodyUsed = true
 
       var body = this.body
       return new Promise(function(resolve, reject) {
@@ -100,12 +95,15 @@
     }
 
     this.text = function() {
+      var error = this.consumed()
+      return error ? error : Promise.resolve(this.body)
+    }
+
+    this.consumed = function() {
       if (this.bodyUsed) {
         return new Promise.reject(new TypeError('Body already consumed'))
       }
-
       this.bodyUsed = true
-      return Promise.resolve(this.body)
     }
 
     return this
