@@ -8,6 +8,9 @@ MockXHR.responses = {
   '/error': function(xhr) {
     xhr.error()
   },
+  '/form': function(xhr) {
+    xhr.respond(200, 'number=1&space=one+two&empty=&encoded=a%2Bb&')
+  },
   '/json': function(xhr) {
     xhr.respond(200, JSON.stringify({name: 'Hubot', login: 'hubot'}))
   },
@@ -76,6 +79,15 @@ asyncTest('resolves text promise', 1, function() {
     return response.text()
   }).then(function(text) {
     equal(text, 'hi')
+    start()
+  })
+})
+
+asyncTest('parses form encoded response', 1, function() {
+  fetch('/form').then(function(response) {
+    return response.formData()
+  }).then(function(form) {
+    ok(form instanceof FormData, 'Parsed a FormData object')
     start()
   })
 })
