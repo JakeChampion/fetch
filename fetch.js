@@ -61,6 +61,13 @@
     })
   }
 
+  function consumed(body) {
+    if (body.bodyUsed) {
+      return new Promise.reject(new TypeError('Body already consumed'))
+    }
+    body.bodyUsed = true
+  }
+
   function Body() {
     this.body = null
     this.bodyUsed = false
@@ -70,7 +77,7 @@
     }
 
     this.blob = function() {
-      var error = this.consumed()
+      var error = consumed(this)
       return error ? error : Promise.resolve(new Blob([this.body]))
     }
 
@@ -79,7 +86,7 @@
     }
 
     this.json = function() {
-      var error = this.consumed()
+      var error = consumed(this)
       if (error) {
         return error
       }
@@ -95,15 +102,8 @@
     }
 
     this.text = function() {
-      var error = this.consumed()
+      var error = consumed(this)
       return error ? error : Promise.resolve(this.body)
-    }
-
-    this.consumed = function() {
-      if (this.bodyUsed) {
-        return new Promise.reject(new TypeError('Body already consumed'))
-      }
-      this.bodyUsed = true
     }
 
     return this
