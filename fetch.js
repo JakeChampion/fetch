@@ -32,7 +32,7 @@
     list.push(value)
   }
 
-  Headers.prototype.delete = function(name) {
+  Headers.prototype['delete'] = function(name) {
     delete this.map[name]
   }
 
