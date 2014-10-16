@@ -36,12 +36,12 @@ asyncTest('resolves promise on 500 error', 2, function() {
   })
 })
 
-// asyncTest('rejects promise for network error', 1, function() {
-//   fetch('/error').catch(function() {
-//     ok(true)
-//     start()
-//   })
-// })
+asyncTest('rejects promise for network error', 1, function() {
+  fetch('/error').catch(function() {
+    ok(true)
+    start()
+  })
+})
 
 asyncTest('resolves text promise', 1, function() {
   fetch('/hello').then(function(response) {

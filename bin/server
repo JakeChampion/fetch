@@ -26,6 +26,9 @@ var routes = {
     res.writeHead(500, {'Content-Type': 'text/plain'});
     res.end('boom');
   },
+  '/error': function(res) {
+    res.destroy();
+  },
   '/form': function(res) {
     res.writeHead(200, {'Content-Type': 'text/plain'});
     res.end('number=1&space=one+two&empty=&encoded=a%2Bb&');
