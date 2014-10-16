@@ -1,2 +1,2 @@
 language: node_js
-script: make lint
+script: make test
