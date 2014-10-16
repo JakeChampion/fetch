@@ -1,36 +1,15 @@
-MockXHR.responses = {
-  '/hello': function(xhr) {
-    xhr.respond(200, 'hi')
-  },
-  '/boom': function(xhr) {
-    xhr.respond(500, 'boom')
-  },
-  '/error': function(xhr) {
-    xhr.error()
-  },
-  '/form': function(xhr) {
-    xhr.respond(200, 'number=1&space=one+two&empty=&encoded=a%2Bb&')
-  },
-  '/json': function(xhr) {
-    xhr.respond(200, JSON.stringify({name: 'Hubot', login: 'hubot'}))
-  },
-  '/json-error': function(xhr) {
-    xhr.respond(200, 'not json {')
-  },
-  '/headers': function(xhr) {
-    var headers = [
-      'Date: Mon, 13 Oct 2014 21:02:27 GMT',
-      'Content-Type: text/html; charset=utf-8'
-    ].join('\r\n')
-    xhr.respond(200, 'hi', headers + '\r\n')
+var blobSupport = (function() {
+  try {
+    new Blob();
+    return true
+  } catch(e) {
+    return false
   }
-}
+})();
 
-window.XMLHttpRequest = MockXHR
 
-asyncTest('populates response body', 3, function() {
+asyncTest('populates response body', 2, function() {
   fetch('/hello').then(function(response) {
-    equal(MockXHR.last().method, 'GET')
     equal(response.status, 200)
     equal(response.body, 'hi')
     start()
@@ -38,15 +17,15 @@ asyncTest('populates response body', 3, function() {
 })
 
 asyncTest('sends request headers', 2, function() {
-  fetch('/hello', {
+  fetch('/request', {
     headers: {
       'Accept': 'application/json',
       'X-Test': '42'
     }
-  }).then(function() {
-    var request = MockXHR.last()
-    equal(request.headers['Accept'], 'application/json')
-    equal(request.headers['X-Test'], '42')
+  }).then(function(response) {
+    var headers = JSON.parse(response.body).headers
+    equal(headers['accept'], 'application/json')
+    equal(headers['x-test'], '42')
     start()
   })
 })
@@ -112,18 +91,20 @@ asyncTest('handles json parse error', 2, function() {
   })
 })
 
-asyncTest('resolves blob promise', 2, function() {
-  fetch('/hello').then(function(response) {
-    return response.blob()
-  }).then(function(blob) {
-    ok(blob instanceof Blob, 'blob is a Blob instance')
-    equal(blob.size, 2)
-    start()
+if (blobSupport) {
+  asyncTest('resolves blob promise', 2, function() {
+    fetch('/hello').then(function(response) {
+      return response.blob()
+    }).then(function(blob) {
+      ok(blob instanceof Blob, 'blob is a Blob instance')
+      equal(blob.size, 2)
+      start()
+    })
   })
-})
+}
 
 asyncTest('post sends encoded body', 2, function() {
-  fetch('/hello', {
+  fetch('/request', {
     method: 'post',
     body: {
       name: 'Hubot',
@@ -131,35 +112,37 @@ asyncTest('post sends encoded body', 2, function() {
       undef: undefined,
       nil: null
     }
-  }).then(function() {
-    var request = MockXHR.last()
-    equal(request.method, 'post')
+  }).then(function(response) {
+    var request = JSON.parse(response.body);
+    equal(request.method, 'POST')
     equal(request.data, 'name=Hubot&title=Hubot+Robawt&nil=')
     start()
   })
 })
 
 asyncTest('post sets content-type header', 1, function() {
-  fetch('/hello', {
+  fetch('/request', {
     method: 'post',
     body: {}
-  }).then(function() {
-    var request = MockXHR.last()
-    equal(request.headers['Content-Type'], 'application/x-www-form-urlencoded; charset=UTF-8')
+  }).then(function(response) {
+    var request = JSON.parse(response.body);
+    equal(request.headers['content-type'], 'application/x-www-form-urlencoded; charset=UTF-8')
     start()
   })
 })
 
-asyncTest('rejects blob promise after body is consumed', 2, function() {
-  fetch('/hello').then(function(response) {
-    response.blob()
-    return response.blob()
-  }).catch(function(error) {
-    ok(error instanceof TypeError, 'Promise rejected after body consumed')
-    ok(error.message === 'Body already consumed', 'Promise rejected for incorrect reason')
-    start()
+if (blobSupport) {
+  asyncTest('rejects blob promise after body is consumed', 2, function() {
+    fetch('/hello').then(function(response) {
+      response.blob()
+      return response.blob()
+    }).catch(function(error) {
+      ok(error instanceof TypeError, 'Promise rejected after body consumed')
+      ok(error.message === 'Body already consumed', 'Promise rejected for incorrect reason')
+      start()
+    })
   })
-})
+}
 
 asyncTest('rejects json promise after body is consumed', 2, function() {
   fetch('/json').then(function(response) {
