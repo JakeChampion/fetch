@@ -1,7 +1,7 @@
 build: node_modules/ bower_components/
 
 test: node_modules/ build lint
-	node ./node_modules/.bin/node-qunit-phantomjs ./test/test.html
+	./test/run.sh
 
 lint: node_modules/
 	./node_modules/.bin/jshint *.js test/*.js
