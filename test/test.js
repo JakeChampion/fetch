@@ -1,3 +1,13 @@
+var blobSupport = (function() {
+  try {
+    new Blob();
+    return true
+  } catch(e) {
+    return false
+  }
+})();
+
+
 asyncTest('populates response body', 2, function() {
   fetch('/hello').then(function(response) {
     equal(response.status, 200)
@@ -81,7 +91,7 @@ asyncTest('handles json parse error', 2, function() {
   })
 })
 
-if (!navigator.userAgent.match(/PhantomJS/)) {
+if (blobSupport) {
   asyncTest('resolves blob promise', 2, function() {
     fetch('/hello').then(function(response) {
       return response.blob()
@@ -121,7 +131,7 @@ asyncTest('post sets content-type header', 1, function() {
   })
 })
 
-if (!navigator.userAgent.match(/PhantomJS/)) {
+if (blobSupport) {
   asyncTest('rejects blob promise after body is consumed', 2, function() {
     fetch('/hello').then(function(response) {
       response.blob()
