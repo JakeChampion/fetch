@@ -43,7 +43,6 @@ var routes = {
   },
   '/headers': function(res) {
     res.writeHead(200, {
-      'Content-Type': 'text/plain',
       'Date': 'Mon, 13 Oct 2014 21:02:27 GMT',
       'Content-Type': 'text/html; charset=utf-8'
     });
