@@ -81,15 +81,17 @@ asyncTest('handles json parse error', 2, function() {
   })
 })
 
-asyncTest('resolves blob promise', 2, function() {
-  fetch('/hello').then(function(response) {
-    return response.blob()
-  }).then(function(blob) {
-    ok(blob instanceof Blob, 'blob is a Blob instance')
-    equal(blob.size, 2)
-    start()
+if (!navigator.userAgent.match(/PhantomJS/)) {
+  asyncTest('resolves blob promise', 2, function() {
+    fetch('/hello').then(function(response) {
+      return response.blob()
+    }).then(function(blob) {
+      ok(blob instanceof Blob, 'blob is a Blob instance')
+      equal(blob.size, 2)
+      start()
+    })
   })
-})
+}
 
 asyncTest('post sends encoded body', 2, function() {
   fetch('/request', {
@@ -119,16 +121,18 @@ asyncTest('post sets content-type header', 1, function() {
   })
 })
 
-asyncTest('rejects blob promise after body is consumed', 2, function() {
-  fetch('/hello').then(function(response) {
-    response.blob()
-    return response.blob()
-  }).catch(function(error) {
-    ok(error instanceof TypeError, 'Promise rejected after body consumed')
-    ok(error.message === 'Body already consumed', 'Promise rejected for incorrect reason')
-    start()
+if (!navigator.userAgent.match(/PhantomJS/)) {
+  asyncTest('rejects blob promise after body is consumed', 2, function() {
+    fetch('/hello').then(function(response) {
+      response.blob()
+      return response.blob()
+    }).catch(function(error) {
+      ok(error instanceof TypeError, 'Promise rejected after body consumed')
+      ok(error.message === 'Body already consumed', 'Promise rejected for incorrect reason')
+      start()
+    })
   })
-})
+}
 
 asyncTest('rejects json promise after body is consumed', 2, function() {
   fetch('/json').then(function(response) {
