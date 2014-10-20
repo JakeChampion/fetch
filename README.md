@@ -114,6 +114,10 @@ fetch('/avatars', {
 
 ### Success and error handlers
 
+This causes `fetch` to behave like jQuery's `$.ajax` by rejecting the `Promise`
+on HTTP failure status codes like 404, 500, etc. The response `Promise` is
+resolved only on successful, 200 level, status codes.
+
 ```javascript
 fetch('/users')
   .then(function (response) {
