@@ -114,15 +114,31 @@ fetch('/avatars', {
 
 ### Success and error handlers
 
+This causes `fetch` to behave like jQuery's `$.ajax` by rejecting the `Promise`
+on HTTP failure status codes like 404, 500, etc. The response `Promise` is
+resolved only on successful, 200 level, status codes.
+
 ```javascript
+function status(response) {
+  if (response.status >= 200 && response.status < 300) {
+    return Promise.resolve(response)
+  } else {
+    return Promise.reject(response)
+  }
+}
+
+function json(response) {
+  return response.json()
+}
+
 fetch('/users')
-  .then(function (response) {
-    if (response.status >= 200 && response.status < 300) {
-      return response.json().then(mySuccessHandler);
-    } else {
-      return response.json().then(myErrorHandler);
-    }
-  }).catch(myErrorHandler);
+  .then(status)
+  .then(json)
+  .then(function(json) {
+    console.log('request succeeded with json response', json)
+  }).catch(function(response) {
+    console.log('request failed with status', response.status)
+  })
 ```
 
 ## Browser Support
