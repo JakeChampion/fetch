@@ -119,21 +119,16 @@ on HTTP failure status codes like 404, 500, etc. The response `Promise` is
 resolved only on successful, 200 level, status codes.
 
 ```javascript
-function status(response) {
+function resolve(response) {
   if (response.status >= 200 && response.status < 300) {
-    return Promise.resolve(response)
+    return Promise.resolve(response.json())
   } else {
     return Promise.reject(response)
   }
 }
 
-function json(response) {
-  return response.json()
-}
-
 fetch('/users')
-  .then(status)
-  .then(json)
+  .then(resolve)
   .then(function(json) {
     console.log('request succeeded with json response', json)
   }).catch(function(response) {
