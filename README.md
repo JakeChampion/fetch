@@ -8,20 +8,20 @@ possible to the standard Fetch specification at https://fetch.spec.whatwg.org.
 
 Available on [Bower](http://bower.io) as **fetch**.
 
-```
+```sh
 $ bower install fetch
 ```
 
 You'll also need a Promise polyfill for older browsers.
 
-```
+```sh
 $ bower install es6-promise
 ```
 
 This can be also be installed with `npm`.
 
-```
-npm install github/fetch --save
+```sh
+$ npm install github/fetch --save
 ```
 
 ## Usage
