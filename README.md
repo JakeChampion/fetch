@@ -21,7 +21,7 @@ $ bower install es6-promise
 This can be also be installed with `npm`.
 
 ```
-npm install --save "https://github.com/github/fetch.git#v0.2.1"
+npm install github/fetch --save
 ```
 
 ## Usage
