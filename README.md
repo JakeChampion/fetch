@@ -18,6 +18,12 @@ You'll also need a Promise polyfill for older browsers.
 $ bower install es6-promise
 ```
 
+This can be also be installed with `npm`.
+
+```
+npm install --save "https://github.com/github/fetch.git#v0.2.1"
+```
+
 ## Usage
 
 The `fetch` function supports any HTTP method. We'll focus on GET and POST
