@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  if (window.fetch) {
+  if ('undefined' != typeof window && window.fetch) {
     return
   }
 
@@ -211,8 +211,18 @@
   }
 
   Body.call(Response.prototype)
-
-  window.fetch = function (url, options) {
+  
+  var e = function (url, options) {
     return new Request(url, options).fetch()
+  };
+  
+  if ("object" == typeof exports && "undefined" != typeof module) {
+    module.exports = e;
+  } else if("function" == typeof define && define.amd) {
+    define([], function () { return e; });
+  } else {
+    var f;
+    "undefined" != typeof window ? f = window : "undefined" != typeof global ? f = global : "undefined" != typeof self && (f=self),f.fetch = e;
   }
+  
 })();
