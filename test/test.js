@@ -165,3 +165,44 @@ asyncTest('rejects text promise after body is consumed', 2, function() {
     start()
   })
 })
+
+asyncTest('supports HTTP PUT', 2, function() {
+  fetch('/request', {
+    method: 'put',
+    body: {
+      name: 'Hubot',
+      title: 'Hubot Robawt',
+    }
+  }).then(function(response) {
+    var request = JSON.parse(response.body);
+    equal(request.method, 'PUT')
+    equal(request.data, 'name=Hubot&title=Hubot+Robawt')
+    start()
+  })
+})
+
+asyncTest('supports HTTP PATCH', 2, function() {
+  fetch('/request', {
+    method: 'patch',
+    body: {
+      name: 'Hubot',
+      title: 'Hubot Robawt',
+    }
+  }).then(function(response) {
+    var request = JSON.parse(response.body);
+    equal(request.method, 'PATCH')
+    equal(request.data, 'name=Hubot&title=Hubot+Robawt')
+    start()
+  })
+})
+
+asyncTest('supports HTTP DELETE', 2, function() {
+  fetch('/request', {
+    method: 'delete',
+  }).then(function(response) {
+    var request = JSON.parse(response.body);
+    equal(request.method, 'DELETE')
+    equal(request.data, '')
+    start()
+  })
+})

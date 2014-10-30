@@ -115,7 +115,7 @@
     this.body = options.body
     this.credentials = options.credentials || null
     this.headers = new Headers(options.headers)
-    this.method = options.method || 'GET'
+    this.method = (options.method || 'GET').toUpperCase()
     this.mode = options.mode || null
     this.referrer = null
   }
