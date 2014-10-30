@@ -24,7 +24,7 @@ This can be also be installed with `npm`.
 $ npm install github/fetch --save
 ```
 
-### Using Fetch with Browserify and npm
+### Using with npm and Browserify
 
 ```js
 require('native-promise-only');
