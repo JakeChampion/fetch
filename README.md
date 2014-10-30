@@ -39,7 +39,7 @@ registry.
 Instead, you can choose ot install **fetch** at an exact specific version by
 changing `package.json` to:
 
-```json
+```
     "fetch": "https://github.com/github/fetch/archive/v0.1.0.tar.gz
 ```
 
