@@ -36,7 +36,7 @@ version or range of versions for **fetch** in your `package.json` as npm does
 not support installing fuzzy versions from modules not published on their
 registry.
 
-Instead, you can choose ot install **fetch** at an exact specific version by
+Instead, you can choose to install **fetch** at an exact specific version by
 changing `package.json` to:
 
 ```
