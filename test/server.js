@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+var port = Number(process.argv[2] || 3000)
+
 var fs = require('fs')
 var http = require('http');
 var url = require('url');
@@ -66,4 +68,4 @@ http.createServer(function(req, res) {
       }
     });
   }
-}).listen(3000);
+}).listen(port);
