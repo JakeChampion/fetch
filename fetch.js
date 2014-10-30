@@ -178,8 +178,13 @@
       var xhr = new XMLHttpRequest()
 
       xhr.onload = function() {
+        var status = xhr.status
+        if (status < 100 || status > 599) {
+          reject()
+          return
+        }
         var options = {
-          status: xhr.status,
+          status: status,
           statusText: xhr.statusText,
           headers: headers(xhr)
         }

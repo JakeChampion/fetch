@@ -47,7 +47,10 @@ asyncTest('resolves promise on 500 error', 2, function() {
 })
 
 asyncTest('rejects promise for network error', 1, function() {
-  fetch('/error').catch(function() {
+  fetch('/error').then(function(response) {
+    ok(false, 'HTTP status ' + response.status + ' was treated as success')
+    start()
+  }).catch(function() {
     ok(true)
     start()
   })
