@@ -52,6 +52,13 @@ var routes = {
   }
 };
 
+var types = {
+  js: 'application/javascript',
+  css: 'text/css',
+  html: 'text/html',
+  txt: 'text/plain'
+};
+
 http.createServer(function(req, res) {
   var pathname = url.parse(req.url).pathname;
   var route = routes[pathname];
@@ -60,10 +67,11 @@ http.createServer(function(req, res) {
   } else {
     fs.readFile(__dirname + '/..' + pathname, function(err, data) {
       if (err) {
-        res.writeHead(404, {'Content-Type': 'text/plain'});
+        res.writeHead(404, {'Content-Type': types.txt});
         res.end('Not Found');
       } else {
-        res.writeHead(200);
+        var ext = (pathname.match(/\.([^\/]+)$/) || [])[1]
+        res.writeHead(200, {'Content-Type': types[ext] || types.txt});
         res.end(data);
       }
     });
