@@ -31,7 +31,7 @@ asyncTest('sends request headers', 2, function() {
 })
 
 asyncTest('parses response headers', 2, function() {
-  fetch('/headers').then(function(response) {
+  fetch('/headers?' + new Date().getTime()).then(function(response) {
     equal(response.headers.get('Date'), 'Mon, 13 Oct 2014 21:02:27 GMT')
     equal(response.headers.get('Content-Type'), 'text/html; charset=utf-8')
     start()
