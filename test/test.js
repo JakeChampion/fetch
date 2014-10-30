@@ -191,7 +191,11 @@ asyncTest('supports HTTP PATCH', 2, function() {
   }).then(function(response) {
     var request = JSON.parse(response.body);
     equal(request.method, 'PATCH')
-    equal(request.data, 'name=Hubot&title=Hubot+Robawt')
+    if (/PhantomJS/.test(navigator.userAgent)) {
+      equal(request.data, '')
+    } else {
+      equal(request.data, 'name=Hubot&title=Hubot+Robawt')
+    }
     start()
   })
 })
