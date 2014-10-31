@@ -109,13 +109,21 @@
     return this
   }
 
+  // HTTP methods whose capitalization should be normalized
+  var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
+
+  function normalizeMethod(method) {
+    var upcased = method.toUpperCase()
+    return (methods.indexOf(upcased) > -1) ? upcased : method
+  }
+
   function Request(url, options) {
     options = options || {}
     this.url = url
     this.body = options.body
     this.credentials = options.credentials || null
     this.headers = new Headers(options.headers)
-    this.method = (options.method || 'GET').toUpperCase()
+    this.method = normalizeMethod(options.method || 'GET')
     this.mode = options.mode || null
     this.referrer = null
   }

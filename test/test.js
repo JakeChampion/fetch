@@ -183,7 +183,7 @@ asyncTest('supports HTTP PUT', 2, function() {
 
 asyncTest('supports HTTP PATCH', 2, function() {
   fetch('/request', {
-    method: 'patch',
+    method: 'PATCH',
     body: {
       name: 'Hubot',
       title: 'Hubot Robawt',
