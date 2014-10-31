@@ -179,6 +179,9 @@
 
       xhr.onload = function() {
         var status = xhr.status
+        if (status === 1223) {
+          status = 204
+        }
         if (status < 100 || status > 599) {
           reject()
           return

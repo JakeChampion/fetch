@@ -56,6 +56,14 @@ asyncTest('rejects promise for network error', 1, function() {
   })
 })
 
+asyncTest('handles 204 No Content response', 2, function() {
+  fetch('/empty').then(function(response) {
+    equal(response.status, 204)
+    equal(response.body, '')
+    start()
+  })
+})
+
 asyncTest('resolves text promise', 1, function() {
   fetch('/hello').then(function(response) {
     return response.text()

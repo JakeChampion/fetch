@@ -28,6 +28,10 @@ var routes = {
     res.writeHead(500, {'Content-Type': 'text/plain'});
     res.end('boom');
   },
+  '/empty': function(res) {
+    res.writeHead(204);
+    res.end();
+  },
   '/error': function(res) {
     res.destroy();
   },
