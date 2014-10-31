@@ -15,7 +15,7 @@ $ bower install fetch
 You'll also need a Promise polyfill for older browsers.
 
 ```sh
-$ bower install native-promise-only
+$ bower install es6-promise
 ```
 
 This can be also be installed with `npm`.
@@ -27,7 +27,7 @@ $ npm install github/fetch --save
 ### Using with npm and Browserify
 
 ```js
-require('native-promise-only');
+require('es6-promise').polyfill();
 require('fetch');
 ```
 
