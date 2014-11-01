@@ -120,15 +120,6 @@
     this.referrer = null
   }
 
-  function encode(params) {
-    return Object.getOwnPropertyNames(params).filter(function(name) {
-      return params[name] !== undefined
-    }).map(function(name) {
-      var value = (params[name] === null) ? '' : params[name]
-      return encodeURIComponent(name) + '=' + encodeURIComponent(value)
-    }).join('&').replace(/%20/g, '+')
-  }
-
   function decode(body) {
     var form = new FormData()
     body.trim().split('&').forEach(function(bytes) {
@@ -140,15 +131,6 @@
       }
     })
     return form
-  }
-
-  function isObject(value) {
-    try {
-      return Object.getPrototypeOf(value) === Object.prototype
-    } catch (ex) {
-      // Probably a string literal.
-      return false
-    }
   }
 
   function headers(xhr) {
@@ -190,12 +172,7 @@
         })
       })
 
-      var body = self.body
-      if (isObject(self.body)) {
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
-        body = encode(self.body)
-      }
-      xhr.send(body)
+      xhr.send(self.body)
     })
   }
 
