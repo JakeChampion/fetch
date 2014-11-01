@@ -123,10 +123,10 @@ asyncTest('post sends encoded body', 2, function() {
 asyncTest('post sets content-type header', 1, function() {
   fetch('/request', {
     method: 'post',
-    body: {}
+    body: new FormData()
   }).then(function(response) {
     var request = JSON.parse(response.body);
-    equal(request.headers['content-type'], 'application/x-www-form-urlencoded; charset=UTF-8')
+    ok(/^multipart\/form-data;/.test(request.headers['content-type']))
     start()
   })
 })
