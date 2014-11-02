@@ -108,31 +108,14 @@ if (blobSupport) {
   })
 }
 
-asyncTest('post sends encoded body', 2, function() {
-  fetch('/request', {
-    method: 'post',
-    body: {
-      name: 'Hubot',
-      title: 'Hubot Robawt',
-      undef: undefined,
-      nil: null
-    }
-  }).then(function(response) {
-    return response.json()
-  }).then(function(json) {
-    equal(json.method, 'POST')
-    equal(json.data, 'name=Hubot&title=Hubot+Robawt&nil=')
-    start()
-  })
-})
-
-asyncTest('post sets content-type header', 1, function() {
+asyncTest('post sets content-type header', 2, function() {
   fetch('/request', {
     method: 'post',
     body: new FormData()
   }).then(function(response) {
     return response.json()
   }).then(function(json) {
+    equal(json.method, 'POST')
     ok(/^multipart\/form-data;/.test(json.headers['content-type']))
     start()
   })
