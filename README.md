@@ -102,18 +102,6 @@ fetch('/query', {
 })
 ```
 
-### Post form fields
-
-```javascript
-fetch('/query', {
-  method: 'post',
-  body: {
-    name: 'Hubot',
-    login: 'hubot'
-  }
-})
-```
-
 ### Post JSON
 
 ```javascript
