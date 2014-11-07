@@ -1,8 +1,18 @@
-(function() {
+(function(global) {
   'use strict';
 
-  if (window.fetch) {
+  if (global.fetch) {
     return
+  }
+
+  var Promise = global.Promise;
+  if (typeof Promise === 'undefined') {
+    Promise = require('bluebird');
+  }
+
+  var XMLHttpRequest = global.XMLHttpRequest;
+  if (typeof XMLHttpRequest === 'undefined') {
+    XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
   }
 
   function Headers(headers) {
@@ -189,7 +199,7 @@
 
   Body.call(Response.prototype)
 
-  window.fetch = function (url, options) {
+  global.fetch = function (url, options) {
     return new Request(url, options).fetch()
   }
-})();
+})(this);
