@@ -69,7 +69,7 @@
   }
 
   function Body() {
-    this.body = null
+    this._body = null
     this.bodyUsed = false
 
     this.arrayBuffer = function() {
@@ -78,11 +78,11 @@
 
     this.blob = function() {
       var rejected = consumed(this)
-      return rejected ? rejected : Promise.resolve(new Blob([this.body]))
+      return rejected ? rejected : Promise.resolve(new Blob([this._body]))
     }
 
     this.formData = function() {
-      return Promise.resolve(decode(this.body))
+      return Promise.resolve(decode(this._body))
     }
 
     this.json = function() {
@@ -91,7 +91,7 @@
         return rejected
       }
 
-      var body = this.body
+      var body = this._body
       return new Promise(function(resolve, reject) {
         try {
           resolve(JSON.parse(body))
@@ -103,7 +103,7 @@
 
     this.text = function() {
       var rejected = consumed(this)
-      return rejected ? rejected : Promise.resolve(this.body)
+      return rejected ? rejected : Promise.resolve(this._body)
     }
 
     return this
@@ -112,7 +112,7 @@
   function Request(url, options) {
     options = options || {}
     this.url = url
-    this.body = options.body
+    this._body = options.body
     this.credentials = options.credentials || null
     this.headers = new Headers(options.headers)
     this.method = options.method || 'GET'
@@ -172,14 +172,14 @@
         })
       })
 
-      xhr.send(self.body)
+      xhr.send(self._body)
     })
   }
 
   Body.call(Request.prototype)
 
   function Response(body, options) {
-    this.body = body
+    this._body = body
     this.type = 'default'
     this.url = null
     this.status = options.status
