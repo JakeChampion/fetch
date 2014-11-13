@@ -7,7 +7,6 @@ var blobSupport = (function() {
   }
 })();
 
-
 asyncTest('populates response body', 2, function() {
   fetch('/hello').then(function(response) {
     equal(response.status, 200)
@@ -34,7 +33,7 @@ asyncTest('sends request headers', 2, function() {
 })
 
 asyncTest('parses response headers', 2, function() {
-  fetch('/headers').then(function(response) {
+  fetch('/headers?' + new Date().getTime()).then(function(response) {
     equal(response.headers.get('Date'), 'Mon, 13 Oct 2014 21:02:27 GMT')
     equal(response.headers.get('Content-Type'), 'text/html; charset=utf-8')
     start()
@@ -52,8 +51,21 @@ asyncTest('resolves promise on 500 error', 2, function() {
 })
 
 asyncTest('rejects promise for network error', 1, function() {
-  fetch('/error').catch(function() {
+  fetch('/error').then(function(response) {
+    ok(false, 'HTTP status ' + response.status + ' was treated as success')
+    start()
+  }).catch(function() {
     ok(true)
+    start()
+  })
+})
+
+asyncTest('handles 204 No Content response', 2, function() {
+  fetch('/empty').then(function(response) {
+    equal(response.status, 204)
+    return response.text()
+  }).then(function(body) {
+    equal(body, '')
     start()
   })
 })
@@ -152,6 +164,48 @@ asyncTest('rejects text promise after body is consumed', 2, function() {
   }).catch(function(error) {
     ok(error instanceof TypeError, 'Promise rejected after body consumed')
     ok(error.message === 'Body already consumed', 'Promise rejected for incorrect reason')
+    start()
+  })
+})
+
+asyncTest('supports HTTP PUT', 2, function() {
+  fetch('/request', {
+    method: 'put',
+    body: 'name=Hubot'
+  }).then(function(response) {
+    return response.json()
+  }).then(function(request) {
+    equal(request.method, 'PUT')
+    equal(request.data, 'name=Hubot')
+    start()
+  })
+})
+
+asyncTest('supports HTTP PATCH', 2, function() {
+  fetch('/request', {
+    method: 'PATCH',
+    body: 'name=Hubot'
+  }).then(function(response) {
+    return response.json()
+  }).then(function(request) {
+    equal(request.method, 'PATCH')
+    if (/PhantomJS/.test(navigator.userAgent)) {
+      equal(request.data, '')
+    } else {
+      equal(request.data, 'name=Hubot')
+    }
+    start()
+  })
+})
+
+asyncTest('supports HTTP DELETE', 2, function() {
+  fetch('/request', {
+    method: 'delete',
+  }).then(function(response) {
+    return response.json()
+  }).then(function(request) {
+    equal(request.method, 'DELETE')
+    equal(request.data, '')
     start()
   })
 })

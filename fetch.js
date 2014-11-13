@@ -109,13 +109,21 @@
     return this
   }
 
+  // HTTP methods whose capitalization should be normalized
+  var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
+
+  function normalizeMethod(method) {
+    var upcased = method.toUpperCase()
+    return (methods.indexOf(upcased) > -1) ? upcased : method
+  }
+
   function Request(url, options) {
     options = options || {}
     this.url = url
     this._body = options.body
     this.credentials = options.credentials || null
     this.headers = new Headers(options.headers)
-    this.method = options.method || 'GET'
+    this.method = normalizeMethod(options.method || 'GET')
     this.mode = options.mode || null
     this.referrer = null
   }
@@ -152,8 +160,13 @@
       var xhr = new XMLHttpRequest()
 
       xhr.onload = function() {
+        var status = (xhr.status === 1223) ? 204 : xhr.status
+        if (status < 100 || status > 599) {
+          reject()
+          return
+        }
         var options = {
-          status: xhr.status,
+          status: status,
           statusText: xhr.statusText,
           headers: headers(xhr)
         }
@@ -172,7 +185,7 @@
         })
       })
 
-      xhr.send(self._body)
+      xhr.send((self._body === undefined) ? null : self._body)
     })
   }
 
