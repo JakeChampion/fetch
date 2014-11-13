@@ -185,11 +185,7 @@
         })
       })
 
-      var body = self._body
-      if (body === undefined) {
-        body = null
-      }
-      xhr.send(body)
+      xhr.send((self._body === undefined) ? null : self._body)
     })
   }
 
