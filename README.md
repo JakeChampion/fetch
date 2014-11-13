@@ -24,6 +24,33 @@ This can be also be installed with `npm`.
 $ npm install github/fetch --save
 ```
 
+### Using with npm and Browserify
+
+```js
+require('es6-promise').polyfill();
+require('fetch');
+```
+
+Note: if you install **fetch** with npm you won't be able to specify a fuzzy
+version or range of versions for **fetch** in your `package.json` as npm does
+not support installing fuzzy versions from modules not published on their
+registry.
+
+Instead, you can choose to install **fetch** at an exact specific version by
+changing `package.json` to:
+
+```
+  "fetch": "https://github.com/github/fetch/archive/v0.1.0.tar.gz
+```
+
+Alternatively, if you would prefer to install **fetch** at a fuzzy version
+you can install it via bower to install it and use the [debowerify transform](https://github.com/eugeneware/debowerify).
+
+Full worked examples of these two approaches to using **fetch** in Browserify are avalable:
+
+- [Fetch API + Browserify](https://github.com/matthew-andrews/fetch-browserify-demo)
+- [Fetch API + Browserify + Bower](https://github.com/matthew-andrews/fetch-browserify-bower-demo)
+
 ## Usage
 
 The `fetch` function supports any HTTP method. We'll focus on GET and POST
@@ -72,18 +99,6 @@ var form = document.querySelector('form')
 fetch('/query', {
   method: 'post',
   body: new FormData(form)
-})
-```
-
-### Post form fields
-
-```javascript
-fetch('/query', {
-  method: 'post',
-  body: {
-    name: 'Hubot',
-    login: 'hubot'
-  }
 })
 ```
 

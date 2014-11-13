@@ -11,7 +11,9 @@ var blobSupport = (function() {
 asyncTest('populates response body', 2, function() {
   fetch('/hello').then(function(response) {
     equal(response.status, 200)
-    equal(response.body, 'hi')
+    return response.text()
+  }).then(function(body) {
+    equal(body, 'hi')
     start()
   })
 })
@@ -23,9 +25,10 @@ asyncTest('sends request headers', 2, function() {
       'X-Test': '42'
     }
   }).then(function(response) {
-    var headers = JSON.parse(response.body).headers
-    equal(headers['accept'], 'application/json')
-    equal(headers['x-test'], '42')
+    return response.json()
+  }).then(function(json) {
+    equal(json.headers['accept'], 'application/json')
+    equal(json.headers['x-test'], '42')
     start()
   })
 })
@@ -41,7 +44,9 @@ asyncTest('parses response headers', 2, function() {
 asyncTest('resolves promise on 500 error', 2, function() {
   fetch('/boom').then(function(response) {
     equal(response.status, 500)
-    equal(response.body, 'boom')
+    return response.text()
+  }).then(function(body) {
+    equal(body, 'boom')
     start()
   })
 })
@@ -114,30 +119,15 @@ if (blobSupport) {
   })
 }
 
-asyncTest('post sends encoded body', 2, function() {
+asyncTest('post sets content-type header', 2, function() {
   fetch('/request', {
     method: 'post',
-    body: {
-      name: 'Hubot',
-      title: 'Hubot Robawt',
-      undef: undefined,
-      nil: null
-    }
+    body: new FormData()
   }).then(function(response) {
-    var request = JSON.parse(response.body);
-    equal(request.method, 'POST')
-    equal(request.data, 'name=Hubot&title=Hubot+Robawt&nil=')
-    start()
-  })
-})
-
-asyncTest('post sets content-type header', 1, function() {
-  fetch('/request', {
-    method: 'post',
-    body: {}
-  }).then(function(response) {
-    var request = JSON.parse(response.body);
-    equal(request.headers['content-type'], 'application/x-www-form-urlencoded; charset=UTF-8')
+    return response.json()
+  }).then(function(json) {
+    equal(json.method, 'POST')
+    ok(/^multipart\/form-data;/.test(json.headers['content-type']))
     start()
   })
 })
