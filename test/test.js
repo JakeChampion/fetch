@@ -171,15 +171,12 @@ asyncTest('rejects text promise after body is consumed', 2, function() {
 asyncTest('supports HTTP PUT', 2, function() {
   fetch('/request', {
     method: 'put',
-    body: {
-      name: 'Hubot',
-      title: 'Hubot Robawt',
-    }
+    body: 'name=Hubot'
   }).then(function(response) {
     return response.json()
   }).then(function(request) {
     equal(request.method, 'PUT')
-    equal(request.data, 'name=Hubot&title=Hubot+Robawt')
+    equal(request.data, 'name=Hubot')
     start()
   })
 })
@@ -187,10 +184,7 @@ asyncTest('supports HTTP PUT', 2, function() {
 asyncTest('supports HTTP PATCH', 2, function() {
   fetch('/request', {
     method: 'PATCH',
-    body: {
-      name: 'Hubot',
-      title: 'Hubot Robawt',
-    }
+    body: 'name=Hubot'
   }).then(function(response) {
     return response.json()
   }).then(function(request) {
@@ -198,7 +192,7 @@ asyncTest('supports HTTP PATCH', 2, function() {
     if (/PhantomJS/.test(navigator.userAgent)) {
       equal(request.data, '')
     } else {
-      equal(request.data, 'name=Hubot&title=Hubot+Robawt')
+      equal(request.data, 'name=Hubot')
     }
     start()
   })
