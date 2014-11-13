@@ -7,7 +7,6 @@ var blobSupport = (function() {
   }
 })();
 
-
 asyncTest('populates response body', 2, function() {
   fetch('/hello').then(function(response) {
     equal(response.status, 200)
@@ -64,7 +63,9 @@ asyncTest('rejects promise for network error', 1, function() {
 asyncTest('handles 204 No Content response', 2, function() {
   fetch('/empty').then(function(response) {
     equal(response.status, 204)
-    equal(response.body, '')
+    return response.text()
+  }).then(function(body) {
+    equal(body, '')
     start()
   })
 })
@@ -175,7 +176,8 @@ asyncTest('supports HTTP PUT', 2, function() {
       title: 'Hubot Robawt',
     }
   }).then(function(response) {
-    var request = JSON.parse(response.body);
+    return response.json()
+  }).then(function(request) {
     equal(request.method, 'PUT')
     equal(request.data, 'name=Hubot&title=Hubot+Robawt')
     start()
@@ -190,7 +192,8 @@ asyncTest('supports HTTP PATCH', 2, function() {
       title: 'Hubot Robawt',
     }
   }).then(function(response) {
-    var request = JSON.parse(response.body);
+    return response.json()
+  }).then(function(request) {
     equal(request.method, 'PATCH')
     if (/PhantomJS/.test(navigator.userAgent)) {
       equal(request.data, '')
@@ -205,7 +208,8 @@ asyncTest('supports HTTP DELETE', 2, function() {
   fetch('/request', {
     method: 'delete',
   }).then(function(response) {
-    var request = JSON.parse(response.body);
+    return response.json()
+  }).then(function(request) {
     equal(request.method, 'DELETE')
     equal(request.data, '')
     start()
