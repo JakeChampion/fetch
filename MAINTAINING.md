@@ -22,7 +22,7 @@ $ git pull
 $ vim bower.json
 $ vim package.json
 $ git add bower.json package.json
-$ git ci -m "Fetch 1.x.x"
+$ git commit -m "Fetch 1.x.x"
 $ git tag v1.x.x
 $ git push
 $ git push --tags
