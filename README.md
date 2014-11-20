@@ -144,7 +144,7 @@ function status(response) {
   if (response.status >= 200 && response.status < 300) {
     return Promise.resolve(response)
   } else {
-    return Promise.reject(response)
+    return Promise.reject(new Error(response.statusText))
   }
 }
 
@@ -157,8 +157,8 @@ fetch('/users')
   .then(json)
   .then(function(json) {
     console.log('request succeeded with json response', json)
-  }).catch(function(response) {
-    console.log('request failed with status', response.status)
+  }).catch(function(error) {
+    console.log('request failed', error)
   })
 ```
 
