@@ -54,8 +54,8 @@ asyncTest('rejects promise for network error', 1, function() {
   fetch('/error').then(function(response) {
     ok(false, 'HTTP status ' + response.status + ' was treated as success')
     start()
-  }).catch(function() {
-    ok(true)
+  }).catch(function(error) {
+    ok(error instanceof TypeError, 'Rejected with Error')
     start()
   })
 })
