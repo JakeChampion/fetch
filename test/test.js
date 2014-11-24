@@ -168,6 +168,17 @@ asyncTest('rejects text promise after body is consumed', 2, function() {
   })
 })
 
+asyncTest('rejects formData promise after body is consumed', 2, function() {
+  fetch('/json').then(function(response) {
+    response.formData()
+    return response.formData()
+  }).catch(function(error) {
+    ok(error instanceof TypeError, 'Promise rejected after body consumed')
+    ok(error.message === 'Body already consumed', 'Promise rejected for incorrect reason')
+    start()
+  })
+})
+
 asyncTest('supports HTTP PUT', 2, function() {
   fetch('/request', {
     method: 'put',
