@@ -82,7 +82,8 @@
     }
 
     this.formData = function() {
-      return Promise.resolve(decode(this._body))
+      var rejected = consumed(this)
+      return rejected ? rejected : Promise.resolve(decode(this._body))
     }
 
     this.json = function() {
