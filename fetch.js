@@ -203,6 +203,10 @@
 
   Body.call(Response.prototype)
 
+  window.Headers = Headers;
+  window.Request = Request;
+  window.Response = Response;
+
   window.fetch = function (url, options) {
     return new Request(url, options).fetch()
   }
