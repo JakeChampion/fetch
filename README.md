@@ -40,7 +40,7 @@ Instead, you can choose to install **fetch** at an exact specific version by
 changing `package.json` to:
 
 ```
-  "fetch": "https://github.com/github/fetch/archive/v0.1.0.tar.gz
+"fetch": "https://github.com/github/fetch/archive/v0.1.0.tar.gz"
 ```
 
 Alternatively, if you would prefer to install **fetch** at a fuzzy version
