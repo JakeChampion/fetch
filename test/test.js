@@ -134,47 +134,51 @@ asyncTest('post sets content-type header', 2, function() {
 })
 
 if (blobSupport) {
-  asyncTest('rejects blob promise after body is consumed', 2, function() {
+  asyncTest('rejects blob promise after body is consumed', 3, function() {
     fetch('/hello').then(function(response) {
+      ok(response.blob, 'Body does not implement blob')
       response.blob()
       return response.blob()
     }).catch(function(error) {
       ok(error instanceof TypeError, 'Promise rejected after body consumed')
-      ok(error.message === 'Body already consumed', 'Promise rejected for incorrect reason')
+      equal(error.message, 'Already read', 'Promise rejected for incorrect reason')
       start()
     })
   })
 }
 
-asyncTest('rejects json promise after body is consumed', 2, function() {
+asyncTest('rejects json promise after body is consumed', 3, function() {
   fetch('/json').then(function(response) {
+    ok(response.json, 'Body does not implement json')
     response.json()
     return response.json()
   }).catch(function(error) {
     ok(error instanceof TypeError, 'Promise rejected after body consumed')
-    ok(error.message === 'Body already consumed', 'Promise rejected for incorrect reason')
+    equal(error.message, 'Already read', 'Promise rejected for incorrect reason')
     start()
   })
 })
 
-asyncTest('rejects text promise after body is consumed', 2, function() {
+asyncTest('rejects text promise after body is consumed', 3, function() {
   fetch('/hello').then(function(response) {
+    ok(response.text, 'Body does not implement text')
     response.text()
     return response.text()
   }).catch(function(error) {
     ok(error instanceof TypeError, 'Promise rejected after body consumed')
-    ok(error.message === 'Body already consumed', 'Promise rejected for incorrect reason')
+    equal(error.message, 'Already read', 'Promise rejected for incorrect reason')
     start()
   })
 })
 
-asyncTest('rejects formData promise after body is consumed', 2, function() {
+asyncTest('rejects formData promise after body is consumed', 3, function() {
   fetch('/json').then(function(response) {
+    ok(response.formData, 'Body does not implement formData')
     response.formData()
     return response.formData()
   }).catch(function(error) {
     ok(error instanceof TypeError, 'Promise rejected after body consumed')
-    ok(error.message === 'Body already consumed', 'Promise rejected for incorrect reason')
+    equal(error.message, 'Already read', 'Promise rejected for incorrect reason')
     start()
   })
 })
