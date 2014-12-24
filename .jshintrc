@@ -17,6 +17,7 @@
   "eqnull": true,
   "browser": true,
   "globals": {
-    "Promise": false
+    "Promise": false,
+    "global": false
   }
 }
