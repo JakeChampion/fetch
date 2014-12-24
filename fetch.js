@@ -206,4 +206,4 @@
   global.fetch = function (url, options) {
     return new Request(url, options).fetch()
   }
-})(this);
+})(typeof window === 'undefined' ? this : window);
