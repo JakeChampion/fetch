@@ -16,8 +16,8 @@
   "asi": true,
   "eqnull": true,
   "browser": true,
+  "worker": true,
   "globals": {
-    "Promise": false,
-    "self": false
+    "Promise": false
   }
 }
