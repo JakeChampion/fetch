@@ -12,12 +12,10 @@
   "unused": true,
   "strict": true,
   "trailing": true,
-  "boss": true,
   "asi": true,
+  "boss": true,
+  "esnext": true,
   "eqnull": true,
   "browser": true,
-  "worker": true,
-  "globals": {
-    "Promise": false
-  }
+  "worker": true
 }
