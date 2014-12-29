@@ -1,7 +1,7 @@
-(function(global) {
+(function() {
   'use strict';
 
-  if (global.fetch) {
+  if (self.fetch) {
     return
   }
 
@@ -203,7 +203,7 @@
 
   Body.call(Response.prototype)
 
-  global.fetch = function (url, options) {
+  self.fetch = function (url, options) {
     return new Request(url, options).fetch()
   }
-})(this);
+})();
