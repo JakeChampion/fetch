@@ -1,12 +1,3 @@
-var blobSupport = (function() {
-  try {
-    new Blob();
-    return true
-  } catch(e) {
-    return false
-  }
-})();
-
 promiseTest('populates response body', 2, function() {
   return fetch('/hello').then(function(response) {
     equal(response.status, 200)
@@ -72,13 +63,15 @@ promiseTest('resolves text promise', 1, function() {
   })
 })
 
-promiseTest('parses form encoded response', 1, function() {
-  return fetch('/form').then(function(response) {
-    return response.formData()
-  }).then(function(form) {
-    ok(form instanceof FormData, 'Parsed a FormData object')
+if (Response.prototype.formData) {
+  promiseTest('parses form encoded response', 1, function() {
+    return fetch('/form').then(function(response) {
+      return response.formData()
+    }).then(function(form) {
+      ok(form instanceof FormData, 'Parsed a FormData object')
+    })
   })
-})
+}
 
 promiseTest('parses json response', 2, function() {
   return fetch('/json').then(function(response) {
@@ -98,7 +91,7 @@ promiseTest('handles json parse error', 2, function() {
   })
 })
 
-if (blobSupport) {
+if (Response.prototype.blob) {
   promiseTest('resolves blob promise', 2, function() {
     return fetch('/hello').then(function(response) {
       return response.blob()
@@ -121,7 +114,7 @@ promiseTest('post sets content-type header', 2, function() {
   })
 })
 
-if (blobSupport) {
+if (Response.prototype.blob) {
   promiseTest('rejects blob promise after body is consumed', 2, function() {
     return fetch('/hello').then(function(response) {
       ok(response.blob, 'Body does not implement blob')
@@ -153,15 +146,17 @@ promiseTest('rejects text promise after body is consumed', 2, function() {
   })
 })
 
-promiseTest('rejects formData promise after body is consumed', 2, function() {
-  return fetch('/json').then(function(response) {
-    ok(response.formData, 'Body does not implement formData')
-    response.formData()
-    return response.formData()
-  }).catch(function(error) {
-    ok(error instanceof TypeError, 'Promise rejected after body consumed')
+if (Response.prototype.formData) {
+  promiseTest('rejects formData promise after body is consumed', 2, function() {
+    return fetch('/json').then(function(response) {
+      ok(response.formData, 'Body does not implement formData')
+      response.formData()
+      return response.formData()
+    }).catch(function(error) {
+      ok(error instanceof TypeError, 'Promise rejected after body consumed')
+    })
   })
-})
+}
 
 promiseTest('supports HTTP PUT', 2, function() {
   return fetch('/request', {
