@@ -76,9 +76,20 @@
       throw new Error('Not implemented yet')
     }
 
-    this.blob = function() {
-      var rejected = consumed(this)
-      return rejected ? rejected : Promise.resolve(new Blob([this._body]))
+    var blobSupport = (function() {
+      try {
+        new Blob();
+        return true
+      } catch(e) {
+        return false
+      }
+    })();
+
+    if (blobSupport) {
+      this.blob = function() {
+        var rejected = consumed(this)
+        return rejected ? rejected : Promise.resolve(new Blob([this._body]))
+      }
     }
 
     this.formData = function() {
