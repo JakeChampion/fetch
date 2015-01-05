@@ -11,6 +11,18 @@
   <script src="../bower_components/es6-promise/promise.js"></script>
   <script src="../fetch.js"></script>
   <script src="../bower_components/qunit/qunit/qunit.js"></script>
+  <script>
+    QUnit.promiseTest = function(testName, expected, callback) {
+      QUnit.test(testName, expected, function() {
+        stop();
+        Promise.resolve().then(callback).then(start, function(error) {
+          ok(false, error);
+          start();
+        });
+      });
+    }
+    window.promiseTest = QUnit.promiseTest;
+  </script>
   <script>QUnit.config.testTimeout = 1000</script>
   <script src="./test.js"></script>
 </body>
