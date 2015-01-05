@@ -24,6 +24,26 @@ var routes = {
     res.writeHead(200, {'Content-Type': 'text/plain'});
     res.end('hi');
   },
+  '/redirect/301': function(res) {
+    res.writeHead(301, {'Location': '/hello'});
+    res.end();
+  },
+  '/redirect/302': function(res) {
+    res.writeHead(302, {'Location': '/hello'});
+    res.end();
+  },
+  '/redirect/303': function(res) {
+    res.writeHead(303, {'Location': '/hello'});
+    res.end();
+  },
+  '/redirect/307': function(res) {
+    res.writeHead(307, {'Location': '/hello'});
+    res.end();
+  },
+  '/redirect/308': function(res) {
+    res.writeHead(308, {'Location': '/hello'});
+    res.end();
+  },
   '/boom': function(res) {
     res.writeHead(500, {'Content-Type': 'text/plain'});
     res.end('boom');
