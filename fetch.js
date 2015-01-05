@@ -203,6 +203,10 @@
 
   Body.call(Response.prototype)
 
+  self.Headers = Headers;
+  self.Request = Request;
+  self.Response = Response;
+
   self.fetch = function (url, options) {
     return new Request(url, options).fetch()
   }
