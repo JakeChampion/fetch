@@ -233,11 +233,14 @@ promiseTest('handles 307 redirect response', 2, function() {
   })
 })
 
-promiseTest('handles 308 redirect response', 2, function() {
-  return fetch('/redirect/308').then(function(response) {
-    equal(response.status, 200)
-    return response.text()
-  }).then(function(body) {
-    equal(body, 'hi')
+// PhantomJS doesn't support 308 redirects
+if (!navigator.userAgent.match(/PhantomJS/)) {
+  promiseTest('handles 308 redirect response', 2, function() {
+    return fetch('/redirect/308').then(function(response) {
+      equal(response.status, 200)
+      return response.text()
+    }).then(function(body) {
+      equal(body, 'hi')
+    })
   })
-})
+}
