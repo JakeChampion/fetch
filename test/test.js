@@ -196,3 +196,43 @@ promiseTest('supports HTTP DELETE', 2, function() {
     equal(request.data, '')
   })
 })
+
+promiseTest('doesnt send cookies with implicit omit credentials', 1, function() {
+  return fetch('/cookie?name=foo&value=bar').then(function(response) {
+    return fetch('/cookie?name=foo');
+  }).then(function(response) {
+    return response.text()
+  }).then(function(data) {
+    equal(data, '')
+  })
+})
+
+promiseTest('doesnt send cookies with omit credentials', 1, function() {
+  return fetch('/cookie?name=foo&value=bar').then(function(response) {
+    return fetch('/cookie?name=foo', {credentials: 'omit'})
+  }).then(function(response) {
+    return response.text()
+  }).then(function(data) {
+    equal(data, '')
+  })
+})
+
+promiseTest('send cookies with same-origin credentials', 1, function() {
+  return fetch('/cookie?name=foo&value=bar').then(function(response) {
+    return fetch('/cookie?name=foo', {credentials: 'same-origin'})
+  }).then(function(response) {
+    return response.text()
+  }).then(function(data) {
+    equal(data, 'bar')
+  })
+})
+
+promiseTest('send cookies with include credentials', 1, function() {
+  return fetch('/cookie?name=foo&value=bar').then(function(response) {
+    return fetch('/cookie?name=foo', {credentials: 'include'})
+  }).then(function(response) {
+    return response.text()
+  }).then(function(data) {
+    equal(data, 'bar')
+  })
+})

@@ -5,6 +5,7 @@ var port = Number(process.argv[2] || 3000)
 var fs = require('fs')
 var http = require('http');
 var url = require('url');
+var querystring = require('querystring');
 
 var routes = {
   '/request': function(res, req) {
@@ -46,6 +47,17 @@ var routes = {
   '/json-error': function(res) {
     res.writeHead(200, {'Content-Type': 'application/json'});
     res.end('not json {');
+  },
+  '/cookie': function(res, req) {
+    var params = querystring.parse(url.parse(req.url).query);
+    if (params.value && params.value) {
+      var setCookie = [params.name, params.value].join('=');
+    }
+    if (params.name) {
+      var cookie = querystring.parse(req.headers['cookie'], '; ')[params.name];
+    }
+    res.writeHead(200, {'Content-Type': 'text/plain', 'Set-Cookie': setCookie});
+    res.end(cookie);
   },
   '/headers': function(res) {
     res.writeHead(200, {
