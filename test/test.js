@@ -197,7 +197,7 @@ promiseTest('supports HTTP DELETE', 2, function() {
   })
 })
 
-promiseTest('doesnt send cookies with implicit omit credentials', 1, function() {
+promiseTest('does not send cookies with implicit omit credentials', 1, function() {
   return fetch('/cookie?name=foo&value=bar').then(function(response) {
     return fetch('/cookie?name=foo');
   }).then(function(response) {
@@ -207,7 +207,7 @@ promiseTest('doesnt send cookies with implicit omit credentials', 1, function() 
   })
 })
 
-promiseTest('doesnt send cookies with omit credentials', 1, function() {
+promiseTest('does not send cookies with omit credentials', 1, function() {
   return fetch('/cookie?name=foo&value=bar').then(function(response) {
     return fetch('/cookie?name=foo', {credentials: 'omit'})
   }).then(function(response) {
