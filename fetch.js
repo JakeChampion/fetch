@@ -180,7 +180,8 @@
         var options = {
           status: status,
           statusText: xhr.statusText,
-          headers: headers(xhr)
+          headers: headers(xhr),
+          url: xhr.responseURL
         }
         resolve(new Response(xhr.responseText, options))
       }
@@ -210,6 +211,7 @@
     this.status = options.status
     this.statusText = options.statusText
     this.headers = options.headers
+    this.url = options.url || ''
   }
 
   Body.call(Response.prototype)
