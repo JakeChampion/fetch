@@ -197,6 +197,16 @@ promiseTest('supports HTTP DELETE', 2, function() {
   })
 })
 
+test('request credentials defaults to omit', function() {
+  var request = new Request('')
+  equal(request.credentials, 'omit')
+})
+
+test('request credentials uses inits member', function() {
+  var request = new Request('', {credentials: 'same-origin'})
+  equal(request.credentials, 'same-origin')
+})
+
 promiseTest('does not send cookies with implicit omit credentials', 1, function() {
   return fetch('/cookie?name=foo&value=bar').then(function(response) {
     return fetch('/cookie?name=foo');
