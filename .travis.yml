@@ -1,2 +1,13 @@
 language: node_js
 script: make test
+before_deploy:
+- npm-prepublish --verbose
+deploy:
+  provider: npm
+  email: "replace-with-email"
+  api_key:
+    secure: "replace-with-encrypted-api-key"
+  on:
+    all_branches: true
+    tags: true
+    repo: github/fetch
