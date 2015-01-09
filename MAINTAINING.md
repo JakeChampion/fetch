@@ -10,10 +10,12 @@ minor version "1.x.x" bump is in order.
 
 To prepare the release:
 
-1. Tag the commit with `v1.x.x`.
+1. Make a single empty commit with the description as "Fetch 1.x.x".
+2. Tag the commit with `v1.x.x`.
 
 ```
 $ git pull
+$ git commit --allow-empty -m "Fetch 1.x.x"
 $ git tag v1.x.x
 $ git push --tags
 ```
