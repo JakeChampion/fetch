@@ -1,7 +1,7 @@
 language: node_js
 script: make test
 before_deploy:
-- npm-prepublish --verbose
+- npm-prepublish --verbose --lax
 deploy:
   provider: npm
   email: "replace-with-email"
