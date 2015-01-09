@@ -1,5 +1,5 @@
 {
-  "name": "fetch",
+  "name": "whatwg-fetch",
   "version": "0.4.0",
   "main": "fetch.js",
   "private": true,
