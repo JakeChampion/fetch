@@ -4,9 +4,9 @@ before_deploy:
 - npm-prepublish --verbose --lax
 deploy:
   provider: npm
-  email: "replace-with-email"
+  email: matt@mattandre.ws
   api_key:
-    secure: "replace-with-encrypted-api-key"
+    secure: ij7AZPB/atfHn/MJI9T6p/awg8zSrFL/FXMorfvSNZdCck8BTZaK1eiiC2Jg1ljZiIeRnc+EEpBWTc1yTLAQUF8dIXf3oyxdSXQzz4GiGHRgqi9vyvPyUXshsqdNY2WzO6lnKJ+XLDCCYyaHcFIBeqPqtYxPe5m8ck8w1kQz8CQ=
   on:
     all_branches: true
     tags: true
