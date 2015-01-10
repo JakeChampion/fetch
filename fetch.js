@@ -5,6 +5,10 @@
     return
   }
 
+  /**
+   * @param {Headers|Object=} headers
+   * @constructor
+   */
   function Headers(headers) {
     this.map = {}
 
@@ -129,6 +133,7 @@
     return (methods.indexOf(upcased) > -1) ? upcased : method
   }
 
+  /** @constructor */
   function Request(url, options) {
     options = options || {}
     this.url = url
@@ -203,6 +208,7 @@
 
   Body.call(Request.prototype)
 
+  /** @constructor */
   function Response(body, options) {
     this._body = body
     this.type = 'default'
