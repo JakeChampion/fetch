@@ -192,55 +192,57 @@ test('supports HTTP DELETE', function() {
   })
 })
 
-test('handles 301 redirect response', function() {
-  return fetch('/redirect/301').then(function(response) {
-    assert.equal(response.status, 200)
-    assert.equal(response.url ? new URL(response.url).pathname : null, '/hello')
-    return response.text()
-  }).then(function(body) {
-    assert.equal(body, 'hi')
-  })
-})
-
-test('handles 302 redirect response', function() {
-  return fetch('/redirect/302').then(function(response) {
-    assert.equal(response.status, 200)
-    assert.equal(response.url ? new URL(response.url).pathname : null, '/hello')
-    return response.text()
-  }).then(function(body) {
-    assert.equal(body, 'hi')
-  })
-})
-
-test('handles 303 redirect response', function() {
-  return fetch('/redirect/303').then(function(response) {
-    assert.equal(response.status, 200)
-    assert.equal(response.url ? new URL(response.url).pathname : null, '/hello')
-    return response.text()
-  }).then(function(body) {
-    assert.equal(body, 'hi')
-  })
-})
-
-test('handles 307 redirect response', function() {
-  return fetch('/redirect/307').then(function(response) {
-    assert.equal(response.status, 200)
-    assert.equal(response.url ? new URL(response.url).pathname : null, '/hello')
-    return response.text()
-  }).then(function(body) {
-    assert.equal(body, 'hi')
-  })
-})
-
-// PhantomJS doesn't support 308 redirects
-if (!navigator.userAgent.match(/PhantomJS/)) {
-  test('handles 308 redirect response', function() {
-    return fetch('/redirect/308').then(function(response) {
+suite('Redirect', function() {
+  test('handles 301 redirect response', function() {
+    return fetch('/redirect/301').then(function(response) {
       assert.equal(response.status, 200)
-    assert.equal(response.url ? new URL(response.url).pathname : null, '/hello')
+      assert.equal(response.url ? new URL(response.url).pathname : null, '/hello')
       return response.text()
     }).then(function(body) {
       assert.equal(body, 'hi')
     })
   })
-}
+
+  test('handles 302 redirect response', function() {
+    return fetch('/redirect/302').then(function(response) {
+      assert.equal(response.status, 200)
+      assert.equal(response.url ? new URL(response.url).pathname : null, '/hello')
+      return response.text()
+    }).then(function(body) {
+      assert.equal(body, 'hi')
+    })
+  })
+
+  test('handles 303 redirect response', function() {
+    return fetch('/redirect/303').then(function(response) {
+      assert.equal(response.status, 200)
+      assert.equal(response.url ? new URL(response.url).pathname : null, '/hello')
+      return response.text()
+    }).then(function(body) {
+      assert.equal(body, 'hi')
+    })
+  })
+
+  test('handles 307 redirect response', function() {
+    return fetch('/redirect/307').then(function(response) {
+      assert.equal(response.status, 200)
+      assert.equal(response.url ? new URL(response.url).pathname : null, '/hello')
+      return response.text()
+    }).then(function(body) {
+      assert.equal(body, 'hi')
+    })
+  })
+
+  // PhantomJS doesn't support 308 redirects
+  if (!navigator.userAgent.match(/PhantomJS/)) {
+    test('handles 308 redirect response', function() {
+      return fetch('/redirect/308').then(function(response) {
+        assert.equal(response.status, 200)
+      assert.equal(response.url ? new URL(response.url).pathname : null, '/hello')
+        return response.text()
+      }).then(function(body) {
+        assert.equal(body, 'hi')
+      })
+    })
+  }
+})
