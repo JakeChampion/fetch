@@ -63,6 +63,36 @@ suite('Response', function() {
 
 // https://fetch.spec.whatwg.org/#body-mixin
 suite('Body mixin', function() {
+  suite('arrayBuffer', function() {
+    test('resolves arrayBuffer promise', function() {
+      return fetch('/hello').then(function(response) {
+        return response.arrayBuffer()
+      }).then(function(buf) {
+        assert(buf instanceof ArrayBuffer, 'buf is an ArrayBuffer instance')
+        assert.equal(buf.byteLength, 2)
+      })
+    })
+
+    test('arrayBuffer handles non-ascii data', function() {
+      return fetch('/nonascii').then(function(response) {
+        return response.arrayBuffer()
+      }).then(function(buf) {
+        assert(buf instanceof ArrayBuffer, 'buf is an ArrayBuffer instance')
+        assert.equal(buf.byteLength, 2, 'blob.size is correct')
+      })
+    })
+
+    test('rejects arrayBuffer promise after body is consumed', function() {
+      return fetch('/hello').then(function(response) {
+        assert(response.arrayBuffer, 'Body does not implement arrayBuffer')
+        response.blob()
+        return response.arrayBuffer()
+      }).catch(function(error) {
+        assert(error instanceof TypeError, 'Promise rejected after body consumed')
+      })
+    })
+  })
+
   suite('blob', function() {
     test('resolves blob promise', function() {
       return fetch('/hello').then(function(response) {

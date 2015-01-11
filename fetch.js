@@ -74,7 +74,23 @@
     this.bodyUsed = false
 
     this.arrayBuffer = function() {
-      throw new Error('Not implemented yet')
+      var rejected = consumed(this)
+      if (rejected) {
+        return rejected
+      }
+
+      var body = this._body
+      return new Promise(function(resolve, reject) {
+        var fileReader = new FileReader()
+        fileReader.readAsArrayBuffer(body)
+        fileReader.onloadend = function(e) {
+          if (e.target.error) {
+            reject(e.target.error)
+          } else {
+            resolve(e.target.result)
+          }
+        }
+      })
     }
 
     this.blob = function() {
