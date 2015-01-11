@@ -10,8 +10,8 @@
   <script src="../node_modules/chai/chai.js"></script>
   <script src="../node_modules/mocha/mocha.js"></script>
   <script>
-    mocha.setup('tdd');
-    self.assert = chai.assert;
+    mocha.setup('tdd')
+    self.assert = chai.assert
   </script>
 
   <script src="../bower_components/es6-promise/promise.js"></script>
@@ -21,9 +21,9 @@
 
   <script>
     if (self.mochaPhantomJS) {
-      mochaPhantomJS.run();
+      mochaPhantomJS.run()
     } else {
-      mocha.run();
+      mocha.run()
     }
   </script>
 </body>

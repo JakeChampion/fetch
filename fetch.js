@@ -92,9 +92,11 @@
       }
     }
 
-    this.formData = function() {
-      var rejected = consumed(this)
-      return rejected ? rejected : Promise.resolve(decode(this._body))
+    if (self.FormData) {
+      this.formData = function() {
+        var rejected = consumed(this)
+        return rejected ? rejected : Promise.resolve(decode(this._body))
+      }
     }
 
     this.json = function() {
