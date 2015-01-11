@@ -73,6 +73,15 @@ suite('Body mixin', function() {
       })
     })
 
+    test('blob handles non-ascii data', function() {
+      return fetch('/nonascii').then(function(response) {
+        return response.blob()
+      }).then(function(blob) {
+        assert(blob instanceof Blob, 'blob is a Blob instance')
+        assert.equal(blob.size, 2, 'blob.size is correct')
+      })
+    })
+
     test('rejects blob promise after body is consumed', function() {
       return fetch('/hello').then(function(response) {
         assert(response.blob, 'Body does not implement blob')
