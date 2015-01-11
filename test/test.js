@@ -192,7 +192,8 @@ test('supports HTTP DELETE', function() {
   })
 })
 
-suite('Redirect', function() {
+// TODO: Avoid URL, not in PhantomJS
+;(self.URL ? suite : suite.skip)('Redirect', function() {
   test('handles 301 redirect response', function() {
     return fetch('/redirect/301').then(function(response) {
       assert.equal(response.status, 200)
