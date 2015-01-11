@@ -22,6 +22,7 @@
     "Headers": false,
     "Request": false,
     "Response": false,
+    "suite": false,
     "test": false,
     "assert": false
   }
