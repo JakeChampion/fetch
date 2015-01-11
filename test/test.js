@@ -153,42 +153,65 @@ test('rejects text promise after body is consumed', function() {
   })
 })
 
-test('supports HTTP PUT', function() {
-  return fetch('/request', {
-    method: 'put',
-    body: 'name=Hubot'
-  }).then(function(response) {
-    return response.json()
-  }).then(function(request) {
-    assert.equal(request.method, 'PUT')
-    assert.equal(request.data, 'name=Hubot')
-  })
-})
-
-test('supports HTTP PATCH', function() {
-  return fetch('/request', {
-    method: 'PATCH',
-    body: 'name=Hubot'
-  }).then(function(response) {
-    return response.json()
-  }).then(function(request) {
-    assert.equal(request.method, 'PATCH')
-    if (/PhantomJS/.test(navigator.userAgent)) {
+suite('HTTP verbs', function() {
+  test('supports HTTP GET', function() {
+    return fetch('/request', {
+      method: 'get',
+      body: 'name=Hubot'
+    }).then(function(response) {
+      return response.json()
+    }).then(function(request) {
+      assert.equal(request.method, 'GET')
       assert.equal(request.data, '')
-    } else {
-      assert.equal(request.data, 'name=Hubot')
-    }
+    })
   })
-})
+    test('supports HTTP POST', function() {
+    return fetch('/request', {
+      method: 'post',
+      body: 'name=Hubot'
+    }).then(function(response) {
+      return response.json()
+    }).then(function(request) {
+      assert.equal(request.method, 'POST')
+      assert.equal(request.data, 'name=Hubot')
+    })
+  })
 
-test('supports HTTP DELETE', function() {
-  return fetch('/request', {
-    method: 'delete',
-  }).then(function(response) {
-    return response.json()
-  }).then(function(request) {
-    assert.equal(request.method, 'DELETE')
-    assert.equal(request.data, '')
+  test('supports HTTP PUT', function() {
+    return fetch('/request', {
+      method: 'put',
+      body: 'name=Hubot'
+    }).then(function(response) {
+      return response.json()
+    }).then(function(request) {
+      assert.equal(request.method, 'PUT')
+      assert.equal(request.data, 'name=Hubot')
+    })
+  })
+
+  var patchSupported = !/PhantomJS/.test(navigator.userAgent)
+
+  ;(patchSupported ? test : test.skip)('supports HTTP PATCH', function() {
+    return fetch('/request', {
+      method: 'PATCH',
+      body: 'name=Hubot'
+    }).then(function(response) {
+      return response.json()
+    }).then(function(request) {
+      assert.equal(request.method, 'PATCH')
+      assert.equal(request.data, 'name=Hubot')
+    })
+  })
+
+  test('supports HTTP DELETE', function() {
+    return fetch('/request', {
+      method: 'delete',
+    }).then(function(response) {
+      return response.json()
+    }).then(function(request) {
+      assert.equal(request.method, 'DELETE')
+      assert.equal(request.data, '')
+    })
   })
 })
 
@@ -234,16 +257,15 @@ suite('Redirect', function() {
     })
   })
 
-  // PhantomJS doesn't support 308 redirects
-  if (!navigator.userAgent.match(/PhantomJS/)) {
-    test('handles 308 redirect response', function() {
-      return fetch('/redirect/308').then(function(response) {
-        assert.equal(response.status, 200)
-        assert.match(response.url, /\/hello/)
-        return response.text()
-      }).then(function(body) {
-        assert.equal(body, 'hi')
-      })
+  var permanentRedirectSupported = !/PhantomJS/.test(navigator.userAgent)
+
+  ;(permanentRedirectSupported ? test : test.skip)('handles 308 redirect response', function() {
+    return fetch('/redirect/308').then(function(response) {
+      assert.equal(response.status, 200)
+      assert.match(response.url, /\/hello/)
+      return response.text()
+    }).then(function(body) {
+      assert.equal(body, 'hi')
     })
-  }
+  })
 })
