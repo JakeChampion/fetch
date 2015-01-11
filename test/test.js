@@ -15,6 +15,16 @@ test('rejects promise for network error', function() {
   })
 })
 
+// https://fetch.spec.whatwg.org/#headers-class
+suite('Headers', function() {
+  test('headers are case insensitve', function() {
+    var headers = new Headers({'Accept': 'application/json'})
+    assert.equal(headers.get('ACCEPT'), 'application/json')
+    assert.equal(headers.get('Accept'), 'application/json')
+    assert.equal(headers.get('accept'), 'application/json')
+  })
+})
+
 // https://fetch.spec.whatwg.org/#request-class
 suite('Request', function() {
   test('sends request headers', function() {

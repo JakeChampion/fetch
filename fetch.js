@@ -24,6 +24,7 @@
   }
 
   Headers.prototype.append = function(name, value) {
+    name = name.toLowerCase()
     var list = this.map[name]
     if (!list) {
       list = []
@@ -33,24 +34,24 @@
   }
 
   Headers.prototype['delete'] = function(name) {
-    delete this.map[name]
+    delete this.map[name.toLowerCase()]
   }
 
   Headers.prototype.get = function(name) {
-    var values = this.map[name]
+    var values = this.map[name.toLowerCase()]
     return values ? values[0] : null
   }
 
   Headers.prototype.getAll = function(name) {
-    return this.map[name] || []
+    return this.map[name.toLowerCase()] || []
   }
 
   Headers.prototype.has = function(name) {
-    return this.map.hasOwnProperty(name)
+    return this.map.hasOwnProperty(name.toLowerCase())
   }
 
   Headers.prototype.set = function(name, value) {
-    this.map[name] = [value]
+    this.map[name.toLowerCase()] = [value]
   }
 
   // Instead of iterable for now.
