@@ -20,8 +20,11 @@ var routes = {
       }));
     })
   },
-  '/hello': function(res) {
-    res.writeHead(200, {'Content-Type': 'text/plain'});
+  '/hello': function(res, req) {
+    res.writeHead(200, {
+      'Content-Type': 'text/plain',
+      'X-Request-URL': 'http://' + req.headers.host + req.url
+    });
     res.end('hi');
   },
   '/redirect/301': function(res) {

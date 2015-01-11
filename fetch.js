@@ -181,7 +181,7 @@
           status: status,
           statusText: xhr.statusText,
           headers: headers(xhr),
-          url: xhr.responseURL
+          url: xhr.responseURL || xhr.getResponseHeader('X-Request-URL')
         }
         resolve(new Response(xhr.responseText, options))
       }
