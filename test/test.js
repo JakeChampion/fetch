@@ -283,3 +283,64 @@ suite('Atomic HTTP redirect handling', function() {
     })
   })
 })
+
+// https://fetch.spec.whatwg.org/#concept-request-credentials-mode
+suite('credentials mode', function() {
+  var omitSupported = !self.fetch.polyfill
+
+  ;(omitSupported ? suite : suite.skip)('omit', function() {
+    test('request credentials defaults to omit', function() {
+      var request = new Request('')
+      assert.equal(request.credentials, 'omit')
+    })
+
+    test('does not send cookies with implicit omit credentials', function() {
+      return fetch('/cookie?name=foo&value=bar').then(function() {
+        return fetch('/cookie?name=foo');
+      }).then(function(response) {
+        return response.text()
+      }).then(function(data) {
+        assert.equal(data, '')
+      })
+    })
+
+    test('does not send cookies with omit credentials', function() {
+      return fetch('/cookie?name=foo&value=bar').then(function() {
+        return fetch('/cookie?name=foo', {credentials: 'omit'})
+      }).then(function(response) {
+        return response.text()
+      }).then(function(data) {
+        assert.equal(data, '')
+      })
+    })
+  })
+
+  suite('same-origin', function() {
+    test('request credentials uses inits member', function() {
+      var request = new Request('', {credentials: 'same-origin'})
+      assert.equal(request.credentials, 'same-origin')
+    })
+
+    test('send cookies with same-origin credentials', function() {
+      return fetch('/cookie?name=foo&value=bar').then(function() {
+        return fetch('/cookie?name=foo', {credentials: 'same-origin'})
+      }).then(function(response) {
+        return response.text()
+      }).then(function(data) {
+        assert.equal(data, 'bar')
+      })
+    })
+  })
+
+  suite('include', function() {
+    test('send cookies with include credentials', function() {
+      return fetch('/cookie?name=foo&value=bar').then(function() {
+        return fetch('/cookie?name=foo', {credentials: 'include'})
+      }).then(function(response) {
+        return response.text()
+      }).then(function(data) {
+        assert.equal(data, 'bar')
+      })
+    })
+  })
+})
