@@ -2,28 +2,32 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Test Suite</title>
-  <link rel="stylesheet" href="../bower_components/qunit/qunit/qunit.css">
+  <title>Fetch Tests</title>
+  <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
 </head>
 <body>
-  <div id="qunit"></div>
-  <div id="qunit-fixture"></div>
+  <div id="mocha"></div>
+  <script src="../node_modules/chai/chai.js"></script>
+  <script src="../node_modules/mocha/mocha.js"></script>
+  <script>
+    mocha.setup('tdd');
+    self.assert = chai.assert;
+  </script>
+
   <script src="../bower_components/es6-promise/promise.js"></script>
   <script src="../fetch.js"></script>
-  <script src="../bower_components/qunit/qunit/qunit.js"></script>
+
+  <script src="test.js"></script>
+
   <script>
-    QUnit.promiseTest = function(testName, expected, callback) {
-      QUnit.test(testName, expected, function() {
-        stop();
-        Promise.resolve().then(callback).then(start, function(error) {
-          ok(false, error);
-          start();
-        });
-      });
+    mocha.checkLeaks();
+    //mocha.globals(['jQuery']);
+
+    if (self.mochaPhantomJS) {
+      mochaPhantomJS.run();
+    } else {
+      mocha.run();
     }
-    window.promiseTest = QUnit.promiseTest;
   </script>
-  <script>QUnit.config.testTimeout = 1000</script>
-  <script src="./test.js"></script>
 </body>
 </html>

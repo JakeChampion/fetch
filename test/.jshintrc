@@ -18,27 +18,11 @@
   "browser": true,
   "worker": true,
   "globals": {
-    "MockXHR": false,
-    "QUnit": false,
     "fetch": false,
     "Headers": false,
     "Request": false,
     "Response": false,
-    "module": false,
     "test": false,
-    "asyncTest": false,
-    "promiseTest": false,
-    "testDone": false,
-    "expect": false,
-    "start": false,
-    "stop": false,
-    "ok": false,
-    "equal": false,
-    "notEqual": false,
-    "deepEqual": false,
-    "notDeepEqual": false,
-    "strictEqual": false,
-    "notStrictEqual": false,
-    "raises": false
+    "assert": false
   }
 }
