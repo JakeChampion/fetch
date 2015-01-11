@@ -62,16 +62,6 @@ test('resolves text promise', function() {
   })
 })
 
-if (Response.prototype.formData) {
-  test('parses form encoded response', function() {
-    return fetch('/form').then(function(response) {
-      return response.formData()
-    }).then(function(form) {
-      assert(form instanceof FormData, 'Parsed a FormData object')
-    })
-  })
-}
-
 test('parses json response', function() {
   return fetch('/json').then(function(response) {
     return response.json()
@@ -90,7 +80,7 @@ test('handles json parse error', function() {
   })
 })
 
-if (Response.prototype.blob) {
+;(Response.prototype.blob ? suite : suite.skip)('Blob', function() {
   test('resolves blob promise', function() {
     return fetch('/hello').then(function(response) {
       return response.blob()
@@ -99,21 +89,7 @@ if (Response.prototype.blob) {
       assert.equal(blob.size, 2)
     })
   })
-}
 
-test('post sets content-type header', function() {
-  return fetch('/request', {
-    method: 'post',
-    body: new FormData()
-  }).then(function(response) {
-    return response.json()
-  }).then(function(json) {
-    assert.equal(json.method, 'POST')
-    assert(/^multipart\/form-data;/.test(json.headers['content-type']))
-  })
-})
-
-if (Response.prototype.blob) {
   test('rejects blob promise after body is consumed', function() {
     return fetch('/hello').then(function(response) {
       assert(response.blob, 'Body does not implement blob')
@@ -123,7 +99,39 @@ if (Response.prototype.blob) {
       assert(error instanceof TypeError, 'Promise rejected after body consumed')
     })
   })
-}
+})
+
+;(Response.prototype.formData ? suite : suite.skip)('FormData', function() {
+  test('post sets content-type header', function() {
+    return fetch('/request', {
+      method: 'post',
+      body: new FormData()
+    }).then(function(response) {
+      return response.json()
+    }).then(function(json) {
+      assert.equal(json.method, 'POST')
+      assert(/^multipart\/form-data;/.test(json.headers['content-type']))
+    })
+  })
+
+  test('rejects formData promise after body is consumed', function() {
+    return fetch('/json').then(function(response) {
+      assert(response.formData, 'Body does not implement formData')
+      response.formData()
+      return response.formData()
+    }).catch(function(error) {
+      assert(error instanceof TypeError, 'Promise rejected after body consumed')
+    })
+  })
+
+  test('parses form encoded response', function() {
+    return fetch('/form').then(function(response) {
+      return response.formData()
+    }).then(function(form) {
+      assert(form instanceof FormData, 'Parsed a FormData object')
+    })
+  })
+})
 
 test('rejects json promise after body is consumed', function() {
   return fetch('/json').then(function(response) {
@@ -144,18 +152,6 @@ test('rejects text promise after body is consumed', function() {
     assert(error instanceof TypeError, 'Promise rejected after body consumed')
   })
 })
-
-if (Response.prototype.formData) {
-  test('rejects formData promise after body is consumed', function() {
-    return fetch('/json').then(function(response) {
-      assert(response.formData, 'Body does not implement formData')
-      response.formData()
-      return response.formData()
-    }).catch(function(error) {
-      assert(error instanceof TypeError, 'Promise rejected after body consumed')
-    })
-  })
-}
 
 test('supports HTTP PUT', function() {
   return fetch('/request', {
