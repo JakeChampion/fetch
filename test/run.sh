@@ -11,4 +11,5 @@ node ./test/server.js $port &>/dev/null &
 server_pid=$!
 trap "kill $server_pid" INT EXIT
 
-node ./node_modules/.bin/node-qunit-phantomjs "http://localhost:$port/test/test.html"
+node ./node_modules/.bin/mocha-phantomjs -s localToRemoteUrlAccessEnabled=true -s webSecurityEnabled=false "http://localhost:$port/test/test.html"
+node ./node_modules/.bin/mocha-phantomjs -s localToRemoteUrlAccessEnabled=true -s webSecurityEnabled=false "http://localhost:$port/test/test-worker.html"
