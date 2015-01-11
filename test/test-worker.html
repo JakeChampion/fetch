@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Fetch Worker Tests</title>
+  <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+</head>
+<body>
+  <div id="mocha"></div>
+  <script src="../node_modules/mocha/mocha.js"></script>
+
+  <script>
+    mocha.setup('tdd')
+
+    var worker = new Worker('worker.js')
+
+    worker.addEventListener('message', function(e) {
+      switch (e.data.name) {
+        case 'pass':
+          test(e.data.title, function() {})
+          break
+        case 'pending':
+          test(e.data.title)
+          break
+        case 'fail':
+          test(e.data.title, function() {
+            var err = new Error(e.data.message)
+            err.stack = e.data.stack
+            throw err
+          })
+          break
+        case 'end':
+          if (self.mochaPhantomJS) {
+            mochaPhantomJS.run()
+          } else {
+            mocha.run()
+          }
+          break
+      }
+    })
+  </script>
+</body>
+</html>

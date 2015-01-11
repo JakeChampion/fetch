@@ -92,9 +92,11 @@
       }
     }
 
-    this.formData = function() {
-      var rejected = consumed(this)
-      return rejected ? rejected : Promise.resolve(decode(this._body))
+    if (self.FormData) {
+      this.formData = function() {
+        var rejected = consumed(this)
+        return rejected ? rejected : Promise.resolve(decode(this._body))
+      }
     }
 
     this.json = function() {
@@ -180,7 +182,8 @@
         var options = {
           status: status,
           statusText: xhr.statusText,
-          headers: headers(xhr)
+          headers: headers(xhr),
+          url: xhr.responseURL || xhr.getResponseHeader('X-Request-URL')
         }
         resolve(new Response(xhr.responseText, options))
       }
@@ -210,6 +213,7 @@
     this.status = options.status
     this.statusText = options.statusText
     this.headers = options.headers
+    this.url = options.url || ''
   }
 
   Body.call(Response.prototype)
@@ -221,4 +225,5 @@
   self.fetch = function (url, options) {
     return new Request(url, options).fetch()
   }
+  self.fetch.polyfill = true
 })();
