@@ -63,7 +63,7 @@ suite('Response', function() {
 
 // https://fetch.spec.whatwg.org/#body-mixin
 suite('Body mixin', function() {
-  ;(Response.prototype.blob ? suite : suite.skip)('blob', function() {
+  suite('blob', function() {
     test('resolves blob promise', function() {
       return fetch('/hello').then(function(response) {
         return response.blob()

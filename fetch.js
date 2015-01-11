@@ -77,30 +77,38 @@
       throw new Error('Not implemented yet')
     }
 
-    var blobSupport = (function() {
-      try {
-        new Blob();
-        return true
-      } catch(e) {
-        return false
-      }
-    })();
-
-    if (blobSupport) {
-      this.blob = function() {
-        var rejected = consumed(this)
-        return rejected ? rejected : Promise.resolve(new Blob([this._body]))
-      }
+    this.blob = function() {
+      var rejected = consumed(this)
+      return rejected ? rejected : Promise.resolve(this._body)
     }
 
     if (self.FormData) {
       this.formData = function() {
-        var rejected = consumed(this)
-        return rejected ? rejected : Promise.resolve(decode(this._body))
+        return this.text().then(function(text) {
+          return new Promise(function(resolve, reject) {
+            try {
+              resolve(decode(text))
+            } catch (ex) {
+              reject(ex)
+            }
+          })
+        })
       }
     }
 
     this.json = function() {
+      return this.text().then(function(text) {
+        return new Promise(function(resolve, reject) {
+          try {
+            resolve(JSON.parse(text))
+          } catch (ex) {
+            reject(ex)
+          }
+        })
+      })
+    }
+
+    this.text = function() {
       var rejected = consumed(this)
       if (rejected) {
         return rejected
@@ -108,17 +116,16 @@
 
       var body = this._body
       return new Promise(function(resolve, reject) {
-        try {
-          resolve(JSON.parse(body))
-        } catch (ex) {
-          reject(ex)
+        var fileReader = new FileReader()
+        fileReader.readAsText(body)
+        fileReader.onloadend = function(e) {
+          if (e.target.error) {
+            reject(e.target.error)
+          } else {
+            resolve(e.target.result)
+          }
         }
       })
-    }
-
-    this.text = function() {
-      var rejected = consumed(this)
-      return rejected ? rejected : Promise.resolve(this._body)
     }
 
     return this
@@ -186,7 +193,7 @@
           headers: headers(xhr),
           url: xhr.responseURL || xhr.getResponseHeader('X-Request-URL')
         }
-        resolve(new Response(xhr.responseText, options))
+        resolve(new Response(xhr.response, options))
       }
 
       xhr.onerror = function() {
@@ -194,6 +201,7 @@
       }
 
       xhr.open(self.method, self.url)
+      xhr.responseType = 'blob'
 
       self.headers.forEach(function(name, values) {
         values.forEach(function(value) {
