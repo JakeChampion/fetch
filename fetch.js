@@ -69,20 +69,20 @@
     body.bodyUsed = true
   }
 
+  var blobSupport = self.FileReader && (function() {
+    try {
+      new Blob();
+      return true
+    } catch(e) {
+      return false
+    }
+  })();
+
   function Body() {
     this._body = null
     this.bodyUsed = false
 
-    var blobSupport = (function() {
-      try {
-        new Blob();
-        return true
-      } catch(e) {
-        return false
-      }
-    })();
-
-    if (blobSupport && self.FileReader) {
+    if (blobSupport) {
       this.arrayBuffer = function() {
         var rejected = consumed(this)
         if (rejected) {
@@ -209,7 +209,7 @@
           headers: headers(xhr),
           url: xhr.responseURL || xhr.getResponseHeader('X-Request-URL')
         }
-        resolve(new Response('responseType' in xhr ? xhr.response: xhr.responseText, options))
+        resolve(new Response(blobSupport ? xhr.response: xhr.responseText, options))
       }
 
       xhr.onerror = function() {
@@ -217,7 +217,7 @@
       }
 
       xhr.open(self.method, self.url)
-      if ('responseType' in xhr) {
+      if (blobSupport) {
         xhr.responseType = 'blob'
       }
 
