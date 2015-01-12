@@ -281,7 +281,7 @@ suite('Atomic HTTP redirect handling', function() {
     })
   })
 
-  var permanentRedirectSupported = !/PhantomJS/.test(navigator.userAgent)
+  var permanentRedirectSupported = !/PhantomJS|Trident/.test(navigator.userAgent)
 
   ;(permanentRedirectSupported ? test : test.skip)('handles 308 redirect response', function() {
     return fetch('/redirect/308').then(function(response) {
