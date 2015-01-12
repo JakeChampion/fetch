@@ -24,6 +24,7 @@
   }
 
   Headers.prototype.append = function(name, value) {
+    name = name.toLowerCase()
     var list = this.map[name]
     if (!list) {
       list = []
@@ -33,24 +34,24 @@
   }
 
   Headers.prototype['delete'] = function(name) {
-    delete this.map[name]
+    delete this.map[name.toLowerCase()]
   }
 
   Headers.prototype.get = function(name) {
-    var values = this.map[name]
+    var values = this.map[name.toLowerCase()]
     return values ? values[0] : null
   }
 
   Headers.prototype.getAll = function(name) {
-    return this.map[name] || []
+    return this.map[name.toLowerCase()] || []
   }
 
   Headers.prototype.has = function(name) {
-    return this.map.hasOwnProperty(name)
+    return this.map.hasOwnProperty(name.toLowerCase())
   }
 
   Headers.prototype.set = function(name, value) {
-    this.map[name] = [value]
+    this.map[name.toLowerCase()] = [value]
   }
 
   // Instead of iterable for now.
@@ -92,9 +93,11 @@
       }
     }
 
-    this.formData = function() {
-      var rejected = consumed(this)
-      return rejected ? rejected : Promise.resolve(decode(this._body))
+    if (self.FormData) {
+      this.formData = function() {
+        var rejected = consumed(this)
+        return rejected ? rejected : Promise.resolve(decode(this._body))
+      }
     }
 
     this.json = function() {
@@ -133,7 +136,7 @@
     options = options || {}
     this.url = url
     this._body = options.body
-    this.credentials = options.credentials || null
+    this.credentials = options.credentials || 'omit'
     this.headers = new Headers(options.headers)
     this.method = normalizeMethod(options.method || 'GET')
     this.mode = options.mode || null
@@ -180,7 +183,8 @@
         var options = {
           status: status,
           statusText: xhr.statusText,
-          headers: headers(xhr)
+          headers: headers(xhr),
+          url: xhr.responseURL || xhr.getResponseHeader('X-Request-URL')
         }
         resolve(new Response(xhr.responseText, options))
       }
@@ -210,6 +214,7 @@
     this.status = options.status
     this.statusText = options.statusText
     this.headers = options.headers
+    this.url = options.url || ''
   }
 
   Body.call(Response.prototype)
@@ -221,4 +226,5 @@
   self.fetch = function (url, options) {
     return new Request(url, options).fetch()
   }
+  self.fetch.polyfill = true
 })();
