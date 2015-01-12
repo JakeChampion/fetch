@@ -63,6 +63,40 @@ suite('Response', function() {
 
 // https://fetch.spec.whatwg.org/#body-mixin
 suite('Body mixin', function() {
+  ;(Response.prototype.arrayBuffer ? suite : suite.skip)('arrayBuffer', function() {
+    test('resolves arrayBuffer promise', function() {
+      return fetch('/hello').then(function(response) {
+        return response.arrayBuffer()
+      }).then(function(buf) {
+        assert(buf instanceof ArrayBuffer, 'buf is an ArrayBuffer instance')
+        assert.equal(buf.byteLength, 2)
+      })
+    })
+
+    test('arrayBuffer handles non-ascii data', function() {
+      return fetch('/nonascii').then(function(response) {
+        return response.arrayBuffer()
+      }).then(function(buf) {
+        assert(buf instanceof ArrayBuffer, 'buf is an ArrayBuffer instance')
+        assert.equal(buf.byteLength, 256, 'buf.byteLength is correct')
+        var view = new Uint8Array(buf)
+        for (var i = 0; i< 256; i++) {
+          assert.equal(view[i], i)
+        }
+      })
+    })
+
+    test('rejects arrayBuffer promise after body is consumed', function() {
+      return fetch('/hello').then(function(response) {
+        assert(response.arrayBuffer, 'Body does not implement arrayBuffer')
+        response.blob()
+        return response.arrayBuffer()
+      }).catch(function(error) {
+        assert(error instanceof TypeError, 'Promise rejected after body consumed')
+      })
+    })
+  })
+
   ;(Response.prototype.blob ? suite : suite.skip)('blob', function() {
     test('resolves blob promise', function() {
       return fetch('/hello').then(function(response) {
@@ -70,6 +104,15 @@ suite('Body mixin', function() {
       }).then(function(blob) {
         assert(blob instanceof Blob, 'blob is a Blob instance')
         assert.equal(blob.size, 2)
+      })
+    })
+
+    test('blob handles non-ascii data', function() {
+      return fetch('/nonascii').then(function(response) {
+        return response.blob()
+      }).then(function(blob) {
+        assert(blob instanceof Blob, 'blob is a Blob instance')
+        assert.equal(blob.size, 256, 'blob.size is correct')
       })
     })
 

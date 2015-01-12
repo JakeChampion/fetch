@@ -28,6 +28,14 @@ var routes = {
     });
     res.end('hi');
   },
+  '/nonascii': function(res) {
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+    var buf = new Buffer(256);
+    for (var i = 0; i< 256; i++) {
+      buf[i] = i;
+    }
+    res.end(buf);
+  },
   '/redirect/301': function(res) {
     res.writeHead(301, {'Location': '/hello'});
     res.end();

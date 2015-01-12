@@ -69,56 +69,79 @@
     body.bodyUsed = true
   }
 
+  var blobSupport = self.FileReader && (function() {
+    try {
+      new Blob();
+      return true
+    } catch(e) {
+      return false
+    }
+  })();
+
   function Body() {
     this._body = null
     this.bodyUsed = false
 
-    this.arrayBuffer = function() {
-      throw new Error('Not implemented yet')
-    }
-
-    var blobSupport = (function() {
-      try {
-        new Blob();
-        return true
-      } catch(e) {
-        return false
-      }
-    })();
-
     if (blobSupport) {
+      this.arrayBuffer = function() {
+        var rejected = consumed(this)
+        if (rejected) {
+          return rejected
+        }
+
+        var body = this._body
+        return new Promise(function(resolve, reject) {
+          var fileReader = new FileReader()
+          fileReader.readAsArrayBuffer(body)
+          fileReader.onloadend = function(e) {
+            if (e.target.error) {
+              reject(e.target.error)
+            } else {
+              resolve(e.target.result)
+            }
+          }
+        })
+      }
+
       this.blob = function() {
         var rejected = consumed(this)
-        return rejected ? rejected : Promise.resolve(new Blob([this._body]))
+        return rejected ? rejected : Promise.resolve(this._body)
+      }
+
+      this.text = function() {
+        var rejected = consumed(this)
+        if (rejected) {
+          return rejected
+        }
+
+        var body = this._body
+        return new Promise(function(resolve, reject) {
+          var fileReader = new FileReader()
+          fileReader.readAsText(body)
+          fileReader.onloadend = function(e) {
+            if (e.target.error) {
+              reject(e.target.error)
+            } else {
+              resolve(e.target.result)
+            }
+          }
+        })
+      }
+    } else {
+      this.text = function() {
+        var rejected = consumed(this)
+        return rejected ? rejected : Promise.resolve(this._body)
       }
     }
 
     if (self.FormData) {
       this.formData = function() {
-        var rejected = consumed(this)
-        return rejected ? rejected : Promise.resolve(decode(this._body))
+        return this.text().then(function(text) { return decode(text) })
       }
     }
 
     this.json = function() {
-      var rejected = consumed(this)
-      if (rejected) {
-        return rejected
-      }
-
-      var body = this._body
-      return new Promise(function(resolve, reject) {
-        try {
-          resolve(JSON.parse(body))
-        } catch (ex) {
-          reject(ex)
-        }
-      })
-    }
-
-    this.text = function() {
-      var rejected = consumed(this)
-      return rejected ? rejected : Promise.resolve(this._body)
+      return this.text().then(function(text) { return JSON.parse(text) })
     }
 
     return this
@@ -186,7 +209,7 @@
           headers: headers(xhr),
           url: xhr.responseURL || xhr.getResponseHeader('X-Request-URL')
         }
-        resolve(new Response(xhr.responseText, options))
+        resolve(new Response(blobSupport ? xhr.response: xhr.responseText, options))
       }
 
       xhr.onerror = function() {
@@ -194,6 +217,9 @@
       }
 
       xhr.open(self.method, self.url)
+      if (blobSupport) {
+        xhr.responseType = 'blob'
+      }
 
       self.headers.forEach(function(name, values) {
         values.forEach(function(value) {
