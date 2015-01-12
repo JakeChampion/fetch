@@ -28,10 +28,10 @@ var routes = {
     });
     res.end('hi');
   },
-  '/nonascii': function(res) {
-    res.writeHead(200, {'Content-Type': 'text/plain'});
+  '/binary': function(res) {
+    res.writeHead(200, {'Content-Type': 'application/octet-stream'});
     var buf = new Buffer(256);
-    for (var i = 0; i< 256; i++) {
+    for (var i = 0; i < 256; i++) {
       buf[i] = i;
     }
     res.end(buf);

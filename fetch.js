@@ -69,7 +69,30 @@
     body.bodyUsed = true
   }
 
-  var blobSupport = self.FileReader && (function() {
+  function fileReaderReady(reader) {
+    return new Promise(function(resolve, reject) {
+      reader.onload = function() {
+        resolve(reader.result)
+      }
+      reader.onerror = function() {
+        reject(reader.error)
+      }
+    })
+  }
+
+  function readBlobAsArrayBuffer(blob) {
+    var reader = new FileReader()
+    reader.readAsArrayBuffer(blob)
+    return fileReaderReady(reader)
+  }
+
+  function readBlobAsText(blob) {
+    var reader = new FileReader()
+    reader.readAsText(blob)
+    return fileReaderReady(reader)
+  }
+
+  var blobSupport = 'FileReader' in self && 'Blob' in self && (function() {
     try {
       new Blob();
       return true
@@ -79,28 +102,12 @@
   })();
 
   function Body() {
-    this._body = null
     this.bodyUsed = false
 
     if (blobSupport) {
       this.arrayBuffer = function() {
         var rejected = consumed(this)
-        if (rejected) {
-          return rejected
-        }
-
-        var body = this._body
-        return new Promise(function(resolve, reject) {
-          var fileReader = new FileReader()
-          fileReader.readAsArrayBuffer(body)
-          fileReader.onloadend = function(e) {
-            if (e.target.error) {
-              reject(e.target.error)
-            } else {
-              resolve(e.target.result)
-            }
-          }
-        })
+        return rejected ? rejected : readBlobAsArrayBuffer(this._body)
       }
 
       this.blob = function() {
@@ -110,22 +117,7 @@
 
       this.text = function() {
         var rejected = consumed(this)
-        if (rejected) {
-          return rejected
-        }
-
-        var body = this._body
-        return new Promise(function(resolve, reject) {
-          var fileReader = new FileReader()
-          fileReader.readAsText(body)
-          fileReader.onloadend = function(e) {
-            if (e.target.error) {
-              reject(e.target.error)
-            } else {
-              resolve(e.target.result)
-            }
-          }
-        })
+        return rejected ? rejected : readBlobAsText(this._body)
       }
     } else {
       this.text = function() {
@@ -134,14 +126,18 @@
       }
     }
 
-    if (self.FormData) {
+    if ('FormData' in self) {
       this.formData = function() {
-        return this.text().then(function(text) { return decode(text) })
+        return this.text().then(function(text) {
+          return decode(text)
+        })
       }
     }
 
     this.json = function() {
-      return this.text().then(function(text) { return JSON.parse(text) })
+      return this.text().then(function(text) {
+        return JSON.parse(text)
+      })
     }
 
     return this
