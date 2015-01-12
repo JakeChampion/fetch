@@ -73,29 +73,56 @@
     this._body = null
     this.bodyUsed = false
 
-    this.arrayBuffer = function() {
-      var rejected = consumed(this)
-      if (rejected) {
-        return rejected
+    if (has_responseType) {
+      this.arrayBuffer = function() {
+        var rejected = consumed(this)
+        if (rejected) {
+          return rejected
+        }
+
+        var body = this._body
+        return new Promise(function(resolve, reject) {
+          var fileReader = new FileReader()
+          fileReader.readAsArrayBuffer(body)
+          fileReader.onloadend = function(e) {
+            if (e.target.error) {
+              reject(e.target.error)
+            } else {
+              resolve(e.target.result)
+            }
+          }
+        })
       }
 
-      var body = this._body
-      return new Promise(function(resolve, reject) {
-        var fileReader = new FileReader()
-        fileReader.readAsArrayBuffer(body)
-        fileReader.onloadend = function(e) {
-          if (e.target.error) {
-            reject(e.target.error)
-          } else {
-            resolve(e.target.result)
-          }
-        }
-      })
-    }
+      this.blob = function() {
+        var rejected = consumed(this)
+        return rejected ? rejected : Promise.resolve(this._body)
+      }
 
-    this.blob = function() {
-      var rejected = consumed(this)
-      return rejected ? rejected : Promise.resolve(this._body)
+      this.text = function() {
+        var rejected = consumed(this)
+        if (rejected) {
+          return rejected
+        }
+
+        var body = this._body
+        return new Promise(function(resolve, reject) {
+          var fileReader = new FileReader()
+          fileReader.readAsText(body)
+          fileReader.onloadend = function(e) {
+            if (e.target.error) {
+              reject(e.target.error)
+            } else {
+              resolve(e.target.result)
+            }
+          }
+        })
+      }
+    } else {
+      this.text = function() {
+        var rejected = consumed(this)
+        return rejected ? rejected : Promise.resolve(this._body)
+      }
     }
 
     if (self.FormData) {
@@ -124,31 +151,13 @@
       })
     }
 
-    this.text = function() {
-      var rejected = consumed(this)
-      if (rejected) {
-        return rejected
-      }
-
-      var body = this._body
-      return new Promise(function(resolve, reject) {
-        var fileReader = new FileReader()
-        fileReader.readAsText(body)
-        fileReader.onloadend = function(e) {
-          if (e.target.error) {
-            reject(e.target.error)
-          } else {
-            resolve(e.target.result)
-          }
-        }
-      })
-    }
-
     return this
   }
 
   // HTTP methods whose capitalization should be normalized
   var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
+
+  var has_responseType = 'responseType' in (new XMLHttpRequest())
 
   function normalizeMethod(method) {
     var upcased = method.toUpperCase()
@@ -209,7 +218,7 @@
           headers: headers(xhr),
           url: xhr.responseURL || xhr.getResponseHeader('X-Request-URL')
         }
-        resolve(new Response(xhr.response, options))
+        resolve(new Response(has_responseType ? xhr.response: xhr.responseText, options))
       }
 
       xhr.onerror = function() {
@@ -217,7 +226,9 @@
       }
 
       xhr.open(self.method, self.url)
-      xhr.responseType = 'blob'
+      if (has_responseType) {
+        xhr.responseType = 'blob'
+      }
 
       self.headers.forEach(function(name, values) {
         values.forEach(function(value) {
