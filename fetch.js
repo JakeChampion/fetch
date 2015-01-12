@@ -73,7 +73,16 @@
     this._body = null
     this.bodyUsed = false
 
-    if (has_responseType) {
+    var blobSupport = (function() {
+      try {
+        new Blob();
+        return true
+      } catch(e) {
+        return false
+      }
+    })();
+
+    if (blobSupport && self.FileReader) {
       this.arrayBuffer = function() {
         var rejected = consumed(this)
         if (rejected) {
@@ -127,28 +136,12 @@
 
     if (self.FormData) {
       this.formData = function() {
-        return this.text().then(function(text) {
-          return new Promise(function(resolve, reject) {
-            try {
-              resolve(decode(text))
-            } catch (ex) {
-              reject(ex)
-            }
-          })
-        })
+        return this.text().then(function(text) { return decode(text) })
       }
     }
 
     this.json = function() {
-      return this.text().then(function(text) {
-        return new Promise(function(resolve, reject) {
-          try {
-            resolve(JSON.parse(text))
-          } catch (ex) {
-            reject(ex)
-          }
-        })
-      })
+      return this.text().then(function(text) { return JSON.parse(text) })
     }
 
     return this
@@ -156,8 +149,6 @@
 
   // HTTP methods whose capitalization should be normalized
   var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
-
-  var has_responseType = 'responseType' in (new XMLHttpRequest())
 
   function normalizeMethod(method) {
     var upcased = method.toUpperCase()
@@ -218,7 +209,7 @@
           headers: headers(xhr),
           url: xhr.responseURL || xhr.getResponseHeader('X-Request-URL')
         }
-        resolve(new Response(has_responseType ? xhr.response: xhr.responseText, options))
+        resolve(new Response('responseType' in xhr ? xhr.response: xhr.responseText, options))
       }
 
       xhr.onerror = function() {
@@ -226,7 +217,7 @@
       }
 
       xhr.open(self.method, self.url)
-      if (has_responseType) {
+      if ('responseType' in xhr) {
         xhr.responseType = 'blob'
       }
 
