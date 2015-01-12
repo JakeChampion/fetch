@@ -78,7 +78,11 @@ suite('Body mixin', function() {
         return response.arrayBuffer()
       }).then(function(buf) {
         assert(buf instanceof ArrayBuffer, 'buf is an ArrayBuffer instance')
-        assert.equal(buf.byteLength, 2, 'blob.size is correct')
+        assert.equal(buf.byteLength, 256, 'buf.byteLength is correct')
+        var view = new Uint8Array(buf)
+        for (var i = 0; i< 256; i++) {
+          assert.equal(view[i], i)
+        }
       })
     })
 
@@ -108,7 +112,7 @@ suite('Body mixin', function() {
         return response.blob()
       }).then(function(blob) {
         assert(blob instanceof Blob, 'blob is a Blob instance')
-        assert.equal(blob.size, 2, 'blob.size is correct')
+        assert.equal(blob.size, 256, 'blob.size is correct')
       })
     })
 
