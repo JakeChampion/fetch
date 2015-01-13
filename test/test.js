@@ -51,7 +51,7 @@ suite('Response', function() {
     })
   })
 
-  ;(self.Blob ? test : test.skip)('construct response with Blob body', function() {
+  ;(Response.prototype.blob ? test : test.skip)('construct response with Blob body', function() {
     var response = new Response(new Blob(['hello']))
     response.text().then(function(text) {
       assert.equal(text, 'hello')
