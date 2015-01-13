@@ -199,7 +199,7 @@
           headers: headers(xhr),
           url: xhr.responseURL || xhr.getResponseHeader('X-Request-URL')
         }
-        resolve(new Response(blobSupport ? xhr.response: xhr.responseText, options))
+        resolve(new Response(blobSupport ? xhr.response : xhr.responseText, options))
       }
 
       xhr.onerror = function() {
