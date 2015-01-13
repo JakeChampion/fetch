@@ -105,39 +105,33 @@
     this.bodyUsed = false
 
     if (blobSupport) {
-      this.arrayBuffer = function() {
-        var rejected = consumed(this)
-        return rejected ? rejected : readBlobAsArrayBuffer(this._body)
-      }
-
       this.blob = function() {
         var rejected = consumed(this)
-        return rejected ? rejected : Promise.resolve(this._body)
+        return rejected ? rejected : Promise.resolve(this._bodyBlob)
+      }
+
+      this.arrayBuffer = function() {
+        return this.blob().then(readBlobAsArrayBuffer)
       }
 
       this.text = function() {
-        var rejected = consumed(this)
-        return rejected ? rejected : readBlobAsText(this._body)
+        return this.blob().then(readBlobAsText)
       }
     } else {
       this.text = function() {
         var rejected = consumed(this)
-        return rejected ? rejected : Promise.resolve(this._body)
+        return rejected ? rejected : Promise.resolve(this._bodyText)
       }
     }
 
     if ('FormData' in self) {
       this.formData = function() {
-        return this.text().then(function(text) {
-          return decode(text)
-        })
+        return this.text().then(decode)
       }
     }
 
     this.json = function() {
-      return this.text().then(function(text) {
-        return JSON.parse(text)
-      })
+      return this.text().then(JSON.parse)
     }
 
     return this
@@ -229,8 +223,20 @@
 
   Body.call(Request.prototype)
 
-  function Response(body, options) {
-    this._body = body
+  function Response(bodyInit, options) {
+    if (!options) {
+      options = {}
+    }
+
+    if (blobSupport) {
+      if (typeof bodyInit === 'string') {
+        this._bodyBlob = new Blob([bodyInit])
+      } else {
+        this._bodyBlob = bodyInit
+      }
+    } else {
+      this._bodyText = bodyInit
+    }
     this.type = 'default'
     this.url = null
     this.status = options.status

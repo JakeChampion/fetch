@@ -44,6 +44,20 @@ suite('Request', function() {
 
 // https://fetch.spec.whatwg.org/#response-class
 suite('Response', function() {
+  test('construct response with String body', function() {
+    var response = new Response('hello')
+    response.text().then(function(text) {
+      assert.equal(text, 'hello')
+    })
+  })
+
+  ;(self.Blob ? test : test.skip)('construct response with Blob body', function() {
+    var response = new Response(new Blob(['hello']))
+    response.text().then(function(text) {
+      assert.equal(text, 'hello')
+    })
+  })
+
   test('populates response body', function() {
     return fetch('/hello').then(function(response) {
       assert.equal(response.status, 200)
