@@ -26,8 +26,16 @@ $ npm install whatwg-fetch --save
 
 ## Usage
 
-The `fetch` function supports any HTTP method. We'll focus on GET and POST
-example requests.
+*fetch-node* is a fork of [window.fetch polyfill](https://github.com/github/fetch) for CommonJS environment.
+
+The most of difference from the original:
+- You need to specify Promise of your choice (since node does not have native Promise support at this time) like:
+  ```JavaScript
+  var Promise = require('bluebird');
+  var fetch = require('fetch-node');
+  fetch.promiseImpl = Promise;
+  ```
+- Should manually expose `fetch` function with `window.fetch = require('fetch-node').fetch;`
 
 ### HTML
 

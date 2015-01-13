@@ -1,5 +1,5 @@
 {
-  "name": "whatwg-fetch",
+  "name": "fetch-node",
   "version": "0.6.0",
   "main": "fetch.js",
   "devDependencies": {
