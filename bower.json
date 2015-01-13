@@ -1,6 +1,6 @@
 {
   "name": "fetch",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "main": "fetch.js",
   "devDependencies": {
     "es6-promise": "1.0.0"
