@@ -106,6 +106,9 @@
 
     if (blobSupport) {
       this.blob = function() {
+        if (!this._bodyBlob) {
+          throw new Error('XMLHttpRequest missing blob support')
+        }
         var rejected = consumed(this)
         return rejected ? rejected : Promise.resolve(this._bodyBlob)
       }
@@ -113,15 +116,13 @@
       this.arrayBuffer = function() {
         return this.blob().then(readBlobAsArrayBuffer)
       }
-
-      this.text = function() {
+    }
+    this.text = function() {
+      if (this._bodyBlob) {
         return this.blob().then(readBlobAsText)
       }
-    } else {
-      this.text = function() {
-        var rejected = consumed(this)
-        return rejected ? rejected : Promise.resolve(this._bodyText)
-      }
+      var rejected = consumed(this)
+      return rejected ? rejected : Promise.resolve(this._bodyText)
     }
 
     if ('FormData' in self) {
@@ -199,7 +200,7 @@
           headers: headers(xhr),
           url: xhr.responseURL || xhr.getResponseHeader('X-Request-URL')
         }
-        resolve(new Response(blobSupport ? xhr.response : xhr.responseText, options))
+        resolve(new Response(blobSupport && 'response' in xhr ? xhr.response: xhr, options))
       }
 
       xhr.onerror = function() {
@@ -228,7 +229,9 @@
       options = {}
     }
 
-    if (blobSupport) {
+    if (bodyInit instanceof XMLHttpRequest) {
+      this._bodyText = bodyInit.responseText
+    } else if (blobSupport) {
       if (typeof bodyInit === 'string') {
         this._bodyBlob = new Blob([bodyInit])
       } else {
@@ -237,6 +240,7 @@
     } else {
       this._bodyText = bodyInit
     }
+
     this.type = 'default'
     this.url = null
     this.status = options.status
