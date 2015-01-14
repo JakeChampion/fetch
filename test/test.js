@@ -44,17 +44,51 @@ suite('Request', function() {
 
 // https://fetch.spec.whatwg.org/#response-class
 suite('Response', function() {
-  test('construct response with String body', function() {
-    var response = new Response('hello')
-    response.text().then(function(text) {
-      assert.equal(text, 'hello')
+  function readBlobAsText(blob) {
+    return new Promise(function(resolve, reject) {
+      var reader = new FileReader()
+      reader.onload = function() {
+        resolve(reader.result)
+      }
+      reader.onerror = function() {
+        reject(reader.error)
+      }
+      reader.readAsText(blob)
     })
-  })
+  }
 
-  ;(Response.prototype.blob ? test : test.skip)('construct response with Blob body', function() {
-    var response = new Response(new Blob(['hello']))
-    response.text().then(function(text) {
-      assert.equal(text, 'hello')
+  // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
+  suite('BodyInit extract', function() {
+    ;(Response.prototype.blob ? suite : suite.skip)('type Blob', function() {
+      test('consume as blob', function() {
+        var response = new Response(new Blob(['hello']))
+        response.blob().then(readBlobAsText).then(function(text) {
+          assert.equal(text, 'hello')
+        })
+      })
+
+      test('consume as text', function() {
+        var response = new Response(new Blob(['hello']))
+        response.text().then(function(text) {
+          assert.equal(text, 'hello')
+        })
+      })
+    })
+
+    suite('type USVString', function() {
+      test('consume as text', function() {
+        var response = new Response('hello')
+        response.text().then(function(text) {
+          assert.equal(text, 'hello')
+        })
+      })
+
+      ;(Response.prototype.blob ? test : test.skip)('consume as blob', function() {
+        var response = new Response('hello')
+        response.blob().then(readBlobAsText).then(function(text) {
+          assert.equal(text, 'hello')
+        })
+      })
     })
   })
 
