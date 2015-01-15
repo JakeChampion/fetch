@@ -173,7 +173,9 @@ suite('Body mixin', function() {
     test('rejects arrayBuffer promise after body is consumed', function() {
       return fetch('/hello').then(function(response) {
         assert(response.arrayBuffer, 'Body does not implement arrayBuffer')
+        assert.equal(response.bodyUsed, false)
         response.blob()
+        assert.equal(response.bodyUsed, true)
         return response.arrayBuffer()
       }).catch(function(error) {
         assert(error instanceof TypeError, 'Promise rejected after body consumed')
@@ -221,7 +223,9 @@ suite('Body mixin', function() {
     test('rejects blob promise after body is consumed', function() {
       return fetch('/hello').then(function(response) {
         assert(response.blob, 'Body does not implement blob')
-        response.blob()
+        assert.equal(response.bodyUsed, false)
+        response.text()
+        assert.equal(response.bodyUsed, true)
         return response.blob()
       }).catch(function(error) {
         assert(error instanceof TypeError, 'Promise rejected after body consumed')
@@ -274,7 +278,9 @@ suite('Body mixin', function() {
     test('rejects json promise after body is consumed', function() {
       return fetch('/json').then(function(response) {
         assert(response.json, 'Body does not implement json')
-        response.json()
+        assert.equal(response.bodyUsed, false)
+        response.text()
+        assert.equal(response.bodyUsed, true)
         return response.json()
       }).catch(function(error) {
         assert(error instanceof TypeError, 'Promise rejected after body consumed')
@@ -312,7 +318,9 @@ suite('Body mixin', function() {
     test('rejects text promise after body is consumed', function() {
       return fetch('/hello').then(function(response) {
         assert(response.text, 'Body does not implement text')
-        response.text()
+        assert.equal(response.bodyUsed, false)
+        response.json()
+        assert.equal(response.bodyUsed, true)
         return response.text()
       }).catch(function(error) {
         assert(error instanceof TypeError, 'Promise rejected after body consumed')
