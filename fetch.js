@@ -199,7 +199,8 @@
           headers: headers(xhr),
           url: xhr.responseURL || xhr.getResponseHeader('X-Request-URL')
         }
-        resolve(new Response('response' in xhr ? xhr.response : xhr.responseText, options))
+        var body = 'response' in xhr ? xhr.response : xhr.responseText;
+        resolve(new Response(body, options))
       }
 
       xhr.onerror = function() {
@@ -207,7 +208,7 @@
       }
 
       xhr.open(self.method, self.url)
-      if (blobSupport) {
+      if ('responseType' in xhr && blobSupport) {
         xhr.responseType = 'blob'
       }
 
