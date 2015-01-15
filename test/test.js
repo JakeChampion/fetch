@@ -15,6 +15,14 @@ test('rejects promise for network error', function() {
   })
 })
 
+test('rejects promise for timeout', function() {
+  return fetch('/slow', {
+    timeout: 5
+  }).catch(function() {
+    assert(true)
+  })
+})
+
 // https://fetch.spec.whatwg.org/#headers-class
 suite('Headers', function() {
   test('headers are case insensitve', function() {
@@ -41,6 +49,7 @@ suite('Request', function() {
     })
   })
 })
+
 
 // https://fetch.spec.whatwg.org/#response-class
 suite('Response', function() {

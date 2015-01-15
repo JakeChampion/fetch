@@ -56,6 +56,12 @@ var routes = {
     res.writeHead(308, {'Location': '/hello'});
     res.end();
   },
+  '/slow': function(res) {
+    setTimeout(function () {
+      res.writeHead(200, { 'Content-Type': 'text/plain' });
+      res.end('too slow');
+    }, 10);
+  },
   '/boom': function(res) {
     res.writeHead(500, {'Content-Type': 'text/plain'});
     res.end('boom');
