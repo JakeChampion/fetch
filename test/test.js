@@ -451,14 +451,41 @@ suite('Atomic HTTP redirect handling', function() {
 suite('credentials mode', function() {
   var omitSupported = !self.fetch.polyfill
 
+  suite('clear cookies', function() {
+    test('clear cookie', function() {
+      return fetch('/cookie?name=foo&value=reset', {credentials: 'same-origin'});
+    })
+  })
+
   ;(omitSupported ? suite : suite.skip)('omit', function() {
     test('request credentials defaults to omit', function() {
       var request = new Request('')
       assert.equal(request.credentials, 'omit')
     })
 
-    test('does not send cookies with implicit omit credentials', function() {
+    test('does not accept cookies with implicit omit credentials', function() {
       return fetch('/cookie?name=foo&value=bar').then(function() {
+        return fetch('/cookie?name=foo', {credentials: 'same-origin'});
+      }).then(function(response) {
+        return response.text()
+      }).then(function(data) {
+        assert.equal(data, 'reset')
+      })
+    })
+
+    test('does not accept cookies with omit credentials', function() {
+      document.cookie = "";
+      return fetch('/cookie?name=foo&value=bar', {credentials: 'omit'}).then(function() {
+        return fetch('/cookie?name=foo', {credentials: 'same-origin'});
+      }).then(function(response) {
+        return response.text()
+      }).then(function(data) {
+        assert.equal(data, 'reset')
+      })
+    })
+
+    test('does not send cookies with implicit omit credentials', function() {
+      return fetch('/cookie?name=foo&value=bar', {credentials: 'same-origin'}).then(function() {
         return fetch('/cookie?name=foo');
       }).then(function(response) {
         return response.text()
@@ -497,7 +524,7 @@ suite('credentials mode', function() {
 
   suite('include', function() {
     test('send cookies with include credentials', function() {
-      return fetch('/cookie?name=foo&value=bar', {credentials: 'same-origin'}).then(function() {
+      return fetch('/cookie?name=foo&value=bar', {credentials: 'include'}).then(function() {
         return fetch('/cookie?name=foo', {credentials: 'include'})
       }).then(function(response) {
         return response.text()
