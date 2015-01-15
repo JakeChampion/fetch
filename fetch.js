@@ -109,9 +109,9 @@
         this._bodyInit = body
         if (typeof body === 'string') {
           this._bodyText = body
-        } else if (Blob.prototype.isPrototypeOf(body)) {
+        } else if ('Blob' in self && Blob.prototype.isPrototypeOf(body)) {
           this._bodyBlob = body
-        } else if (FormData.prototype.isPrototypeOf(body)) {
+        } else if ('FormData' in self && FormData.prototype.isPrototypeOf(body)) {
           this._bodyFormData = body
         } else if (!body) {
           this._bodyText = ''
@@ -158,6 +158,8 @@
         this._bodyInit = body
         if (typeof body === 'string') {
           this._bodyText = body
+        } else if ('FormData' in self && FormData.prototype.isPrototypeOf(body)) {
+          this._bodyFormData = body
         } else if (!body) {
           this._bodyText = ''
         } else {
