@@ -98,7 +98,7 @@ var routes = {
   '/cookie': function(res, req) {
     var setCookie, cookie
     var params = querystring.parse(url.parse(req.url).query);
-    if (params.value && params.value) {
+    if (params.name && params.value) {
       setCookie = [params.name, params.value].join('=');
     }
     if (params.name) {
