@@ -187,6 +187,19 @@
     return new Promise(function(resolve, reject) {
       var xhr = new XMLHttpRequest()
 
+      function responseURL() {
+        if ('responseURL' in xhr) {
+          return xhr.responseURL
+        }
+
+        // Avoid security warnings on getResponseHeader when not allowed by CORS
+        if (xhr.getAllResponseHeaders().match(/^X-Request-URL:/m)) {
+          return xhr.getResponseHeader('X-Request-URL')
+        }
+
+        return;
+      }
+
       xhr.onload = function() {
         var status = (xhr.status === 1223) ? 204 : xhr.status
         if (status < 100 || status > 599) {
@@ -197,7 +210,7 @@
           status: status,
           statusText: xhr.statusText,
           headers: headers(xhr),
-          url: xhr.responseURL || xhr.getResponseHeader('X-Request-URL')
+          url: responseURL()
         }
         var body = 'response' in xhr ? xhr.response : xhr.responseText;
         resolve(new Response(body, options))
