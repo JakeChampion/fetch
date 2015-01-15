@@ -451,10 +451,8 @@ suite('Atomic HTTP redirect handling', function() {
 suite('credentials mode', function() {
   var omitSupported = !self.fetch.polyfill
 
-  suite('clear cookies', function() {
-    test('clear cookie', function() {
-      return fetch('/cookie?name=foo&value=reset', {credentials: 'same-origin'});
-    })
+  setup(function() {
+    return fetch('/cookie?name=foo&value=reset', {credentials: 'same-origin'});
   })
 
   ;(omitSupported ? suite : suite.skip)('omit', function() {
