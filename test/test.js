@@ -1,3 +1,30 @@
+function readBlobAsText(blob) {
+  return new Promise(function(resolve, reject) {
+    var reader = new FileReader()
+    reader.onload = function() {
+      resolve(reader.result)
+    }
+    reader.onerror = function() {
+      reject(reader.error)
+    }
+    reader.readAsText(blob)
+  })
+}
+
+function readBlobAsBytes(blob) {
+  return new Promise(function(resolve, reject) {
+    var reader = new FileReader()
+    reader.onload = function() {
+      var view = new Uint8Array(reader.result)
+      resolve(Array.prototype.slice.call(view))
+    }
+    reader.onerror = function() {
+      reject(reader.error)
+    }
+    reader.readAsArrayBuffer(blob)
+  })
+}
+
 test('resolves promise on 500 error', function() {
   return fetch('/boom').then(function(response) {
     assert.equal(response.status, 500)
@@ -44,19 +71,6 @@ suite('Request', function() {
 
 // https://fetch.spec.whatwg.org/#response-class
 suite('Response', function() {
-  function readBlobAsText(blob) {
-    return new Promise(function(resolve, reject) {
-      var reader = new FileReader()
-      reader.onload = function() {
-        resolve(reader.result)
-      }
-      reader.onerror = function() {
-        reject(reader.error)
-      }
-      reader.readAsText(blob)
-    })
-  }
-
   // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
   suite('BodyInit extract', function() {
     ;(Response.prototype.blob ? suite : suite.skip)('type Blob', function() {
@@ -134,6 +148,28 @@ suite('Body mixin', function() {
       })
     })
 
+    test('arrayBuffer handles utf-8 data', function() {
+      return fetch('/hello/utf8').then(function(response) {
+        return response.arrayBuffer()
+      }).then(function(buf) {
+        assert(buf instanceof ArrayBuffer, 'buf is an ArrayBuffer instance')
+        assert.equal(buf.byteLength, 5, 'buf.byteLength is correct')
+        var octets = Array.prototype.slice.call(new Uint8Array(buf))
+        assert.deepEqual(octets, [104, 101, 108, 108, 111])
+      })
+    })
+
+    test('arrayBuffer handles utf-16le data', function() {
+      return fetch('/hello/utf16le').then(function(response) {
+        return response.arrayBuffer()
+      }).then(function(buf) {
+        assert(buf instanceof ArrayBuffer, 'buf is an ArrayBuffer instance')
+        assert.equal(buf.byteLength, 10, 'buf.byteLength is correct')
+        var octets = Array.prototype.slice.call(new Uint8Array(buf))
+        assert.deepEqual(octets, [104, 0, 101, 0, 108, 0, 108, 0, 111, 0])
+      })
+    })
+
     test('rejects arrayBuffer promise after body is consumed', function() {
       return fetch('/hello').then(function(response) {
         assert(response.arrayBuffer, 'Body does not implement arrayBuffer')
@@ -161,6 +197,24 @@ suite('Body mixin', function() {
       }).then(function(blob) {
         assert(blob instanceof Blob, 'blob is a Blob instance')
         assert.equal(blob.size, 256, 'blob.size is correct')
+      })
+    })
+
+    test('blob handles utf-8 data', function() {
+      return fetch('/hello/utf8').then(function(response) {
+        return response.blob()
+      }).then(readBlobAsBytes).then(function(octets) {
+        assert.equal(octets.length, 5, 'blob.size is correct')
+        assert.deepEqual(octets, [104, 101, 108, 108, 111])
+      })
+    })
+
+    test('blob handles utf-16le data', function() {
+      return fetch('/hello/utf16le').then(function(response) {
+        return response.blob()
+      }).then(readBlobAsBytes).then(function(octets) {
+        assert.equal(octets.length, 10, 'blob.size is correct')
+        assert.deepEqual(octets, [104, 0, 101, 0, 108, 0, 108, 0, 111, 0])
       })
     })
 
