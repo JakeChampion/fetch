@@ -193,7 +193,7 @@
         }
 
         // Avoid security warnings on getResponseHeader when not allowed by CORS
-        if (xhr.getAllResponseHeaders().match(/^X-Request-URL:/m)) {
+        if (/^X-Request-URL:/m.test(xhr.getAllResponseHeaders())) {
           return xhr.getResponseHeader('X-Request-URL')
         }
 
