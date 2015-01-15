@@ -423,7 +423,7 @@ suite('credentials mode', function() {
     })
 
     test('send cookies with same-origin credentials', function() {
-      return fetch('/cookie?name=foo&value=bar').then(function() {
+      return fetch('/cookie?name=foo&value=bar', {credentials: 'same-origin'}).then(function() {
         return fetch('/cookie?name=foo', {credentials: 'same-origin'})
       }).then(function(response) {
         return response.text()
@@ -435,7 +435,7 @@ suite('credentials mode', function() {
 
   suite('include', function() {
     test('send cookies with include credentials', function() {
-      return fetch('/cookie?name=foo&value=bar').then(function() {
+      return fetch('/cookie?name=foo&value=bar', {credentials: 'same-origin'}).then(function() {
         return fetch('/cookie?name=foo', {credentials: 'include'})
       }).then(function(response) {
         return response.text()
