@@ -105,9 +105,34 @@
     this.bodyUsed = false
 
     if (blobSupport) {
+      this._initBody = function(body) {
+        this._bodyInit = body
+        if (typeof body === 'string') {
+          this._bodyText = body
+        } else if (Blob.prototype.isPrototypeOf(body)) {
+          this._bodyBlob = body
+        } else if (FormData.prototype.isPrototypeOf(body)) {
+          this._bodyFormData = body
+        } else if (!body) {
+          this._bodyText = ''
+        } else {
+          throw new Error('unsupported BodyInit type')
+        }
+      }
+
       this.blob = function() {
         var rejected = consumed(this)
-        return rejected ? rejected : Promise.resolve(this._bodyBlob)
+        if (rejected) {
+          return rejected
+        }
+
+        if (this._bodyBlob) {
+          return Promise.resolve(this._bodyBlob)
+        } else if (this._bodyFormData) {
+          throw new Error('could not read FormData body as blob')
+        } else {
+          return Promise.resolve(new Blob([this._bodyText]))
+        }
       }
 
       this.arrayBuffer = function() {
@@ -115,9 +140,31 @@
       }
 
       this.text = function() {
-        return this.blob().then(readBlobAsText)
+        var rejected = consumed(this)
+        if (rejected) {
+          return rejected
+        }
+
+        if (this._bodyBlob) {
+          return readBlobAsText(this._bodyBlob)
+        } else if (this._bodyFormData) {
+          throw new Error('could not read FormData body as text')
+        } else {
+          return Promise.resolve(this._bodyText)
+        }
       }
     } else {
+      this._initBody = function(body) {
+        this._bodyInit = body
+        if (typeof body === 'string') {
+          this._bodyText = body
+        } else if (!body) {
+          this._bodyText = ''
+        } else {
+          throw new Error('unsupported BodyInit type')
+        }
+      }
+
       this.text = function() {
         var rejected = consumed(this)
         return rejected ? rejected : Promise.resolve(this._bodyText)
@@ -148,7 +195,8 @@
   function Request(url, options) {
     options = options || {}
     this.url = url
-    this._body = options.body
+
+    this._initBody(options.body)
     this.credentials = options.credentials || 'omit'
     this.headers = new Headers(options.headers)
     this.method = normalizeMethod(options.method || 'GET')
@@ -231,7 +279,7 @@
         })
       })
 
-      xhr.send((self._body === undefined) ? null : self._body)
+      xhr.send(typeof self._bodyInit === 'undefined' ? null : self._bodyInit)
     })
   }
 
@@ -242,15 +290,7 @@
       options = {}
     }
 
-    if (blobSupport) {
-      if (typeof bodyInit === 'string') {
-        this._bodyBlob = new Blob([bodyInit])
-      } else {
-        this._bodyBlob = bodyInit
-      }
-    } else {
-      this._bodyText = bodyInit
-    }
+    this._initBody(bodyInit)
     this.type = 'default'
     this.url = null
     this.status = options.status
