@@ -474,7 +474,6 @@ suite('credentials mode', function() {
     })
 
     test('does not accept cookies with omit credentials', function() {
-      document.cookie = "";
       return fetch('/cookie?name=foo&value=bar', {credentials: 'omit'}).then(function() {
         return fetch('/cookie?name=foo', {credentials: 'same-origin'});
       }).then(function(response) {
