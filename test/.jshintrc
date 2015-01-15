@@ -25,6 +25,7 @@
     "mocha": false,
     "chai": false,
     "suite": false,
+    "setup": false,
     "test": false,
     "assert": false
   }
