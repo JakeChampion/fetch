@@ -154,6 +154,7 @@
     this.method = normalizeMethod(options.method || 'GET')
     this.mode = options.mode || null
     this.referrer = null
+    this.timeout = options.timeout || null
   }
 
   function decode(body) {
@@ -216,6 +217,10 @@
           xhr.setRequestHeader(name, value)
         })
       })
+
+      if (self.timeout) {
+        xhr.timeout = self.timeout
+      }
 
       xhr.send((self._body === undefined) ? null : self._body)
     })
