@@ -334,7 +334,6 @@ suite('Methods', function() {
   test('supports HTTP GET', function() {
     return fetch('/request', {
       method: 'get',
-      body: 'name=Hubot'
     }).then(function(response) {
       return response.json()
     }).then(function(request) {
@@ -342,7 +341,17 @@ suite('Methods', function() {
       assert.equal(request.data, '')
     })
   })
-    test('supports HTTP POST', function() {
+
+  test('HTTP GET cannot have a body', function() {
+    try {
+      var r = new Request('', { body: 'hello' })
+      assert(false, "Should throw")
+    } catch(e) {
+      assert(true, "Should throw")
+    }
+  })
+
+  test('supports HTTP POST', function() {
     return fetch('/request', {
       method: 'post',
       body: 'name=Hubot'
