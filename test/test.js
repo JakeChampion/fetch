@@ -67,6 +67,46 @@ suite('Request', function() {
       assert.equal(json.headers['x-test'], '42')
     })
   })
+
+  test('construct with url', function() {
+    var request = new Request('https://fetch.spec.whatwg.org/')
+    assert.equal(request.url, 'https://fetch.spec.whatwg.org/')
+  })
+
+  // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
+  suite('BodyInit extract', function() {
+    ;(Request.prototype.blob ? suite : suite.skip)('type Blob', function() {
+      test('consume as blob', function() {
+        var request = new Request(null, {body: new Blob(['hello'])})
+        return request.blob().then(readBlobAsText).then(function(text) {
+          assert.equal(text, 'hello')
+        })
+      })
+
+      test('consume as text', function() {
+        var request = new Request(null, {body: new Blob(['hello'])})
+        return request.text().then(function(text) {
+          assert.equal(text, 'hello')
+        })
+      })
+    })
+
+    suite('type USVString', function() {
+      test('consume as text', function() {
+        var request = new Request(null, {body: 'hello'})
+        return request.text().then(function(text) {
+          assert.equal(text, 'hello')
+        })
+      })
+
+      ;(Request.prototype.blob ? test : test.skip)('consume as blob', function() {
+        var request = new Request(null, {body: 'hello'})
+        return request.blob().then(readBlobAsText).then(function(text) {
+          assert.equal(text, 'hello')
+        })
+      })
+    })
+  })
 })
 
 // https://fetch.spec.whatwg.org/#response-class
@@ -76,14 +116,14 @@ suite('Response', function() {
     ;(Response.prototype.blob ? suite : suite.skip)('type Blob', function() {
       test('consume as blob', function() {
         var response = new Response(new Blob(['hello']))
-        response.blob().then(readBlobAsText).then(function(text) {
+        return response.blob().then(readBlobAsText).then(function(text) {
           assert.equal(text, 'hello')
         })
       })
 
       test('consume as text', function() {
         var response = new Response(new Blob(['hello']))
-        response.text().then(function(text) {
+        return response.text().then(function(text) {
           assert.equal(text, 'hello')
         })
       })
@@ -92,14 +132,14 @@ suite('Response', function() {
     suite('type USVString', function() {
       test('consume as text', function() {
         var response = new Response('hello')
-        response.text().then(function(text) {
+        return response.text().then(function(text) {
           assert.equal(text, 'hello')
         })
       })
 
       ;(Response.prototype.blob ? test : test.skip)('consume as blob', function() {
         var response = new Response('hello')
-        response.blob().then(readBlobAsText).then(function(text) {
+        return response.blob().then(readBlobAsText).then(function(text) {
           assert.equal(text, 'hello')
         })
       })
@@ -319,7 +359,7 @@ suite('Body mixin', function() {
       return fetch('/hello').then(function(response) {
         assert(response.text, 'Body does not implement text')
         assert.equal(response.bodyUsed, false)
-        response.json()
+        response.text()
         assert.equal(response.bodyUsed, true)
         return response.text()
       }).catch(function(error) {
