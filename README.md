@@ -18,7 +18,7 @@ You'll also need a Promise polyfill for older browsers.
 $ bower install es6-promise
 ```
 
-This can be also be installed with `npm`.
+This can also be installed with `npm`.
 
 ```sh
 $ npm install whatwg-fetch --save
