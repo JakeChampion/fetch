@@ -205,7 +205,7 @@
     this.referrer = null
 
     if ((this.method === 'GET' || this.method === 'HEAD') && options.body) {
-      throw new TypeError()
+      throw new TypeError('Body not allowed for GET or HEAD requests')
     }
     this._initBody(options.body)
   }
