@@ -77,14 +77,14 @@ suite('Request', function() {
   suite('BodyInit extract', function() {
     ;(Request.prototype.blob ? suite : suite.skip)('type Blob', function() {
       test('consume as blob', function() {
-        var request = new Request(null, {body: new Blob(['hello'])})
+        var request = new Request(null, {method: 'POST', body: new Blob(['hello'])})
         return request.blob().then(readBlobAsText).then(function(text) {
           assert.equal(text, 'hello')
         })
       })
 
       test('consume as text', function() {
-        var request = new Request(null, {body: new Blob(['hello'])})
+        var request = new Request(null, {method: 'POST', body: new Blob(['hello'])})
         return request.text().then(function(text) {
           assert.equal(text, 'hello')
         })
@@ -93,14 +93,14 @@ suite('Request', function() {
 
     suite('type USVString', function() {
       test('consume as text', function() {
-        var request = new Request(null, {body: 'hello'})
+        var request = new Request(null, {method: 'POST', body: 'hello'})
         return request.text().then(function(text) {
           assert.equal(text, 'hello')
         })
       })
 
       ;(Request.prototype.blob ? test : test.skip)('consume as blob', function() {
-        var request = new Request(null, {body: 'hello'})
+        var request = new Request(null, {method: 'POST', body: 'hello'})
         return request.blob().then(readBlobAsText).then(function(text) {
           assert.equal(text, 'hello')
         })
@@ -382,13 +382,22 @@ suite('Methods', function() {
     })
   })
 
-  test('HTTP GET cannot have a body', function() {
-    try {
-      var r = new Request('', { body: 'hello' })
-      assert(false, "Should throw")
-    } catch(e) {
-      assert(true, "Should throw")
-    }
+  test('GET with body throws TypeError', function() {
+    assert.throw(function() {
+      new Request('', {
+        method: 'get',
+        body: 'invalid'
+      })
+    }, TypeError)
+  })
+
+  test('HEAD with body throws TypeError', function() {
+    assert.throw(function() {
+      new Request('', {
+        method: 'head',
+        body: 'invalid'
+      })
+    }, TypeError)
   })
 
   test('supports HTTP POST', function() {

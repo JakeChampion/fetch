@@ -198,12 +198,16 @@
     options = options || {}
     this.url = url
 
-    this._initBody(options.body)
     this.credentials = options.credentials || 'omit'
     this.headers = new Headers(options.headers)
     this.method = normalizeMethod(options.method || 'GET')
     this.mode = options.mode || null
     this.referrer = null
+
+    if ((this.method === 'GET' || this.method == 'HEAD') && options.body) {
+      throw new TypeError()
+    }
+    this._initBody(options.body)
   }
 
   function decode(body) {
