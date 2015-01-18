@@ -1,4 +1,4 @@
-# window.fetch polyfill
+# window.fetch polyfill [![Build Status](https://travis-ci.org/github/fetch.svg?branch=master)](https://travis-ci.org/github/fetch) ![Bower](https://img.shields.io/bower/v/fetch.svg) [![npm](https://img.shields.io/npm/v/whatwg-fetch.svg)](https://www.npmjs.com/package/whatwg-fetch)
 
 The global `fetch` function is an easier way to make web requests and handle
 responses than using an XMLHttpRequest. This polyfill is written as closely as
