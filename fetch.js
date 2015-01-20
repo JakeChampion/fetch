@@ -274,7 +274,7 @@
         reject(new TypeError('Network request failed'))
       }
 
-      xhr.open(self.method, self.url)
+      xhr.open(self.method, self.url, true)
       if ('responseType' in xhr && blobSupport) {
         xhr.responseType = 'blob'
       }
