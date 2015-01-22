@@ -2,13 +2,7 @@
   "name": "whatwg-fetch",
   "version": "0.6.0",
   "main": "fetch.js",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/github/fetch.git"
-  },
-  "bugs": {
-    "url": "https://github.com/github/fetch/issues"
-  },
+  "repository": "github/fetch",
   "licenses": [
     {
       "type": "MIT",
