@@ -240,6 +240,9 @@
 
     return new Promise(function(resolve, reject) {
       var xhr = new XMLHttpRequest()
+      if (self.credentials === 'cors') {
+        xhr.withCredentials = true;
+      }
 
       function responseURL() {
         if ('responseURL' in xhr) {
