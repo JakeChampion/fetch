@@ -92,27 +92,29 @@
     return fileReaderReady(reader)
   }
 
-  var blobSupport = 'FileReader' in self && 'Blob' in self && (function() {
-    try {
-      new Blob();
-      return true
-    } catch(e) {
-      return false
-    }
-  })();
-  var formDataSupport = 'FormData' in self;
+  var support = {
+    blob: 'FileReader' in self && 'Blob' in self && (function() {
+      try {
+        new Blob();
+        return true
+      } catch(e) {
+        return false
+      }
+    })(),
+    formData: 'FormData' in self
+  }
 
   function Body() {
     this.bodyUsed = false
 
-    if (blobSupport) {
+    if (support.blob) {
       this._initBody = function(body) {
         this._bodyInit = body
         if (typeof body === 'string') {
           this._bodyText = body
-        } else if (blobSupport && Blob.prototype.isPrototypeOf(body)) {
+        } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
           this._bodyBlob = body
-        } else if (formDataSupport && FormData.prototype.isPrototypeOf(body)) {
+        } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
           this._bodyFormData = body
         } else if (!body) {
           this._bodyText = ''
@@ -159,7 +161,7 @@
         this._bodyInit = body
         if (typeof body === 'string') {
           this._bodyText = body
-        } else if (formDataSupport && FormData.prototype.isPrototypeOf(body)) {
+        } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
           this._bodyFormData = body
         } else if (!body) {
           this._bodyText = ''
@@ -174,7 +176,7 @@
       }
     }
 
-    if (formDataSupport) {
+    if (support.formData) {
       this.formData = function() {
         return this.text().then(decode)
       }
@@ -279,7 +281,7 @@
       }
 
       xhr.open(self.method, self.url, true)
-      if ('responseType' in xhr && blobSupport) {
+      if ('responseType' in xhr && support.blob) {
         xhr.responseType = 'blob'
       }
 
