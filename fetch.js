@@ -120,7 +120,7 @@
       }
     })(),
     formData: 'FormData' in self,
-    XDomainRequest = 'XDomainRequest' in self
+    XDomainRequest: 'XDomainRequest' in self
   }
 
   function Body() {
