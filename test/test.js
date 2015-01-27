@@ -28,6 +28,7 @@ function readBlobAsBytes(blob) {
 test('resolves promise on 500 error', function() {
   return fetch('/boom').then(function(response) {
     assert.equal(response.status, 500)
+    assert.equal(response.ok, false)
     return response.text()
   }).then(function(body) {
     assert.equal(body, 'boom')
@@ -149,6 +150,7 @@ suite('Response', function() {
   test('populates response body', function() {
     return fetch('/hello').then(function(response) {
       assert.equal(response.status, 200)
+      assert.equal(response.ok, true)
       return response.text()
     }).then(function(body) {
       assert.equal(body, 'hi')
@@ -455,6 +457,7 @@ suite('Atomic HTTP redirect handling', function() {
   test('handles 301 redirect response', function() {
     return fetch('/redirect/301').then(function(response) {
       assert.equal(response.status, 200)
+      assert.equal(response.ok, true)
       assert.match(response.url, /\/hello/)
       return response.text()
     }).then(function(body) {
@@ -465,6 +468,7 @@ suite('Atomic HTTP redirect handling', function() {
   test('handles 302 redirect response', function() {
     return fetch('/redirect/302').then(function(response) {
       assert.equal(response.status, 200)
+      assert.equal(response.ok, true)
       assert.match(response.url, /\/hello/)
       return response.text()
     }).then(function(body) {
@@ -475,6 +479,7 @@ suite('Atomic HTTP redirect handling', function() {
   test('handles 303 redirect response', function() {
     return fetch('/redirect/303').then(function(response) {
       assert.equal(response.status, 200)
+      assert.equal(response.ok, true)
       assert.match(response.url, /\/hello/)
       return response.text()
     }).then(function(body) {
@@ -485,6 +490,7 @@ suite('Atomic HTTP redirect handling', function() {
   test('handles 307 redirect response', function() {
     return fetch('/redirect/307').then(function(response) {
       assert.equal(response.status, 200)
+      assert.equal(response.ok, true)
       assert.match(response.url, /\/hello/)
       return response.text()
     }).then(function(body) {
@@ -497,6 +503,7 @@ suite('Atomic HTTP redirect handling', function() {
   ;(permanentRedirectSupported ? test : test.skip)('handles 308 redirect response', function() {
     return fetch('/redirect/308').then(function(response) {
       assert.equal(response.status, 200)
+      assert.equal(response.ok, true)
       assert.match(response.url, /\/hello/)
       return response.text()
     }).then(function(body) {
