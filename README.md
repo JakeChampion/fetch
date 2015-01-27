@@ -24,6 +24,8 @@ This can also be installed with `npm`.
 $ npm install whatwg-fetch --save
 ```
 
+(For a node.js implementation, try [node-fetch](https://github.com/bitinn/node-fetch))
+
 ## Usage
 
 The `fetch` function supports any HTTP method. We'll focus on GET and POST
