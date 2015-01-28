@@ -1,9 +1,0 @@
-#Directories
-test/
-examples/
-
-#Files
-.npmignore
-.gitignore
-.jshintrc
-.travis.yml
