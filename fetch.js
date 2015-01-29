@@ -7,14 +7,17 @@
 
   function normalizeName(name) {
     if (typeof name !== 'string') {
-      throw new TypeError('field name must be a string')
+      name = name.toString();
+    }
+    if (/[^a-z0-9\-#$%&'*+.\^_`|~]/i.test(name)) {
+      throw new TypeError('Invalid character in header field name')
     }
     return name.toLowerCase()
   }
 
   function normalizeValue(value) {
     if (typeof value !== 'string') {
-      throw new TypeError('field value must be a string')
+      value = value.toString();
     }
     return value
   }

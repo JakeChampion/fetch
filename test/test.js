@@ -57,6 +57,13 @@ suite('Headers', function() {
     assert.isTrue(headers.has('Content-Type'))
     assert.equal(headers.get('Content-Type'), 'application/json')
   })
+  test('appends values to existing header name', function() {
+    var headers = new Headers({'Accept': 'application/json'})
+    headers.append('Accept', 'text/plain')
+    assert.equal(headers.getAll('Accept').length, 2)
+    assert.equal(headers.getAll('Accept')[0], 'application/json')
+    assert.equal(headers.getAll('Accept')[1], 'text/plain')
+  })
   test('sets header name and value', function() {
     var headers = new Headers()
     headers.set('Content-Type', 'application/json')
@@ -80,41 +87,35 @@ suite('Headers', function() {
     assert.isNull(headers.get('Content-Type'))
   })
   test('returns list on getAll when header found', function() {
-    var headers = new Headers()
-    assert.isArray(headers.getAll('Content-Type'))
-    assert.equal(headers.getAll('Content-Type').length, 0)
-  })
-  test('returns empty list on getAll when no header found', function() {
     var headers = new Headers({'Content-Type': 'application/json'})
     assert.isArray(headers.getAll('Content-Type'))
     assert.equal(headers.getAll('Content-Type').length, 1)
     assert.equal(headers.getAll('Content-Type')[0], 'application/json')
   })
-  test('throws TypeError on non-string value on constructor', function() {
-    assert.throws(function() { new Headers({'Accept': ['application/json']}) }, TypeError, 'field value must be a string');
+  test('returns empty list on getAll when no header found', function() {
+    var headers = new Headers()
+    assert.isArray(headers.getAll('Content-Type'))
+    assert.equal(headers.getAll('Content-Type').length, 0)
   })
-  test('throws TypeError when non-string name is set', function() {
-    assert.throws(function() { new Headers().set(1, 'application/json') }, TypeError, 'field name must be a string');
+  test('converts field name to string on set and get', function() {
+    var headers = new Headers()
+    headers.set(1, 'application/json')
+    assert.equal(headers.get(1), 'application/json')
   })
-  test('throws TypeError when non-string value is set', function() {
-    assert.throws(function() { new Headers().set('Content-Type', []) }, TypeError, 'field value must be a string');
+  test('converts field value to string on set and get', function() {
+    var headers = new Headers()
+    headers.set('Content-Type', 1)
+    assert.equal(headers.get('Content-Type'), '1')
   })
-  test('throws TypeError when non-string name is appended', function() {
-    assert.throws(function() { new Headers().append(1, 'application/json') }, TypeError, 'field name must be a string');
+  test('throws TypeError on invalid character in field name', function() {
+    assert.throws(function() { new Headers({'<Accept>': ['application/json']}) }, TypeError)
+    assert.throws(function() { new Headers({'Accept:': ['application/json']}) }, TypeError)
+    assert.throws(function() { 
+      var headers = new Headers();
+      headers.set({field: 'value'}, 'application/json');
+    }, TypeError)
   })
-  test('throws TypeError when non-string value is appended', function() {
-    assert.throws(function() { new Headers().append('Content-Type', []) }, TypeError, 'field value must be a string');
-  })
-  test('throws TypeError when non-string name passed to has', function() {
-    assert.throws(function() { new Headers().has(1) }, TypeError, 'field name must be a string');
-  })
-  test('throws TypeError when non-string name passed to get', function() {
-    assert.throws(function() { new Headers().get(1) }, TypeError, 'field name must be a string');
-  })
-  test('throws TypeError when non-string name passed to getAll', function() {
-    assert.throws(function() { new Headers().get(1) }, TypeError, 'field name must be a string');
-  })
-})
+ })
 
 // https://fetch.spec.whatwg.org/#request-class
 suite('Request', function() {
