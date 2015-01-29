@@ -44,11 +44,75 @@ test('rejects promise for network error', function() {
 
 // https://fetch.spec.whatwg.org/#headers-class
 suite('Headers', function() {
-  test('headers are case insensitve', function() {
+  test('headers are case insensitive', function() {
     var headers = new Headers({'Accept': 'application/json'})
     assert.equal(headers.get('ACCEPT'), 'application/json')
     assert.equal(headers.get('Accept'), 'application/json')
     assert.equal(headers.get('accept'), 'application/json')
+  })
+  test('appends to existing', function() {
+    var headers = new Headers({'Accept': 'application/json'})
+    assert.isFalse(headers.has('Content-Type'))
+    headers.append('Content-Type', 'application/json')
+    assert.isTrue(headers.has('Content-Type'))
+    assert.equal(headers.get('Content-Type'), 'application/json')
+  })
+  test('sets header name and value', function() {
+    var headers = new Headers()
+    headers.set('Content-Type', 'application/json')
+    assert.equal(headers.get('Content-Type'), 'application/json')
+  })
+  test('returns null on no header found', function() {
+    var headers = new Headers()
+    assert.isNull(headers.get('Content-Type'))
+  })
+  test('has headers that are set', function() {
+    var headers = new Headers()
+    headers.set('Content-Type', 'application/json')
+    assert.isTrue(headers.has('Content-Type'))
+  })
+  test('deletes headers', function() {
+    var headers = new Headers()
+    headers.set('Content-Type', 'application/json')
+    assert.isTrue(headers.has('Content-Type'))
+    headers.delete('Content-Type')
+    assert.isFalse(headers.has('Content-Type'))
+    assert.isNull(headers.get('Content-Type'))
+  })
+  test('returns list on getAll when header found', function() {
+    var headers = new Headers()
+    assert.isArray(headers.getAll('Content-Type'))
+    assert.equal(headers.getAll('Content-Type').length, 0)
+  })
+  test('returns empty list on getAll when no header found', function() {
+    var headers = new Headers({'Content-Type': 'application/json'})
+    assert.isArray(headers.getAll('Content-Type'))
+    assert.equal(headers.getAll('Content-Type').length, 1)
+    assert.equal(headers.getAll('Content-Type')[0], 'application/json')
+  })
+  test('throws TypeError on non-string value on constructor', function() {
+    assert.throws(function() { new Headers({'Accept': ['application/json']}) }, TypeError, 'field value must be a string');
+  })
+  test('throws TypeError when non-string name is set', function() {
+    assert.throws(function() { new Headers().set(1, 'application/json') }, TypeError, 'field name must be a string');
+  })
+  test('throws TypeError when non-string value is set', function() {
+    assert.throws(function() { new Headers().set('Content-Type', []) }, TypeError, 'field value must be a string');
+  })
+  test('throws TypeError when non-string name is appended', function() {
+    assert.throws(function() { new Headers().append(1, 'application/json') }, TypeError, 'field name must be a string');
+  })
+  test('throws TypeError when non-string value is appended', function() {
+    assert.throws(function() { new Headers().append('Content-Type', []) }, TypeError, 'field value must be a string');
+  })
+  test('throws TypeError when non-string name passed to has', function() {
+    assert.throws(function() { new Headers().has(1) }, TypeError, 'field name must be a string');
+  })
+  test('throws TypeError when non-string name passed to get', function() {
+    assert.throws(function() { new Headers().get(1) }, TypeError, 'field name must be a string');
+  })
+  test('throws TypeError when non-string name passed to getAll', function() {
+    assert.throws(function() { new Headers().get(1) }, TypeError, 'field name must be a string');
   })
 })
 

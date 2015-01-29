@@ -5,6 +5,20 @@
     return
   }
 
+  function normalizeName(name) {
+    if (typeof name !== 'string') {
+      throw new TypeError('field name must be a string')
+    }
+    return name.toLowerCase()
+  }
+
+  function normalizeValue(value) {
+    if (typeof value !== 'string') {
+      throw new TypeError('field value must be a string')
+    }
+    return value
+  }
+
   function Headers(headers) {
     this.map = {}
 
@@ -24,7 +38,8 @@
   }
 
   Headers.prototype.append = function(name, value) {
-    name = name.toLowerCase()
+    name = normalizeName(name)
+    value = normalizeValue(value)
     var list = this.map[name]
     if (!list) {
       list = []
@@ -34,24 +49,24 @@
   }
 
   Headers.prototype['delete'] = function(name) {
-    delete this.map[name.toLowerCase()]
+    delete this.map[normalizeName(name)]
   }
 
   Headers.prototype.get = function(name) {
-    var values = this.map[name.toLowerCase()]
+    var values = this.map[normalizeName(name)]
     return values ? values[0] : null
   }
 
   Headers.prototype.getAll = function(name) {
-    return this.map[name.toLowerCase()] || []
+    return this.map[normalizeName(name)] || []
   }
 
   Headers.prototype.has = function(name) {
-    return this.map.hasOwnProperty(name.toLowerCase())
+    return this.map.hasOwnProperty(normalizeName(name))
   }
 
   Headers.prototype.set = function(name, value) {
-    this.map[name.toLowerCase()] = [value]
+    this.map[normalizeName(name)] = [normalizeValue(value)]
   }
 
   // Instead of iterable for now.
@@ -281,6 +296,7 @@
       }
 
       xhr.open(self.method, self.url, true)
+
       if ('responseType' in xhr && support.blob) {
         xhr.responseType = 'blob'
       }
