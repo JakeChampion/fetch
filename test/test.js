@@ -110,7 +110,7 @@ suite('Headers', function() {
   test('throws TypeError on invalid character in field name', function() {
     assert.throws(function() { new Headers({'<Accept>': ['application/json']}) }, TypeError)
     assert.throws(function() { new Headers({'Accept:': ['application/json']}) }, TypeError)
-    assert.throws(function() { 
+    assert.throws(function() {
       var headers = new Headers();
       headers.set({field: 'value'}, 'application/json');
     }, TypeError)
@@ -447,7 +447,8 @@ suite('Methods', function() {
     })
   })
 
-  test('GET with body throws TypeError', function() {
+  // TODO: Waiting to verify behavior
+  test.skip('GET with body throws TypeError', function() {
     assert.throw(function() {
       new Request('', {
         method: 'get',
@@ -456,7 +457,7 @@ suite('Methods', function() {
     }, TypeError)
   })
 
-  test('HEAD with body throws TypeError', function() {
+  test.skip('HEAD with body throws TypeError', function() {
     assert.throw(function() {
       new Request('', {
         method: 'head',
