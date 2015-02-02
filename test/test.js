@@ -44,13 +44,78 @@ test('rejects promise for network error', function() {
 
 // https://fetch.spec.whatwg.org/#headers-class
 suite('Headers', function() {
-  test('headers are case insensitve', function() {
+  test('headers are case insensitive', function() {
     var headers = new Headers({'Accept': 'application/json'})
     assert.equal(headers.get('ACCEPT'), 'application/json')
     assert.equal(headers.get('Accept'), 'application/json')
     assert.equal(headers.get('accept'), 'application/json')
   })
-})
+  test('appends to existing', function() {
+    var headers = new Headers({'Accept': 'application/json'})
+    assert.isFalse(headers.has('Content-Type'))
+    headers.append('Content-Type', 'application/json')
+    assert.isTrue(headers.has('Content-Type'))
+    assert.equal(headers.get('Content-Type'), 'application/json')
+  })
+  test('appends values to existing header name', function() {
+    var headers = new Headers({'Accept': 'application/json'})
+    headers.append('Accept', 'text/plain')
+    assert.equal(headers.getAll('Accept').length, 2)
+    assert.equal(headers.getAll('Accept')[0], 'application/json')
+    assert.equal(headers.getAll('Accept')[1], 'text/plain')
+  })
+  test('sets header name and value', function() {
+    var headers = new Headers()
+    headers.set('Content-Type', 'application/json')
+    assert.equal(headers.get('Content-Type'), 'application/json')
+  })
+  test('returns null on no header found', function() {
+    var headers = new Headers()
+    assert.isNull(headers.get('Content-Type'))
+  })
+  test('has headers that are set', function() {
+    var headers = new Headers()
+    headers.set('Content-Type', 'application/json')
+    assert.isTrue(headers.has('Content-Type'))
+  })
+  test('deletes headers', function() {
+    var headers = new Headers()
+    headers.set('Content-Type', 'application/json')
+    assert.isTrue(headers.has('Content-Type'))
+    headers.delete('Content-Type')
+    assert.isFalse(headers.has('Content-Type'))
+    assert.isNull(headers.get('Content-Type'))
+  })
+  test('returns list on getAll when header found', function() {
+    var headers = new Headers({'Content-Type': 'application/json'})
+    assert.isArray(headers.getAll('Content-Type'))
+    assert.equal(headers.getAll('Content-Type').length, 1)
+    assert.equal(headers.getAll('Content-Type')[0], 'application/json')
+  })
+  test('returns empty list on getAll when no header found', function() {
+    var headers = new Headers()
+    assert.isArray(headers.getAll('Content-Type'))
+    assert.equal(headers.getAll('Content-Type').length, 0)
+  })
+  test('converts field name to string on set and get', function() {
+    var headers = new Headers()
+    headers.set(1, 'application/json')
+    assert.equal(headers.get(1), 'application/json')
+  })
+  test('converts field value to string on set and get', function() {
+    var headers = new Headers()
+    headers.set('Content-Type', 1)
+    assert.equal(headers.get('Content-Type'), '1')
+  })
+  test('throws TypeError on invalid character in field name', function() {
+    assert.throws(function() { new Headers({'<Accept>': ['application/json']}) }, TypeError)
+    assert.throws(function() { new Headers({'Accept:': ['application/json']}) }, TypeError)
+    assert.throws(function() { 
+      var headers = new Headers();
+      headers.set({field: 'value'}, 'application/json');
+    }, TypeError)
+  })
+ })
 
 // https://fetch.spec.whatwg.org/#request-class
 suite('Request', function() {
