@@ -1,27 +1,15 @@
 function readBlobAsText(blob) {
   return new Promise(function(resolve, reject) {
-    var reader = new FileReader()
-    reader.onload = function() {
-      resolve(reader.result)
-    }
-    reader.onerror = function() {
-      reject(reader.error)
-    }
-    reader.readAsText(blob)
+    var reader = new FileReaderSync()
+    resolve(reader.readAsText(blob))
   })
 }
 
 function readBlobAsBytes(blob) {
   return new Promise(function(resolve, reject) {
-    var reader = new FileReader()
-    reader.onload = function() {
-      var view = new Uint8Array(reader.result)
-      resolve(Array.prototype.slice.call(view))
-    }
-    reader.onerror = function() {
-      reject(reader.error)
-    }
-    reader.readAsArrayBuffer(blob)
+    var reader = new FileReaderSync()
+    var u8 = new Uint8Array(reader.readAsArrayBuffer(blob))
+    resolve(Array.prototype.slice.call(u8))
   })
 }
 
