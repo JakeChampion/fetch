@@ -113,6 +113,18 @@ var routes = {
       'Content-Type': 'text/html; charset=utf-8'
     });
     res.end();
+  },
+  '/test.js': function(res, req) {
+    fs.readFile(__dirname + '/test.js', function(err, data) {
+      res.writeHead(200, {'Content-Type': 'text/javascript'});
+      res.end(data);
+    });
+  },
+  '/test.html': function(res, req) {
+    fs.readFile(__dirname + '/test.html', function(err, data) {
+      res.writeHead(200, {'Content-Type': 'text/html'});
+      res.end(data);
+    });
   }
 };
 
@@ -141,3 +153,5 @@ http.createServer(function(req, res) {
     });
   }
 }).listen(port);
+
+console.log("Starting server on port " + port);
