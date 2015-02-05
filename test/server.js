@@ -146,4 +146,4 @@ http.createServer(function(req, res) {
   }
 }).listen(port);
 
-console.log("Starting server on port " + port);
+console.log('Starting server on port ' + port);
