@@ -113,18 +113,6 @@ var routes = {
       'Content-Type': 'text/html; charset=utf-8'
     });
     res.end();
-  },
-  '/test.js': function(res, req) {
-    fs.readFile(__dirname + '/test.js', function(err, data) {
-      res.writeHead(200, {'Content-Type': 'text/javascript'});
-      res.end(data);
-    });
-  },
-  '/test.html': function(res, req) {
-    fs.readFile(__dirname + '/test.html', function(err, data) {
-      res.writeHead(200, {'Content-Type': 'text/html'});
-      res.end(data);
-    });
   }
 };
 
@@ -141,7 +129,11 @@ http.createServer(function(req, res) {
   if (route) {
     route(res, req);
   } else {
-    fs.readFile(__dirname + '/..' + pathname, function(err, data) {
+    var filePath = __dirname + pathname;
+    if (!fs.existsSync(filePath)) {
+      filePath = __dirname + '/..' + pathname;
+    }
+    fs.readFile(filePath, function(err, data) {
       if (err) {
         res.writeHead(404, {'Content-Type': types.txt});
         res.end('Not Found');
