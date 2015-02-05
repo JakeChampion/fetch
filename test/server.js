@@ -129,7 +129,11 @@ http.createServer(function(req, res) {
   if (route) {
     route(res, req);
   } else {
-    fs.readFile(__dirname + '/..' + pathname, function(err, data) {
+    var filePath = __dirname + pathname;
+    if (!fs.existsSync(filePath)) {
+      filePath = __dirname + '/..' + pathname;
+    }
+    fs.readFile(filePath, function(err, data) {
       if (err) {
         res.writeHead(404, {'Content-Type': types.txt});
         res.end('Not Found');
@@ -141,3 +145,5 @@ http.createServer(function(req, res) {
     });
   }
 }).listen(port);
+
+console.log('Starting server on port ' + port);
