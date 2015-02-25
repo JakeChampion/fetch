@@ -264,7 +264,7 @@
       var legacyCors = false;
       if (support.XDomainRequest) {
         var origin = location.protocol + '//' + location.host;
-        legacyCors = (/^\/\//.test(self.url) ? location.protocol + self.url : self.url).substring(0, origin.length) !== origin;
+        legacyCors = (/^\/\//.test(self.url) ? location.protocol + self.url : self.url).substring(0, origin.length) !== origin && && (self.method === 'GET' || self.method === 'POST');
       }
       var xhr = legacyCors ? new XDomainRequest() : new XMLHttpRequest()
 
