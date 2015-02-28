@@ -279,7 +279,8 @@
       }
 
       xhr.onload = function() {
-        var status = (xhr.status === 1223) ? 204 : xhr.status
+        var protocol = /^([\w-]+:)\/\//.test(responseURL()) ? RegExp.$1 : self.location.protocol
+        var status = ((xhr.status === 1223) || (xhr.status === 0 && protocol === 'file:')) ? 204 : xhr.status
         if (status < 100 || status > 599) {
           reject(new TypeError('Network request failed'))
           return
