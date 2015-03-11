@@ -261,9 +261,6 @@
 
     return new Promise(function(resolve, reject) {
       var xhr = new XMLHttpRequest()
-      if (self.credentials === 'cors') {
-        xhr.withCredentials = true;
-      }
 
       function responseURL() {
         if ('responseURL' in xhr) {
@@ -299,6 +296,10 @@
       }
 
       xhr.open(self.method, self.url, true)
+
+      if (self.credentials === 'cors') {
+        xhr.withCredentials = true;
+      }
 
       if ('responseType' in xhr && support.blob) {
         xhr.responseType = 'blob'
