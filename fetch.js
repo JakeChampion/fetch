@@ -1,9 +1,15 @@
-(function() {
+(function (root, factory) {
   'use strict';
-
-  if (self.fetch) {
-    return
+  /* global module, define */
+  if (typeof define === 'function' && define.amd) {
+    define([], factory)
+  } else if (typeof exports === 'object') {
+    module.exports = factory()
+  } else {
+    factory().polyfill()
   }
+}(this, function () {
+  'use strict';
 
   function normalizeName(name) {
     if (typeof name !== 'string') {
@@ -331,14 +337,34 @@
     this.url = options.url || ''
   }
 
-  Body.call(Response.prototype)
-
-  self.Headers = Headers;
-  self.Request = Request;
-  self.Response = Response;
-
-  self.fetch = function (url, options) {
+  function fetch (url, options) {
     return new Request(url, options).fetch()
   }
-  self.fetch.polyfill = true
-})();
+
+  fetch.polyfill = true
+
+  Body.call(Response.prototype)
+
+  function polyfill() {
+    /* global global */
+    var local = (typeof global !== 'undefined') ? global : self
+
+    if (local.fetch) {
+      return
+    }
+
+    local.Headers = Headers
+    local.Request = Request
+    local.Response = Response
+    local.fetch = fetch
+  }
+
+  return {
+    'Headers': Headers,
+    'Request': Request,
+    'Response': Response,
+    'fetch': fetch,
+    'polyfill': polyfill
+  };
+
+}));
