@@ -1,4 +1,4 @@
-require('es6-promise');
+var Promise = require('es6-promise').Promise;
 var https = require('https');
 
 function fetchJSON(options, obj) {
