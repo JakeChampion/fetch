@@ -3,11 +3,6 @@ build: node_modules/ bower_components/
 test: node_modules/ build lint
 	./script/test
 
-saucelabs: build
-	./script/saucelabs
-
-travis: lint test saucelabs
-
 lint: node_modules/
 	./node_modules/.bin/jshint *.js test/*.js
 

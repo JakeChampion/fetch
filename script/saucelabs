@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -e
 set -x
 
@@ -14,7 +15,7 @@ job=$(./script/saucelabs-start "http://localhost:$port/test/test.html")
 while true
 do
   result=$(echo "$job" | ./script/saucelabs-status)
-  [[ $string == *"\"completed\": true"* ]] && break
+  [[ $result == *"\"completed\": true"* ]] && break
   sleep 1
 done
 
