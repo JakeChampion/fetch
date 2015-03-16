@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+
+url="https://saucelabs.com/rest/v1/$SAUCE_USERNAME/js-tests/status"
+auth="$SAUCE_USERNAME:$SAUCE_ACCESS_KEY"
+header="Content-Type: application/json"
+curl -fs "$url" -X POST -u "$auth" -H "$header" -d "@-"
