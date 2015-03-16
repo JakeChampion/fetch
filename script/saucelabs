@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-set -x
 
 port=8080
 
@@ -17,6 +16,9 @@ do
   result=$(echo "$job" | ./script/saucelabs-status)
   [[ $result == *"\"completed\": true"* ]] && break
   sleep 1
+  echo -n "."
 done
+
+echo -n ""
 
 echo "$result" | ./script/saucelabs-result
