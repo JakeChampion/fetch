@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-set -x
 
 url="https://saucelabs.com/rest/v1/$SAUCE_USERNAME/js-tests"
 auth="$SAUCE_USERNAME:$SAUCE_ACCESS_KEY"
