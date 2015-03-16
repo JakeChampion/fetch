@@ -12,8 +12,8 @@
   "trailing": true,
   "asi": true,
   "boss": true,
-  "sub": true,
   "esnext": true,
+  "sub": true,
   "eqnull": true,
   "browser": true,
   "node": true,
@@ -25,9 +25,9 @@
     "Response": false,
     "mocha": false,
     "chai": false,
+    "suite": false,
     "setup": false,
     "test": false,
-    "suite": false,
     "assert": false
   }
 }
