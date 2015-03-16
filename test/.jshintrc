@@ -12,10 +12,11 @@
   "trailing": true,
   "asi": true,
   "boss": true,
-  "esnext": true,
   "sub": true,
+  "esnext": true,
   "eqnull": true,
   "browser": true,
+  "node": true,
   "worker": true,
   "globals": {
     "fetch": false,
@@ -24,9 +25,9 @@
     "Response": false,
     "mocha": false,
     "chai": false,
-    "suite": false,
     "setup": false,
     "test": false,
+    "suite": false,
     "assert": false
   }
 }
