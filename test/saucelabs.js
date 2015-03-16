@@ -1,5 +1,4 @@
 require('es6-promise');
-var http = require('http');
 var https = require('https');
 
 function fetchJSON(options, obj) {
@@ -78,7 +77,6 @@ fetchJSON({
     throw 'tests failed';
   }
 }).then(function() {
-  server.close();
   global.process.exit(0);
 }, function(error) {
   setImmediate(function() {
