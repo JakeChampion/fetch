@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+
+if [ -n "$SAUCE_BROWSER" ]; then
+  ./script/saucelabs
+else
+  ./script/phantomjs
+fi

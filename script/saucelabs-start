@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+
+url="https://saucelabs.com/rest/v1/$SAUCE_USERNAME/js-tests"
+auth="$SAUCE_USERNAME:$SAUCE_ACCESS_KEY"
+header="Content-Type: application/json"
+
+data=$(cat <<JSON
+{
+  "public": "public",
+  "build": "$TRAVIS_BUILD_NUMBER",
+  "tags": ["$TRAVIS_PULL_REQUEST", "$TRAVIS_BRANCH"],
+  "tunnel-identifier": "$TRAVIS_JOB_NUMBER",
+  "platforms": [["$SAUCE_PLATFORM", "$SAUCE_BROWSER", "$SAUCE_VERSION"]],
+  "url": "$1",
+  "framework": "mocha"
+}
+JSON
+)
+
+curl -fs "$url" -X POST -u "$auth" -H "$header" -d "$data"
