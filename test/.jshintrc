@@ -16,10 +16,8 @@
   "sub": true,
   "eqnull": true,
   "browser": true,
-  "node": true,
   "worker": true,
   "globals": {
-    "Promise": true,
     "fetch": false,
     "Headers": false,
     "Request": false,
