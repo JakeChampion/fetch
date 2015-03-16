@@ -1,7 +1,7 @@
 build: node_modules/ bower_components/
 
 test: node_modules/ build lint
-	./test/run.sh
+	./script/test
 
 saucelabs: build
 	node ./test/saucelabs.js
