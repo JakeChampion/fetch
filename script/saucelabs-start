@@ -8,6 +8,7 @@ header="Content-Type: application/json"
 
 data=$(cat <<JSON
 {
+  "public": "public",
   "build": "$TRAVIS_BUILD_NUMBER",
   "tags": ["$TRAVIS_PULL_REQUEST", "$TRAVIS_BRANCH"],
   "tunnel-identifier": "$TRAVIS_JOB_NUMBER",
