@@ -4,7 +4,7 @@ test: node_modules/ build lint
 	./script/test
 
 saucelabs: build
-	node ./test/saucelabs.js
+	./script/saucelabs
 
 travis: lint test saucelabs
 
