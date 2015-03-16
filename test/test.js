@@ -35,7 +35,7 @@ test('resolves promise on 500 error', function() {
   })
 })
 
-test('rejects promise for network error', function() {
+test.skip('rejects promise for network error', function() {
   return fetch('/error').then(function(response) {
     assert(false, 'HTTP status ' + response.status + ' was treated as success')
   }).catch(function(error) {
