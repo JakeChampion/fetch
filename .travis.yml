@@ -3,7 +3,7 @@ before_script: make
 script: make travis
 env:
   global:
-    - SAUCE_USERNAME=josh-fetch
+    - SAUCE_USERNAME=github-fetch
     - SAUCE_ACCESS_KEY=c3d37f93-0c2e-4834-9da5-eddc0d8c6299
   matrix:
     - SAUCE_PLATFORM="Windows 7" SAUCE_BROWSER="googlechrome" SAUCE_VERSION=""
