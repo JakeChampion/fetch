@@ -20,5 +20,8 @@
   "files" : [
     "LICENSE",
     "fetch.js"
-  ]
+  ],
+  "spm": {
+    "main": "fetch.js"
+  }
 }
