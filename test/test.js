@@ -228,6 +228,15 @@ suite('Response', function() {
       assert.equal(response.headers.get('Content-Type'), 'text/html; charset=utf-8')
     })
   })
+
+  test('creates Headers object from raw headers', function() {
+    var r = new Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}});
+    assert.equal(r.headers instanceof Headers, true);
+    return r.json().then(function(json){
+      assert(json.foo, 'bar');
+      return json;
+    })
+  })
 })
 
 // https://fetch.spec.whatwg.org/#body-mixin
