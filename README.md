@@ -154,6 +154,14 @@ If you want `response.url` to be reliable, you'll want to set this header. The
 day that you ditch this polyfill and use native fetch only, you can remove the
 header hack.
 
+### Webpack usage
+
+To use fetch with webpack, you will need `import-loader`, `export-loader`, `es6-promise` and require it this way:
+
+```javascript
+var fetch = require('imports?self=>{},es6p=es6-promise,Promise=>es6p.Promise!exports?self.fetch!whatwg-fetch');
+```
+
 ## Browser Support
 
 ![Chrome](https://raw.github.com/alrra/browser-logos/master/chrome/chrome_48x48.png) | ![Firefox](https://raw.github.com/alrra/browser-logos/master/firefox/firefox_48x48.png) | ![IE](https://raw.github.com/alrra/browser-logos/master/internet-explorer/internet-explorer_48x48.png) | ![Opera](https://raw.github.com/alrra/browser-logos/master/opera/opera_48x48.png) | ![Safari](https://raw.github.com/alrra/browser-logos/master/safari/safari_48x48.png)
