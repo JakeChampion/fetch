@@ -4,12 +4,14 @@ set -e
 
 port=8080
 
+version=$([ "$1" == "coffee" ] && echo "test-coffee" || echo "test")
+
 # Spin a test server in the background
 node ./test/server.js $port &>/dev/null &
 server_pid=$!
 trap "kill $server_pid" INT EXIT
 
-job=$(./script/saucelabs-start "http://localhost:$port/test/test.html")
+job=$(./script/saucelabs-start "http://localhost:$port/test/${version}.html")
 
 while true
 do
