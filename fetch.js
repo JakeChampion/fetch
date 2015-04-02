@@ -297,7 +297,9 @@
 
       xhr.open(self.method, self.url, true)
 
-      if (self.credentials === 'cors') {
+      // Note: 'cors' credentials value is nonstandard and accepted for
+      // backwards compatibility with old versions of this polyfill.
+      if (self.credentials === 'cors' || self.credentials === 'include') {
         xhr.withCredentials = true;
       }
 
