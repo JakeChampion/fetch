@@ -337,7 +337,22 @@
   self.Request = Request;
   self.Response = Response;
 
-  self.fetch = function (url, options) {
+  self.fetch = function (input, options) {
+    if (input instanceof Request) {
+      if (input.bodyUsed === true) throw TypeError('Body has already been used');
+
+      var url = input.url;
+      options = options || {};
+      options.credentials = options.credentials || input.credentials;
+      options.headers = options.headers || input.headers;
+      options.method = options.method || input.method;
+      options.mode = options.mode || input.mode;
+      options.body = options.body || input.body;
+    }
+    else {
+      var url = input;
+    }
+
     return new Request(url, options).fetch()
   }
   self.fetch.polyfill = true
