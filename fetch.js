@@ -350,7 +350,7 @@
       options.headers = options.headers || input.headers;
       options.method = options.method || input.method;
       options.mode = options.mode || input.mode;
-      options.body = options.body || input.body;
+      options.body = options.body || input._bodyInit;
     }
     else {
       url = input;
