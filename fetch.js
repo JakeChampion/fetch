@@ -338,10 +338,13 @@
   self.Response = Response;
 
   self.fetch = function (input, options) {
+    var url;
     if (input instanceof Request) {
-      if (input.bodyUsed === true) throw TypeError('Body has already been used');
+      if (input.bodyUsed === true) {
+        throw new TypeError('Body has already been used');
+      }
 
-      var url = input.url;
+      url = input.url;
       options = options || {};
       options.credentials = options.credentials || input.credentials;
       options.headers = options.headers || input.headers;
@@ -350,7 +353,7 @@
       options.body = options.body || input.body;
     }
     else {
-      var url = input;
+      url = input;
     }
 
     return new Request(url, options).fetch()
