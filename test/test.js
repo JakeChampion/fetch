@@ -139,6 +139,14 @@ suite('Request', function() {
     assert.equal(request.url, 'https://fetch.spec.whatwg.org/')
   })
 
+  test('rejects username:password in url', function() {
+    assert.throw(function() {
+      new Request('https://exampleuser:examplepass@fetch.spec.whatwg.org/', {
+        method: 'get'
+      })
+    }, TypeError)
+  })
+
   // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
   suite('BodyInit extract', function() {
     ;(Request.prototype.blob ? suite : suite.skip)('type Blob', function() {

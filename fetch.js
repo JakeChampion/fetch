@@ -217,6 +217,11 @@
 
   function Request(url, options) {
     options = options || {}
+
+    if (url && url.match(/^\w+?:\/\/\w+?:\w+?@/)) {
+      throw new TypeError('Credentials not allowed in request URL')
+    }
+
     this.url = url
 
     this.credentials = options.credentials || 'omit'
