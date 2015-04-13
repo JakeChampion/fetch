@@ -226,17 +226,18 @@
       input = {url: input}
     }
 
-    this.url = input.url;
+    this.url = input.url
     this.credentials = options.credentials || input.credentials || 'omit'
     this.headers = new Headers(options.headers || input.headers)
     this.method = normalizeMethod(options.method || input.method || 'GET')
     this.mode = options.mode || input.mode || null
     this.referrer = null
 
-    if ((this.method === 'GET' || this.method === 'HEAD') && options.body) {
+    var body = options.body || input._bodyInit
+    if ((this.method === 'GET' || this.method === 'HEAD') && body) {
       throw new TypeError('Body not allowed for GET or HEAD requests')
     }
-    this._initBody(options.body || input._bodyInit)
+    this._initBody(body)
   }
 
   function decode(body) {
