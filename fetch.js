@@ -215,20 +215,28 @@
     return (methods.indexOf(upcased) > -1) ? upcased : method
   }
 
-  function Request(url, options) {
+  function Request(input, options) {
     options = options || {}
-    this.url = url
+    if (input instanceof Request) {
+      if (input.bodyUsed === true) {
+        throw new TypeError('Body has already been used')
+      }
+    }
+    else {
+      input = {url: input}
+    }
 
-    this.credentials = options.credentials || 'omit'
-    this.headers = new Headers(options.headers)
-    this.method = normalizeMethod(options.method || 'GET')
-    this.mode = options.mode || null
+    this.url = input.url;
+    this.credentials = options.credentials || input.credentials || 'omit'
+    this.headers = new Headers(options.headers || input.headers)
+    this.method = normalizeMethod(options.method || input.method || 'GET')
+    this.mode = options.mode || input.mode || null
     this.referrer = null
 
     if ((this.method === 'GET' || this.method === 'HEAD') && options.body) {
       throw new TypeError('Body not allowed for GET or HEAD requests')
     }
-    this._initBody(options.body)
+    this._initBody(options.body || input._bodyInit)
   }
 
   function decode(body) {
@@ -338,25 +346,7 @@
   self.Response = Response;
 
   self.fetch = function (input, options) {
-    var url;
-    if (input instanceof Request) {
-      if (input.bodyUsed === true) {
-        throw new TypeError('Body has already been used');
-      }
-
-      url = input.url;
-      options = options || {};
-      options.credentials = options.credentials || input.credentials;
-      options.headers = options.headers || input.headers;
-      options.method = options.method || input.method;
-      options.mode = options.mode || input.mode;
-      options.body = options.body || input._bodyInit;
-    }
-    else {
-      url = input;
-    }
-
-    return new Request(url, options).fetch()
+    return new Request(input, options).fetch()
   }
   self.fetch.polyfill = true
 })();
