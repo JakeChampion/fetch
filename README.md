@@ -117,10 +117,9 @@ resolved only on successful, 200 level, status codes.
 ```javascript
 function status(response) {
   if (response.status >= 200 && response.status < 300) {
-    return Promise.resolve(response)
-  } else {
-    return Promise.reject(new Error(response.statusText))
+    return response
   }
+  throw new Error(response.statusText)
 }
 
 function json(response) {
