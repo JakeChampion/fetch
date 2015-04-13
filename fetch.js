@@ -225,6 +225,9 @@
     this.mode = options.mode || null
     this.referrer = null
 
+    this.user = options.user || null
+    this.password = options.password || null
+
     if ((this.method === 'GET' || this.method === 'HEAD') && options.body) {
       throw new TypeError('Body not allowed for GET or HEAD requests')
     }
@@ -298,7 +301,7 @@
         reject(new TypeError('Network request failed'))
       }
 
-      xhr.open(self.method, self.url, true)
+      xhr.open(self.method, self.url, true, self.user, self.password)
 
       if ('responseType' in xhr && support.blob) {
         xhr.responseType = 'blob'
