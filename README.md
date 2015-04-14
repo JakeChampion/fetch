@@ -26,6 +26,12 @@ $ npm install whatwg-fetch --save
 
 (For a node.js implementation, try [node-fetch](https://github.com/bitinn/node-fetch))
 
+This can also be installed with `spm`. [![](http://spmjs.io/badge/whatwg-fetch)](http://spmjs.io/package/whatwg-fetch)
+
+```sh
+$ spm install whatwg-fetch --save
+```
+
 ## Usage
 
 The `fetch` function supports any HTTP method. We'll focus on GET and POST
