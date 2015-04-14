@@ -84,7 +84,7 @@ var routes = {
     res.destroy();
   },
   '/form': function(res) {
-    res.writeHead(200, {'Content-Type': 'text/plain'});
+    res.writeHead(200, {'Content-Type': 'application/x-www-form-urlencoded'});
     res.end('number=1&space=one+two&empty=&encoded=a%2Bb&');
   },
   '/json': function(res) {

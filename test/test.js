@@ -1,27 +1,50 @@
 function readBlobAsText(blob) {
   return new Promise(function(resolve, reject) {
-    var reader = new FileReader()
-    reader.onload = function() {
-      resolve(reader.result)
+    // FileReader is not available on Workers in Firefox, but FileReaderSync
+    // is.
+    var reader
+    if (typeof FileReaderSync !== "undefined") {
+      reader = new FileReaderSync()
+      try {
+        resolve(reader.readAsText(blob))
+      } catch(e) {
+        reject(e);
+      }
+    } else {
+      reader = new FileReader()
+      reader.onload = function() {
+        resolve(reader.result)
+      }
+      reader.onerror = function() {
+        reject(reader.error)
+      }
+      reader.readAsText(blob)
     }
-    reader.onerror = function() {
-      reject(reader.error)
-    }
-    reader.readAsText(blob)
   })
 }
 
 function readBlobAsBytes(blob) {
   return new Promise(function(resolve, reject) {
-    var reader = new FileReader()
-    reader.onload = function() {
-      var view = new Uint8Array(reader.result)
-      resolve(Array.prototype.slice.call(view))
+    var reader
+    if (typeof FileReaderSync !== "undefined") {
+      reader = new FileReaderSync()
+      try {
+        var view = new Uint8Array(reader.readAsArrayBuffer(blob))
+        resolve(Array.prototype.slice.call(view))
+      } catch(e) {
+        reject(e);
+      }
+    } else {
+      var reader = new FileReader()
+      reader.onload = function() {
+        var view = new Uint8Array(reader.result)
+        resolve(Array.prototype.slice.call(view))
+      }
+      reader.onerror = function() {
+        reject(reader.error)
+      }
+      reader.readAsArrayBuffer(blob)
     }
-    reader.onerror = function() {
-      reject(reader.error)
-    }
-    reader.readAsArrayBuffer(blob)
   })
 }
 
