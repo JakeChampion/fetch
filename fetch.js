@@ -218,7 +218,7 @@
   function Request(url, options) {
     options = options || {}
 
-    if (url && url.match(/^\w+?:\/\/\w+?:\w+?@/)) {
+    if (url && url.match(/^([\w-]+:)?\/\/[^\/]+@/)) {
       throw new TypeError('Credentials not allowed in request URL')
     }
 
