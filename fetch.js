@@ -331,6 +331,19 @@
     this.url = options.url || ''
   }
 
+  Response.prototype.clone = function () {
+    if (this.bodyUsed) {
+      throw new TypeError('Body used');
+    }
+
+    return new Response(this._bodyInit, {
+      status: this.status,
+      statusText: this.statusText,
+      headers: this.headers,
+      url: this.url
+    });
+  };
+
   Body.call(Response.prototype)
 
   self.Headers = Headers;
