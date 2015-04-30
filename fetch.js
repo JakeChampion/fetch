@@ -328,7 +328,15 @@
         })
       })
 
-      xhr.send(typeof self._bodyInit === 'undefined' ? null : self._bodyInit)
+      var send = xhr.send.bind(xhr, typeof self._bodyInit === 'undefined' ? null : self._bodyInit)
+      if (legacyCors) {
+        xhr.onprogress = xhr.onprogress || function () {}
+        setTimeout(function () {
+          send()
+        })
+      } else {
+        send()
+      }
     })
   }
 
