@@ -225,9 +225,14 @@
     this.mode = options.mode || null
     this.referrer = null
 
+    if (!options.constructedWithFetch && methods.indexOf(this.method) === -1) {
+      throw new TypeError('Method "' + this.method + '" not allowed, must be one of ' + methods.join(', '))
+    }
+
     if ((this.method === 'GET' || this.method === 'HEAD') && options.body) {
       throw new TypeError('Body not allowed for GET or HEAD requests')
     }
+
     this._initBody(options.body)
   }
 
@@ -266,7 +271,7 @@
       }
 
       if (methods.indexOf(self.method) === -1) {
-        reject(new TypeError('Method not allowed, must be one of ' + methods.join(', ')))
+        reject(new TypeError('Method "' + self.method + '" not allowed, must be one of ' + methods.join(', ')))
       }
 
       function responseURL() {
@@ -342,6 +347,8 @@
   self.Response = Response;
 
   self.fetch = function (url, options) {
+    options = options || {}
+    options.constructedWithFetch = true;
     return new Request(url, options).fetch()
   }
   self.fetch.polyfill = true

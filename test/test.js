@@ -139,6 +139,15 @@ suite('Request', function() {
     assert.equal(request.url, 'https://fetch.spec.whatwg.org/')
   })
 
+  test('throws TypeError on invalid method', function() {
+    assert.throw(function() {
+      new Request('/request', {
+        method: 'trace',
+        body: 'invalid'
+      })
+    }, TypeError)
+  })
+
   // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
   suite('BodyInit extract', function() {
     ;(Request.prototype.blob ? suite : suite.skip)('type Blob', function() {
