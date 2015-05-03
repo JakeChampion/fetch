@@ -212,10 +212,7 @@
 
   function normalizeMethod(method) {
     var upcased = method.toUpperCase()
-    if (methods.indexOf(upcased) === -1) {
-      throw new TypeError('Method not allowed, must be one of ' + methods.join(', '))
-    }
-    return upcased;
+    return (methods.indexOf(upcased) > -1) ? upcased : method
   }
 
   function Request(url, options) {
@@ -266,6 +263,10 @@
       var xhr = new XMLHttpRequest()
       if (self.credentials === 'cors') {
         xhr.withCredentials = true;
+      }
+
+      if (methods.indexOf(self.method) === -1) {
+        reject(new TypeError('Method not allowed, must be one of ' + methods.join(', ')))
       }
 
       function responseURL() {

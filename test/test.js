@@ -526,22 +526,36 @@ suite('Methods', function() {
     })
   })
 
-  test('rejects forbidden methods CONNECT,TRACE,TRACK', function() {
-    ['CONNECT','TRACE','TRACK'].forEach(function(method) {
-      assert.throw(function() {
-        return fetch('/request', {
-          method: method,
-        })
-      }, TypeError)
-    });
+  test('rejects forbidden method CONNECT', function() {
+    return fetch('/request', { method: 'CONNECT' }).then(function() {
+      assert(false, 'HTTP request for forbidden method was treated as success')
+    }).catch(function(error) {
+      assert(error instanceof TypeError, 'Rejected with Error')
+    })
+  })
+
+  test('rejects forbidden method TRACE', function() {
+    return fetch('/request', { method: 'TRACE' }).then(function() {
+      assert(false, 'HTTP request for forbidden method was treated as success')
+    }).catch(function(error) {
+      assert(error instanceof TypeError, 'Rejected with Error')
+    })
+  })
+
+  test('rejects forbidden method TRACK', function() {
+    return fetch('/request', { method: 'TRACK' }).then(function() {
+      assert(false, 'HTTP request for forbidden method was treated as success')
+    }).catch(function(error) {
+      assert(error instanceof TypeError, 'Rejected with Error')
+    })
   })
 
   test('rejects methods that do not exist in fetch library', function() {
-    assert.throw(function() {
-      return fetch('/request', {
-        method: 'fakemethod',
-      })
-    }, TypeError)
+    return fetch('/request', { method: 'FAKEMETHOD'}).then(function() {
+      assert(false, 'HTTP request for non-existing method was treated as success')
+    }).catch(function(error) {
+      assert(error instanceof TypeError, 'Rejected with Error')
+    })
   })
 
 })
