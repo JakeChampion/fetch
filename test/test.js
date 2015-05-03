@@ -139,11 +139,34 @@ suite('Request', function() {
     assert.equal(request.url, 'https://fetch.spec.whatwg.org/')
   })
 
-  test('throws TypeError on invalid method', function() {
+  test('throws TypeError on invalid method CONNECT', function() {
     assert.throw(function() {
       new Request('/request', {
-        method: 'trace',
-        body: 'invalid'
+        method: 'CONNECT'
+      })
+    }, TypeError)
+  })
+
+  test('throws TypeError on invalid method TRACE', function() {
+    assert.throw(function() {
+      new Request('/request', {
+        method: 'TRACE'
+      })
+    }, TypeError)
+  })
+
+  test('throws TypeError on invalid method TRACK', function() {
+    assert.throw(function() {
+      new Request('/request', {
+        method: 'TRACK'
+      })
+    }, TypeError)
+  })
+
+  test('throws TypeError on methods that do not exist in fetch library', function() {
+    assert.throw(function() {
+      new Request('/request', {
+        method: 'FAKEMETHOD'
       })
     }, TypeError)
   })
