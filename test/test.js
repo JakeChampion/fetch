@@ -139,6 +139,38 @@ suite('Request', function() {
     assert.equal(request.url, 'https://fetch.spec.whatwg.org/')
   })
 
+  test('throws TypeError on invalid method CONNECT', function() {
+    assert.throw(function() {
+      new Request('/request', {
+        method: 'CONNECT'
+      })
+    }, TypeError)
+  })
+
+  test('throws TypeError on invalid method TRACE', function() {
+    assert.throw(function() {
+      new Request('/request', {
+        method: 'TRACE'
+      })
+    }, TypeError)
+  })
+
+  test('throws TypeError on invalid method TRACK', function() {
+    assert.throw(function() {
+      new Request('/request', {
+        method: 'TRACK'
+      })
+    }, TypeError)
+  })
+
+  test('throws TypeError on methods that do not exist in fetch library', function() {
+    assert.throw(function() {
+      new Request('/request', {
+        method: 'FAKEMETHOD'
+      })
+    }, TypeError)
+  })
+
   // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
   suite('BodyInit extract', function() {
     ;(Request.prototype.blob ? suite : suite.skip)('type Blob', function() {
@@ -525,6 +557,39 @@ suite('Methods', function() {
       assert.equal(request.data, '')
     })
   })
+
+  test('rejects forbidden method CONNECT', function() {
+    return fetch('/request', { method: 'CONNECT' }).then(function() {
+      assert(false, 'HTTP request for forbidden method was treated as success')
+    }).catch(function(error) {
+      assert(error instanceof TypeError, 'Rejected with Error')
+    })
+  })
+
+  test('rejects forbidden method TRACE', function() {
+    return fetch('/request', { method: 'TRACE' }).then(function() {
+      assert(false, 'HTTP request for forbidden method was treated as success')
+    }).catch(function(error) {
+      assert(error instanceof TypeError, 'Rejected with Error')
+    })
+  })
+
+  test('rejects forbidden method TRACK', function() {
+    return fetch('/request', { method: 'TRACK' }).then(function() {
+      assert(false, 'HTTP request for forbidden method was treated as success')
+    }).catch(function(error) {
+      assert(error instanceof TypeError, 'Rejected with Error')
+    })
+  })
+
+  test('rejects methods that do not exist in fetch library', function() {
+    return fetch('/request', { method: 'FAKEMETHOD'}).then(function() {
+      assert(false, 'HTTP request for non-existing method was treated as success')
+    }).catch(function(error) {
+      assert(error instanceof TypeError, 'Rejected with Error')
+    })
+  })
+
 })
 
 // https://fetch.spec.whatwg.org/#atomic-http-redirect-handling
