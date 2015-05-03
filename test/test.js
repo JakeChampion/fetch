@@ -525,6 +525,25 @@ suite('Methods', function() {
       assert.equal(request.data, '')
     })
   })
+
+  test('rejects forbidden methods CONNECT,TRACE,TRACK', function() {
+    ['CONNECT','TRACE','TRACK'].forEach(function(method) {
+      assert.throw(function() {
+        return fetch('/request', {
+          method: method,
+        })
+      }, TypeError)
+    });
+  })
+
+  test('rejects methods that do not exist in fetch library', function() {
+    assert.throw(function() {
+      return fetch('/request', {
+        method: 'fakemethod',
+      })
+    }, TypeError)
+  })
+
 })
 
 // https://fetch.spec.whatwg.org/#atomic-http-redirect-handling

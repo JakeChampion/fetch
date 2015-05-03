@@ -212,7 +212,10 @@
 
   function normalizeMethod(method) {
     var upcased = method.toUpperCase()
-    return (methods.indexOf(upcased) > -1) ? upcased : method
+    if (methods.indexOf(upcased) === -1) {
+      throw new TypeError('Method not allowed, must be one of ' + methods.join(', '))
+    }
+    return upcased;
   }
 
   function Request(url, options) {
