@@ -11,6 +11,7 @@
     "examples/",
     "Makefile",
     "package.json",
+    "script/",
     "test/"
   ]
 }
