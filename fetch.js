@@ -125,22 +125,23 @@
   function Body() {
     this.bodyUsed = false
 
-    if (support.blob) {
-      this._initBody = function(body) {
-        this._bodyInit = body
-        if (typeof body === 'string') {
-          this._bodyText = body
-        } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
-          this._bodyBlob = body
-        } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
-          this._bodyFormData = body
-        } else if (!body) {
-          this._bodyText = ''
-        } else {
-          throw new Error('unsupported BodyInit type')
-        }
-      }
 
+    this._initBody = function(body) {
+      this._bodyInit = body
+      if (typeof body === 'string') {
+        this._bodyText = body
+      } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
+        this._bodyBlob = body
+      } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
+        this._bodyFormData = body
+      } else if (!body) {
+        this._bodyText = ''
+      } else {
+        throw new Error('unsupported BodyInit type')
+      }
+    }
+
+    if (support.blob) {
       this.blob = function() {
         var rejected = consumed(this)
         if (rejected) {
@@ -175,19 +176,6 @@
         }
       }
     } else {
-      this._initBody = function(body) {
-        this._bodyInit = body
-        if (typeof body === 'string') {
-          this._bodyText = body
-        } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
-          this._bodyFormData = body
-        } else if (!body) {
-          this._bodyText = ''
-        } else {
-          throw new Error('unsupported BodyInit type')
-        }
-      }
-
       this.text = function() {
         var rejected = consumed(this)
         return rejected ? rejected : Promise.resolve(this._bodyText)
