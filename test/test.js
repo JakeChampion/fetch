@@ -1,5 +1,5 @@
 function readBlobAsText(blob) {
-  if (typeof FileReader === 'function') {
+  if ('FileReader' in self) {
     return new Promise(function(resolve, reject) {
       var reader = new FileReader()
       reader.onload = function() {
@@ -10,7 +10,7 @@ function readBlobAsText(blob) {
       }
       reader.readAsText(blob)
     })
-  } else if (typeof FileReaderSync === 'function') {
+  } else if ('FileReaderSync' in self) {
     return new FileReaderSync().readAsText(blob)
   } else {
     throw new ReferenceError('FileReader is not defined')
@@ -18,7 +18,7 @@ function readBlobAsText(blob) {
 }
 
 function readBlobAsBytes(blob) {
-  if (typeof FileReader === 'function') {
+  if ('FileReader' in self) {
     return new Promise(function(resolve, reject) {
       var reader = new FileReader()
       reader.onload = function() {
@@ -30,7 +30,7 @@ function readBlobAsBytes(blob) {
       }
       reader.readAsArrayBuffer(blob)
     })
-  } else if (typeof FileReaderSync === 'function') {
+  } else if ('FileReaderSync' in self) {
     return new FileReaderSync().readAsArrayBuffer(blob)
   } else {
     throw new ReferenceError('FileReader is not defined')
