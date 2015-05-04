@@ -8,7 +8,7 @@ port=3900
 while lsof -i :$((++port)) >/dev/null; do true; done
 
 # Spin a test server in the background
-node ./test/server.js $port &>/dev/null &
+node ./script/server $port &>/dev/null &
 server_pid=$!
 trap "kill $server_pid" INT EXIT
 
