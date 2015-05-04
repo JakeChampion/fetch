@@ -203,20 +203,29 @@
     return (methods.indexOf(upcased) > -1) ? upcased : method
   }
 
-  function Request(url, options) {
+  function Request(input, options) {
     options = options || {}
-    this.url = url
+    if (input instanceof Request) {
+      if (input.bodyUsed === true) {
+        throw new TypeError('Body has already been used')
+      }
+    }
+    else {
+      input = {url: input}
+    }
 
-    this.credentials = options.credentials || 'omit'
-    this.headers = new Headers(options.headers)
-    this.method = normalizeMethod(options.method || 'GET')
-    this.mode = options.mode || null
+    this.url = input.url
+    this.credentials = options.credentials || input.credentials || 'omit'
+    this.headers = new Headers(options.headers || input.headers)
+    this.method = normalizeMethod(options.method || input.method || 'GET')
+    this.mode = options.mode || input.mode || null
     this.referrer = null
 
-    if ((this.method === 'GET' || this.method === 'HEAD') && options.body) {
+    var body = options.body || input._bodyInit
+    if ((this.method === 'GET' || this.method === 'HEAD') && body) {
       throw new TypeError('Body not allowed for GET or HEAD requests')
     }
-    this._initBody(options.body)
+    this._initBody(body)
   }
 
   function decode(body) {
@@ -325,8 +334,8 @@
   self.Request = Request;
   self.Response = Response;
 
-  self.fetch = function (url, options) {
-    return new Request(url, options).fetch()
+  self.fetch = function (input, options) {
+    return new Request(input, options).fetch()
   }
   self.fetch.polyfill = true
 })();
