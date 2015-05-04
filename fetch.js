@@ -119,7 +119,8 @@
         return false
       }
     })(),
-    formData: 'FormData' in self
+    formData: 'FormData' in self,
+    XDomainRequest: 'XDomainRequest' in self
   }
 
   function Body() {
@@ -248,8 +249,20 @@
     var self = this
 
     return new Promise(function(resolve, reject) {
-      var xhr = new XMLHttpRequest()
-      if (self.credentials === 'cors') {
+      var legacyCors = false;
+      if (support.XDomainRequest) {
+        var origin = location.protocol + '//' + location.host;
+        if (!/^\/[^\/]/.test(self.url)) { // exclude relative urls
+          legacyCors = (/^\/\//.test(self.url) ? location.protocol + self.url : self.url).substring(0, origin.length) !== origin;
+        }
+      }
+      var xhr = legacyCors ? new XDomainRequest() : new XMLHttpRequest()
+
+      if (legacyCors) {
+        xhr.getAllResponseHeaders = function() {
+          return 'Content-Type: '+xhr.contentType;
+        };
+      } else if (self.credentials === 'cors') {
         xhr.withCredentials = true;
       }
 
@@ -268,6 +281,11 @@
 
       xhr.onload = function() {
         var status = (xhr.status === 1223) ? 204 : xhr.status
+
+        // If XDomainRequest there is no status code so just hope for the best...
+        if (legacyCors) {
+          status = 200;
+        }
         if (status < 100 || status > 599) {
           reject(new TypeError('Network request failed'))
           return
@@ -298,7 +316,15 @@
         })
       })
 
-      xhr.send(typeof self._bodyInit === 'undefined' ? null : self._bodyInit)
+      var send = xhr.send.bind(xhr, typeof self._bodyInit === 'undefined' ? null : self._bodyInit)
+      if (legacyCors) {
+        xhr.onprogress = xhr.onprogress || function () {}
+        setTimeout(function () {
+          send()
+        })
+      } else {
+        send()
+      }
     })
   }
 

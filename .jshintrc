@@ -17,5 +17,6 @@
   "esnext": true,
   "eqnull": true,
   "browser": true,
-  "worker": true
+  "worker": true,
+  "wsh": true
 }
