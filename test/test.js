@@ -13,7 +13,7 @@ function readBlobAsText(blob) {
   } else if (typeof FileReaderSync === 'function') {
     return new FileReaderSync().readAsText(blob)
   } else {
-    throw new ReferenceError("FileReader is not defined")
+    throw new ReferenceError('FileReader is not defined')
   }
 }
 
@@ -33,7 +33,7 @@ function readBlobAsBytes(blob) {
   } else if (typeof FileReaderSync === 'function') {
     return new FileReaderSync().readAsArrayBuffer(blob)
   } else {
-    throw new ReferenceError("FileReader is not defined")
+    throw new ReferenceError('FileReader is not defined')
   }
 }
 
