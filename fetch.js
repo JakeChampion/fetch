@@ -244,7 +244,7 @@
     return head
   }
 
-  Request.prototype.fetch = function() {
+  Request.prototype._fetch = function() {
     var self = this
 
     return new Promise(function(resolve, reject) {
@@ -325,8 +325,14 @@
   self.Request = Request;
   self.Response = Response;
 
-  self.fetch = function (url, options) {
-    return new Request(url, options).fetch()
+  self.fetch = function (input, init) {
+    var request
+    if (Request.prototype.isPrototypeOf(input)) {
+      request = input
+    } else {
+      request = new Request(input, init)
+    }
+    return request._fetch()
   }
   self.fetch.polyfill = true
 })();

@@ -146,6 +146,22 @@ suite('Request', function() {
     })
   })
 
+  test('fetch request', function() {
+    var request = new Request('/request', {
+      headers: {
+        'Accept': 'application/json',
+        'X-Test': '42'
+      }
+    })
+
+    return fetch(request).then(function(response) {
+      return response.json()
+    }).then(function(json) {
+      assert.equal(json.headers['accept'], 'application/json')
+      assert.equal(json.headers['x-test'], '42')
+    })
+  })
+
   test('construct with url', function() {
     var request = new Request('https://fetch.spec.whatwg.org/')
     assert.equal(request.url, 'https://fetch.spec.whatwg.org/')
