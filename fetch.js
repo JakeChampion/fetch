@@ -318,6 +318,10 @@
         xhr.withCredentials = true
       }
 
+      if (self.credentials === 'cors') {
+        xhr.withCredentials = true;
+      }
+
       if ('responseType' in xhr && support.blob) {
         xhr.responseType = 'blob'
       }
