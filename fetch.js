@@ -278,9 +278,6 @@
 
     return new Promise(function(resolve, reject) {
       var xhr = new XMLHttpRequest()
-      if (request.credentials === 'cors') {
-        xhr.withCredentials = true;
-      }
 
       function responseURL() {
         if ('responseURL' in xhr) {
@@ -316,6 +313,12 @@
       }
 
       xhr.open(request.method, request.url, true)
+
+      // Note: 'cors' credentials value is nonstandard and accepted for
+      // backwards compatibility with old versions of this polyfill.
+      if (request.credentials === 'cors' || request.credentials === 'include') {
+        xhr.withCredentials = true;
+      }
 
       if ('responseType' in xhr && support.blob) {
         xhr.responseType = 'blob'
