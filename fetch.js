@@ -314,10 +314,8 @@
 
       xhr.open(request.method, request.url, true)
 
-      // Note: 'cors' credentials value is nonstandard and accepted for
-      // backwards compatibility with old versions of this polyfill.
-      if (request.credentials === 'cors' || request.credentials === 'include') {
-        xhr.withCredentials = true;
+      if (request.credentials === 'include') {
+        xhr.withCredentials = true
       }
 
       if ('responseType' in xhr && support.blob) {
