@@ -140,18 +140,21 @@ fetch('/users')
 
 The `Response` object has a URL attribute for the final responded resource.
 Usually this is the same as the `Request` url, but in the case of a redirect,
-its all transparent. Newer versions of XHR include a `responseURL` attribute
-that returns this value. But not every browser supports this. The compromise
-requires setting a special server side header to tell the browser what URL it
-just requested (yeah, I know browsers).
+its all transparent. Newer versions of XHR* include a `responseURL` attribute
+that returns this value. But not every browser supports this.
+
+The compromise requires setting a special server side header to tell the 
+browser what URL it just requested (yeah, I know browsers).
 
 ``` ruby
 response.headers['X-Request-URL'] = request.url
 ```
 
-If you want `response.url` to be reliable, you'll want to set this header. The
-day that you ditch this polyfill and use native fetch only, you can remove the
-header hack.
+If you want `response.url` to be reliable, you'll want to set this header. 
+Set it to the full url, including query params. The day that you ditch 
+this polyfill and use native fetch only, you can remove the header hack.
+
+* [Firefox 32 and Chrome 37](http://stackoverflow.com/questions/8056277/how-to-get-response-url-in-xmlhttprequest)
 
 ## Browser Support
 
