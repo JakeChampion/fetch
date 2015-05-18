@@ -1,9 +1,20 @@
-(function() {
+;(function(root, factory) {
   'use strict';
 
-  if (self.fetch) {
+  if (root.fetch) {
     return
   }
+
+  if (typeof define === 'function' && define.amd) {
+    define(factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.fetch = factory();
+  }
+
+})(this, function() {
+  'use strict';
 
   function normalizeName(name) {
     if (typeof name !== 'string') {
@@ -267,7 +278,7 @@
   self.Request = Request;
   self.Response = Response;
 
-  self.fetch = function(input, init) {
+  var fetch = function(input, init) {
     // TODO: Request constructor should accept input, init
     var request
     if (Request.prototype.isPrototypeOf(input) && !init) {
@@ -331,5 +342,7 @@
       xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
     })
   }
-  self.fetch.polyfill = true
-})();
+  fetch.polyfill = true
+
+  return fetch;
+});
