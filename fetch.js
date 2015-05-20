@@ -331,6 +331,7 @@
       var send = xhr.send.bind(xhr, typeof self._bodyInit === 'undefined' ? null : self._bodyInit)
       if (legacyCors) {
         xhr.onprogress = xhr.onprogress || function () {}
+        xhr.ontimeout = xhr.ontimeout || function () {}
         setTimeout(function () {
           send()
         })
