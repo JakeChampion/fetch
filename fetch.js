@@ -72,10 +72,10 @@
     this.map[normalizeName(name)] = [normalizeValue(value)]
   }
 
-  Headers.prototype.forEach = function(callback) {
+  Headers.prototype.forEach = function(callback, thisArg) {
     Object.getOwnPropertyNames(this.map).forEach(function(name) {
       this.map[name].forEach(function(value) {
-        callback(value, name, this)
+        callback.call(thisArg, value, name, this)
       }, this)
     }, this)
   }

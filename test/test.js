@@ -144,6 +144,13 @@ suite('Headers', function() {
     assert.deepEqual({key: 'accept', value: 'text/plain', object: headers}, results[1])
     assert.deepEqual({key: 'content-type', value: 'text/html', object: headers}, results[2])
   })
+  test('forEach accepts second thisArg argument', function() {
+    var headers = new Headers({'Accept': 'application/json'})
+    var thisArg = 42
+    headers.forEach(function() {
+      assert.equal(this, thisArg)
+    }, thisArg)
+  })
  })
 
 // https://fetch.spec.whatwg.org/#request-class
