@@ -25,18 +25,15 @@
   function Headers(headers) {
     this.map = {}
 
-    var self = this
     if (headers instanceof Headers) {
-      headers.forEach(function(name, values) {
-        values.forEach(function(value) {
-          self.append(name, value)
-        })
-      })
+      headers.forEach(function(value, name) {
+        this.append(name, value)
+      }, this)
 
     } else if (headers) {
       Object.getOwnPropertyNames(headers).forEach(function(name) {
-        self.append(name, headers[name])
-      })
+        this.append(name, headers[name])
+      }, this)
     }
   }
 
