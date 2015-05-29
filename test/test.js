@@ -57,6 +57,16 @@ test.skip('rejects promise for network error', function() {
 
 // https://fetch.spec.whatwg.org/#headers-class
 suite('Headers', function() {
+  test('constructor copies headers', function() {
+    var original = new Headers()
+    original.append('Accept', 'application/json')
+    original.append('Accept', 'text/plain')
+    original.append('Content-Type', 'text/html')
+
+    var headers = new Headers(original)
+    assert.deepEqual(['application/json', 'text/plain'], headers.getAll('Accept'))
+    assert.deepEqual(['text/html'], headers.getAll('Content-Type'))
+  })
   test('headers are case insensitive', function() {
     var headers = new Headers({'Accept': 'application/json'})
     assert.equal(headers.get('ACCEPT'), 'application/json')
