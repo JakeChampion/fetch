@@ -74,7 +74,9 @@
 
   Headers.prototype.forEach = function(callback) {
     Object.getOwnPropertyNames(this.map).forEach(function(name) {
-      callback(name, this.map[name])
+      this.map[name].forEach(function(value) {
+        callback(value, name, this)
+      }, this)
     }, this)
   }
 
@@ -320,10 +322,8 @@
         xhr.responseType = 'blob'
       }
 
-      request.headers.forEach(function(name, values) {
-        values.forEach(function(value) {
-          xhr.setRequestHeader(name, value)
-        })
+      request.headers.forEach(function(value, name) {
+        xhr.setRequestHeader(name, value)
       })
 
       xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
