@@ -128,6 +128,29 @@ suite('Headers', function() {
       headers.set({field: 'value'}, 'application/json');
     }, TypeError)
   })
+  test('is iterable with forEach', function() {
+    var headers = new Headers()
+    headers.append('Accept', 'application/json')
+    headers.append('Accept', 'text/plain')
+    headers.append('Content-Type', 'text/html')
+
+    var results = []
+    headers.forEach(function(value, key, object) {
+      results.push({value: value, key: key, object: object})
+    })
+
+    assert.equal(results.length, 3)
+    assert.deepEqual({key: 'accept', value: 'application/json', object: headers}, results[0])
+    assert.deepEqual({key: 'accept', value: 'text/plain', object: headers}, results[1])
+    assert.deepEqual({key: 'content-type', value: 'text/html', object: headers}, results[2])
+  })
+  test('forEach accepts second thisArg argument', function() {
+    var headers = new Headers({'Accept': 'application/json'})
+    var thisArg = 42
+    headers.forEach(function() {
+      assert.equal(this, thisArg)
+    }, thisArg)
+  })
  })
 
 // https://fetch.spec.whatwg.org/#request-class

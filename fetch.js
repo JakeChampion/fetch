@@ -72,12 +72,12 @@
     this.map[normalizeName(name)] = [normalizeValue(value)]
   }
 
-  // Instead of iterable for now.
-  Headers.prototype.forEach = function(callback) {
-    var self = this
+  Headers.prototype.forEach = function(callback, thisArg) {
     Object.getOwnPropertyNames(this.map).forEach(function(name) {
-      callback(name, self.map[name])
-    })
+      this.map[name].forEach(function(value) {
+        callback.call(thisArg, value, name, this)
+      }, this)
+    }, this)
   }
 
   function consumed(body) {
@@ -322,10 +322,8 @@
         xhr.responseType = 'blob'
       }
 
-      request.headers.forEach(function(name, values) {
-        values.forEach(function(value) {
-          xhr.setRequestHeader(name, value)
-        })
+      request.headers.forEach(function(value, name) {
+        xhr.setRequestHeader(name, value)
       })
 
       xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
