@@ -72,12 +72,10 @@
     this.map[normalizeName(name)] = [normalizeValue(value)]
   }
 
-  // Instead of iterable for now.
   Headers.prototype.forEach = function(callback) {
-    var self = this
     Object.getOwnPropertyNames(this.map).forEach(function(name) {
-      callback(name, self.map[name])
-    })
+      callback(name, this.map[name])
+    }, this)
   }
 
   function consumed(body) {
