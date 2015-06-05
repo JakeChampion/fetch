@@ -186,7 +186,9 @@
     }
 
     this.json = function() {
-      return this.text().then(JSON.parse)
+      return this.text().then(function(text) {
+        return JSON.parse(text)
+      })
     }
 
     return this
