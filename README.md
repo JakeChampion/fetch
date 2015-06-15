@@ -123,27 +123,29 @@ ways that bear keeping in mind:
 
 #### Handling HTTP error statuses
 
-This causes `fetch` to behave like jQuery's `$.ajax` by rejecting the `Promise`
-on HTTP failure status codes like 404, 500, etc. The response `Promise` is
-resolved only on successful, 200 level, status codes.
+To have `fetch` Promise reject on HTTP error statuses, i.e. on any non-2xx
+status, define a custom response handler:
 
 ```javascript
-function status(response) {
+function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response
+  } else {
+    var error = new Error(response.statusText)
+    error.response = response
+    throw error
   }
-  throw new Error(response.statusText)
 }
 
-function json(response) {
+function parseJSON(response) {
   return response.json()
 }
 
 fetch('/users')
-  .then(status)
-  .then(json)
-  .then(function(json) {
-    console.log('request succeeded with json response', json)
+  .then(checkStatus)
+  .then(parseJSON)
+  .then(function(data) {
+    console.log('request succeeded with JSON response', data)
   }).catch(function(error) {
     console.log('request failed', error)
   })
