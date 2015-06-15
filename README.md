@@ -168,20 +168,20 @@ preserving the authentication session.
 
 #### Obtaining the Response URL
 
-The `Response` object has a URL attribute for the final responded resource.
-Usually this is the same as the `Request` url, but in the case of a redirect,
-its all transparent. Newer versions of XHR include a `responseURL` attribute
-that returns this value. But not every browser supports this. The compromise
-requires setting a special server side header to tell the browser what URL it
-just requested (yeah, I know browsers).
+Due to limitations of XMLHttpRequest, the `response.url` value might not be
+reliable after HTTP redirects on older browsers.
+
+The solution is to configure the server to set the response HTTP header
+`X-Request-URL` to the current URL after any redirect that might have happened.
+It should be safe to set it unconditionally.
 
 ``` ruby
+# Ruby on Rails controller example
 response.headers['X-Request-URL'] = request.url
 ```
 
-If you want `response.url` to be reliable, you'll want to set this header. The
-day that you ditch this polyfill and use native fetch only, you can remove the
-header hack.
+This server workaround is necessary if you need reliable `response.url` in
+Firefox < 32, Chrome < 37, Safari, or IE.
 
 ## Browser Support
 
