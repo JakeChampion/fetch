@@ -98,13 +98,13 @@ fetch('/users', {
 ```javascript
 var input = document.querySelector('input[type="file"]')
 
-var form = new FormData()
-form.append('file', input.files[0])
-form.append('user', 'hubot')
+var data = new FormData()
+data.append('file', input.files[0])
+data.append('user', 'hubot')
 
 fetch('/avatars', {
   method: 'post',
-  body: form
+  body: data
 })
 ```
 
