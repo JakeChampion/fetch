@@ -71,7 +71,7 @@ fetch('/users.json').then(function(response) {
 ```javascript
 var form = document.querySelector('form')
 
-fetch('/query', {
+fetch('/create', {
   method: 'post',
   body: new FormData(form)
 })
