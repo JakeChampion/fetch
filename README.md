@@ -108,7 +108,20 @@ fetch('/avatars', {
 })
 ```
 
-### Success and error handlers
+### Caveats
+
+The `fetch` specification differs from other ajax implementations in mainly two
+ways that bear keeping in mind:
+
+* The Promise returned from `fetch()` **won't reject on HTTP error status**
+  even if the response is a HTTP 404 or 500. Instead, it will resolve normally,
+  and it will only reject on network failure, or if anything prevented the
+  request from completing.
+
+* By default, `fetch` **won't send any cookies** to the server, resulting in
+  unauthenticated requests if the site relies on maintaining a user session.
+
+#### Handling HTTP error statuses
 
 This causes `fetch` to behave like jQuery's `$.ajax` by rejecting the `Promise`
 on HTTP failure status codes like 404, 500, etc. The response `Promise` is
@@ -136,7 +149,22 @@ fetch('/users')
   })
 ```
 
-### Response URL caveat
+#### Sending cookies
+
+To have `fetch` automatically use cookies for the current domain, the
+`credentials` option must be provided:
+
+```javascript
+fetch('/users', {
+  credentials: 'same-origin'
+})
+```
+
+This option makes `fetch` behave similar to XMLHttpRequest with regards to
+cookies. Otherwise, cookies won't get sent, resulting in these requests not
+preserving the authentication session.
+
+#### Obtaining the Response URL
 
 The `Response` object has a URL attribute for the final responded resource.
 Usually this is the same as the `Request` url, but in the case of a redirect,
