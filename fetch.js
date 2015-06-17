@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  if (self.fetch) {
+  if (typeof self === 'undefined' || self.fetch) {
     return
   }
 
