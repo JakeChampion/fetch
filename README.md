@@ -110,8 +110,8 @@ fetch('/avatars', {
 
 ### Caveats
 
-The `fetch` specification differs from other ajax implementations in mainly two
-ways that bear keeping in mind:
+The `fetch` specification differs from `jQuery.ajax()` in mainly two ways that
+bear keeping in mind:
 
 * The Promise returned from `fetch()` **won't reject on HTTP error status**
   even if the response is a HTTP 404 or 500. Instead, it will resolve normally,
