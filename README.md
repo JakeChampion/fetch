@@ -153,8 +153,8 @@ fetch('/users')
 
 #### Sending cookies
 
-To have `fetch` automatically use cookies for the current domain, the
-`credentials` option must be provided:
+To automatically send cookies for the current domain, the `credentials` option
+must be provided:
 
 ```javascript
 fetch('/users', {
