@@ -166,6 +166,16 @@ This option makes `fetch` behave similar to XMLHttpRequest with regards to
 cookies. Otherwise, cookies won't get sent, resulting in these requests not
 preserving the authentication session.
 
+#### Receiving cookies
+
+Like with XMLHttpRequest, the `Set-Cookie` response header returned from the
+server is a [forbidden header name][] and therefore can't be programatically
+read with `response.headers.get()`. Instead, it's the browser's responsibility
+to handle new cookies being set (if applicable to the current URL). Unless they
+are HTTP-only, new cookies will be available through `document.cookie`.
+
+  [forbidden header name]: https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name
+
 #### Obtaining the Response URL
 
 Due to limitations of XMLHttpRequest, the `response.url` value might not be
