@@ -71,7 +71,7 @@ fetch('/users.json').then(function(response) {
 ```javascript
 var form = document.querySelector('form')
 
-fetch('/query', {
+fetch('/users', {
   method: 'post',
   body: new FormData(form)
 })
@@ -98,60 +98,100 @@ fetch('/users', {
 ```javascript
 var input = document.querySelector('input[type="file"]')
 
-var form = new FormData()
-form.append('file', input.files[0])
-form.append('user', 'hubot')
+var data = new FormData()
+data.append('file', input.files[0])
+data.append('user', 'hubot')
 
 fetch('/avatars', {
   method: 'post',
-  body: form
+  body: data
 })
 ```
 
-### Success and error handlers
+### Caveats
 
-This causes `fetch` to behave like jQuery's `$.ajax` by rejecting the `Promise`
-on HTTP failure status codes like 404, 500, etc. The response `Promise` is
-resolved only on successful, 200 level, status codes.
+The `fetch` specification differs from `jQuery.ajax()` in mainly two ways that
+bear keeping in mind:
+
+* The Promise returned from `fetch()` **won't reject on HTTP error status**
+  even if the response is a HTTP 404 or 500. Instead, it will resolve normally,
+  and it will only reject on network failure, or if anything prevented the
+  request from completing.
+
+* By default, `fetch` **won't send any cookies** to the server, resulting in
+  unauthenticated requests if the site relies on maintaining a user session.
+
+#### Handling HTTP error statuses
+
+To have `fetch` Promise reject on HTTP error statuses, i.e. on any non-2xx
+status, define a custom response handler:
 
 ```javascript
-function status(response) {
+function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response
+  } else {
+    var error = new Error(response.statusText)
+    error.response = response
+    throw error
   }
-  throw new Error(response.statusText)
 }
 
-function json(response) {
+function parseJSON(response) {
   return response.json()
 }
 
 fetch('/users')
-  .then(status)
-  .then(json)
-  .then(function(json) {
-    console.log('request succeeded with json response', json)
+  .then(checkStatus)
+  .then(parseJSON)
+  .then(function(data) {
+    console.log('request succeeded with JSON response', data)
   }).catch(function(error) {
     console.log('request failed', error)
   })
 ```
 
-### Response URL caveat
+#### Sending cookies
 
-The `Response` object has a URL attribute for the final responded resource.
-Usually this is the same as the `Request` url, but in the case of a redirect,
-its all transparent. Newer versions of XHR include a `responseURL` attribute
-that returns this value. But not every browser supports this. The compromise
-requires setting a special server side header to tell the browser what URL it
-just requested (yeah, I know browsers).
+To automatically send cookies for the current domain, the `credentials` option
+must be provided:
+
+```javascript
+fetch('/users', {
+  credentials: 'same-origin'
+})
+```
+
+This option makes `fetch` behave similar to XMLHttpRequest with regards to
+cookies. Otherwise, cookies won't get sent, resulting in these requests not
+preserving the authentication session.
+
+#### Receiving cookies
+
+Like with XMLHttpRequest, the `Set-Cookie` response header returned from the
+server is a [forbidden header name][] and therefore can't be programatically
+read with `response.headers.get()`. Instead, it's the browser's responsibility
+to handle new cookies being set (if applicable to the current URL). Unless they
+are HTTP-only, new cookies will be available through `document.cookie`.
+
+  [forbidden header name]: https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name
+
+#### Obtaining the Response URL
+
+Due to limitations of XMLHttpRequest, the `response.url` value might not be
+reliable after HTTP redirects on older browsers.
+
+The solution is to configure the server to set the response HTTP header
+`X-Request-URL` to the current URL after any redirect that might have happened.
+It should be safe to set it unconditionally.
 
 ``` ruby
+# Ruby on Rails controller example
 response.headers['X-Request-URL'] = request.url
 ```
 
-If you want `response.url` to be reliable, you'll want to set this header. The
-day that you ditch this polyfill and use native fetch only, you can remove the
-header hack.
+This server workaround is necessary if you need reliable `response.url` in
+Firefox < 32, Chrome < 37, Safari, or IE.
 
 ## Browser Support
 
