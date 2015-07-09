@@ -1,5 +1,8 @@
 # window.fetch polyfill
 
+This project adheres to the [Open Code of Conduct][code-of-conduct]. By participating, you are expected to uphold this code.
+[code-of-conduct]: http://todogroup.org/opencodeofconduct/#fetch/opensource@github.com
+
 The global `fetch` function is an easier way to make web requests and handle
 responses than using an XMLHttpRequest. This polyfill is written as closely as
 possible to the standard Fetch specification at https://fetch.spec.whatwg.org.
