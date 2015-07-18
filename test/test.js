@@ -202,6 +202,82 @@ suite('Request', function() {
     assert.equal(request.url, 'https://fetch.spec.whatwg.org/')
   })
 
+  test('construct with Request', function() {
+    var request1 = new Request('https://fetch.spec.whatwg.org/', {
+      method: 'post',
+      body: 'I work out',
+      headers: {
+        accept: 'application/json',
+        'Content-Type': 'text/plain'
+      }
+    })
+    var request2 = new Request(request1)
+
+    return request2.text().then(function(body2) {
+      assert.equal(body2, 'I work out')
+      assert.equal(request2.method, 'POST')
+      assert.equal(request2.url, 'https://fetch.spec.whatwg.org/')
+      assert.equal(request2.headers.get('accept'), 'application/json')
+      assert.equal(request2.headers.get('content-type'), 'text/plain')
+
+      return request1.text().then(function() {
+        assert(false, "original request's body should have been consumed")
+      }, function(error) {
+        assert(error instanceof TypeError, "expected TypeError for already read body")
+      })
+    })
+  })
+
+  test('construct with Request and override headers', function() {
+    var request1 = new Request('https://fetch.spec.whatwg.org/', {
+      method: 'post',
+      body: 'I work out',
+      headers: {
+        accept: 'application/json',
+        'Content-Type': 'text/plain'
+      }
+    })
+    var request2 = new Request(request1, {
+      headers: { 'x-test': '42' }
+    })
+
+    assert.equal(request2.headers.get('accept'), undefined)
+    assert.equal(request2.headers.get('content-type'), undefined)
+    assert.equal(request2.headers.get('x-test'), '42')
+  })
+
+  test('construct with Request and override body', function() {
+    var request1 = new Request('https://fetch.spec.whatwg.org/', {
+      method: 'post',
+      body: 'I work out',
+      headers: {
+        'Content-Type': 'text/plain'
+      }
+    })
+    var request2 = new Request(request1, {
+      body: '{"wiggles": 5}',
+      headers: { 'Content-Type': 'application/json' }
+    })
+
+    return request2.json().then(function(data) {
+      assert.equal(data.wiggles, 5)
+      assert.equal(request2.headers.get('content-type'), 'application/json')
+    })
+  })
+
+  test('construct with used Request body', function() {
+    var request1 = new Request('https://fetch.spec.whatwg.org/', {
+      method: 'post',
+      body: 'I work out'
+    })
+
+    return request1.text().then(function() {
+      assert.throws(function() {
+        new Request(request1)
+      }, TypeError)
+    })
+  })
+
   // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
   suite('BodyInit extract', function() {
     ;(Request.prototype.blob ? suite : suite.skip)('type Blob', function() {
