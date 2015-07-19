@@ -9,6 +9,7 @@ env:
   matrix:
     - PHANTOMJS=1
     - SAUCE_PLATFORM="Windows 7" SAUCE_BROWSER="googlechrome" SAUCE_VERSION=""
+    - SAUCE_PLATFORM="Windows 7" SAUCE_BROWSER="firefox" SAUCE_VERSION=""
     - SAUCE_PLATFORM="Windows 7" SAUCE_BROWSER="internet explorer" SAUCE_VERSION="11"
     - SAUCE_PLATFORM="Windows 7" SAUCE_BROWSER="internet explorer" SAUCE_VERSION="10"
     - SAUCE_PLATFORM="Windows 7" SAUCE_BROWSER="internet explorer" SAUCE_VERSION="9"
