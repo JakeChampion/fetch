@@ -507,7 +507,11 @@ suite('Body mixin', function() {
         response.formData()
         return response.formData()
       }).catch(function(error) {
-        assert(error instanceof TypeError, 'Promise rejected after body consumed')
+        if (error instanceof chai.AssertionError) {
+          throw error
+        } else {
+          assert(error instanceof TypeError, 'Promise rejected after body consumed')
+        }
       })
     })
 
