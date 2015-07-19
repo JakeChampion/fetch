@@ -128,7 +128,9 @@ suite('Headers', function() {
   test('converts field value to string on set and get', function() {
     var headers = new Headers()
     headers.set('Content-Type', 1)
+    headers.set('X-CSRF-Token', undefined);
     assert.equal(headers.get('Content-Type'), '1')
+    assert.equal(headers.get('X-CSRF-Token'), 'undefined')
   })
   test('throws TypeError on invalid character in field name', function() {
     assert.throws(function() { new Headers({'<Accept>': ['application/json']}) }, TypeError)
