@@ -209,7 +209,9 @@
       }
       this.url = input.url
       this.credentials = input.credentials
-      if (!options.headers) this.headers = new Headers(input.headers)
+      if (!options.headers) {
+        this.headers = new Headers(input.headers)
+      }
       this.method = input.method
       this.mode = input.mode
       if (!body) {
@@ -221,7 +223,9 @@
     }
 
     this.credentials = options.credentials || this.credentials || 'omit'
-    if (options.headers || !this.headers) this.headers = new Headers(options.headers)
+    if (options.headers || !this.headers) {
+      this.headers = new Headers(options.headers)
+    }
     this.method = normalizeMethod(options.method || this.method || 'GET')
     this.mode = options.mode || this.mode || null
     this.referrer = null

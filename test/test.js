@@ -221,9 +221,9 @@ suite('Request', function() {
       assert.equal(request2.headers.get('content-type'), 'text/plain')
 
       return request1.text().then(function() {
-        assert(false, "original request's body should have been consumed")
+        assert(false, 'original request body should have been consumed')
       }, function(error) {
-        assert(error instanceof TypeError, "expected TypeError for already read body")
+        assert(error instanceof TypeError, 'expected TypeError for already read body')
       })
     })
   })
