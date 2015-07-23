@@ -57,6 +57,16 @@ test.skip('rejects promise for network error', function() {
 
 // https://fetch.spec.whatwg.org/#headers-class
 suite('Headers', function() {
+  test('constructor copies headers', function() {
+    var original = new Headers()
+    original.append('Accept', 'application/json')
+    original.append('Accept', 'text/plain')
+    original.append('Content-Type', 'text/html')
+
+    var headers = new Headers(original)
+    assert.deepEqual(['application/json', 'text/plain'], headers.getAll('Accept'))
+    assert.deepEqual(['text/html'], headers.getAll('Content-Type'))
+  })
   test('headers are case insensitive', function() {
     var headers = new Headers({'Accept': 'application/json'})
     assert.equal(headers.get('ACCEPT'), 'application/json')
@@ -118,7 +128,9 @@ suite('Headers', function() {
   test('converts field value to string on set and get', function() {
     var headers = new Headers()
     headers.set('Content-Type', 1)
+    headers.set('X-CSRF-Token', undefined);
     assert.equal(headers.get('Content-Type'), '1')
+    assert.equal(headers.get('X-CSRF-Token'), 'undefined')
   })
   test('throws TypeError on invalid character in field name', function() {
     assert.throws(function() { new Headers({'<Accept>': ['application/json']}) }, TypeError)
@@ -127,6 +139,29 @@ suite('Headers', function() {
       var headers = new Headers();
       headers.set({field: 'value'}, 'application/json');
     }, TypeError)
+  })
+  test('is iterable with forEach', function() {
+    var headers = new Headers()
+    headers.append('Accept', 'application/json')
+    headers.append('Accept', 'text/plain')
+    headers.append('Content-Type', 'text/html')
+
+    var results = []
+    headers.forEach(function(value, key, object) {
+      results.push({value: value, key: key, object: object})
+    })
+
+    assert.equal(results.length, 3)
+    assert.deepEqual({key: 'accept', value: 'application/json', object: headers}, results[0])
+    assert.deepEqual({key: 'accept', value: 'text/plain', object: headers}, results[1])
+    assert.deepEqual({key: 'content-type', value: 'text/html', object: headers}, results[2])
+  })
+  test('forEach accepts second thisArg argument', function() {
+    var headers = new Headers({'Accept': 'application/json'})
+    var thisArg = 42
+    headers.forEach(function() {
+      assert.equal(this, thisArg)
+    }, thisArg)
   })
  })
 
