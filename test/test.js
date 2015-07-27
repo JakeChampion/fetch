@@ -265,7 +265,7 @@ suite('Request', function() {
     })
   })
 
-  test('construct with used Request body', function() {
+  ;(/Chrome\//.test(navigator.userAgent) ? test.skip : test)('construct with used Request body', function() {
     var request1 = new Request('https://fetch.spec.whatwg.org/', {
       method: 'post',
       body: 'I work out'
