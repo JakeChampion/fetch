@@ -15,7 +15,7 @@ Available on [Bower](http://bower.io) as **fetch**.
 $ bower install fetch
 ```
 
-You'll also need a Promise polyfill for older browsers.
+You'll also need a Promise polyfill for [older browsers](http://caniuse.com/#feat=promises).
 
 ```sh
 $ bower install es6-promise
