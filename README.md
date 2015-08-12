@@ -27,6 +27,13 @@ This can also be installed with `npm`.
 $ npm install whatwg-fetch --save
 ```
 
+You have two options when using the npm module:
+
+```
+require('whatwg-fetch');  // Polyfills self.fetch
+var fetch = require('whatwg-fetch/library');  // Returns an implementation
+```
+
 (For a node.js implementation, try [node-fetch](https://github.com/bitinn/node-fetch))
 
 ## Usage
