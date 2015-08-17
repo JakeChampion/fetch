@@ -27,7 +27,9 @@ This can also be installed with `npm`.
 $ npm install whatwg-fetch --save
 ```
 
-(For a node.js implementation, try [node-fetch](https://github.com/bitinn/node-fetch))
+For a node.js implementation, try [node-fetch](https://github.com/bitinn/node-fetch).
+
+For use with webpack, refer to [Using WebPack with shims and polyfills](http://mts.io/2015/04/08/webpack-shims-polyfills/).
 
 ## Usage
 
