@@ -2,11 +2,12 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <script src="../bower_components/es6-promise/promise.js"></script>
   <script src="../fetch.js"></script>
 </head>
 <body>
   <script>
-    var result = fetch('https://github.com')
+    var result = fetch('some-view.html')
 
     result.then(function(response) {
       console.log('response', response)
