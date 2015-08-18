@@ -1,8 +1,22 @@
-(function() {
+/* global define, module, require */
+(function (global, factory) {
+  'use strict';
+  if (typeof define === 'function' && define.amd) {
+    define(['es6-promise'], function (Promise) {
+      return (global.fetch = factory(global, Promise));
+    });
+  } else if (typeof exports === 'object') {
+    module.exports = factory(global, require('es6-promise').Promise);
+  } else {
+    global.fetch = factory(global, global.Promise);
+  }
+}(this, function (self, Promise) {
+
   'use strict';
 
-  if (self.fetch) {
-    return
+  var hasFetch = 'fetch' in self && self[ 'fetch' ] !== null;
+  if(hasFetch) {
+    return self.fetch;
   }
 
   function normalizeName(name) {
@@ -284,7 +298,7 @@
   self.Request = Request;
   self.Response = Response;
 
-  self.fetch = function(input, init) {
+  function fetch(input, init) {
     var request
     if (Request.prototype.isPrototypeOf(input) && !init) {
       request = input
@@ -345,5 +359,6 @@
       xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
     })
   }
-  self.fetch.polyfill = true
-})();
+  fetch.polyfill = true
+  return fetch;
+}));
