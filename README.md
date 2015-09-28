@@ -163,7 +163,7 @@ must be provided:
 
 ```javascript
 fetch('/users', {
-  credentials: 'same-origin'
+  credentials: 'include'
 })
 ```
 
