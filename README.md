@@ -171,6 +171,15 @@ This option makes `fetch` behave similar to XMLHttpRequest with regards to
 cookies. Otherwise, cookies won't get sent, resulting in these requests not
 preserving the authentication session.
 
+Use the `include` value to send cookies in a [cross-origin resource sharing](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) (CORS) request.
+
+```javascript
+fetch('https://example.com:1234/users', {
+  credentials: 'include'
+})
+```
+
+
 #### Receiving cookies
 
 Like with XMLHttpRequest, the `Set-Cookie` response header returned from the
