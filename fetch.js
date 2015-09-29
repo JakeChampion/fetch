@@ -236,6 +236,27 @@
     this._initBody(body)
   }
 
+  function cloneBody(body) {
+    if (body._bodyText) {
+      return body._bodyText
+    } else if (body._bodyBlob) {
+      return body._bodyBlob
+    } else if (body._bodyFormData) {
+      return body._bodyFormData
+    }
+    return null
+  }
+
+  Request.prototype.clone = function() {
+    return new Request(cloneBody(this), {
+      method: this.method,
+      mode: this.mode,
+      credentials: this.credentials,
+      headers: new Headers(this.headers),
+      url: this.url
+    })
+  }
+
   function decode(body) {
     var form = new FormData()
     body.trim().split('&').forEach(function(bytes) {
@@ -278,6 +299,15 @@
   }
 
   Body.call(Response.prototype)
+
+  Response.prototype.clone = function() {
+    return new Response(cloneBody(this), {
+      status: this.status,
+      statusText: this.statusText,
+      headers: new Headers(this.headers),
+      url: this.url
+    })
+  }
 
   Response.error = function() {
     var response = new Response(null, {status: 0, statusText: ''})

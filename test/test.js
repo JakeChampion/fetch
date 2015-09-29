@@ -385,6 +385,35 @@ suite('Response', function() {
     })
   })
 
+  test('clone text response', function() {
+    var res = new Response('{"foo":"bar"}', {
+      headers: {'content-type': 'application/json'}
+    })
+    var clone = res.clone()
+
+    assert.notEqual(clone.headers, res.headers, 'headers were cloned')
+    assert.equal(clone.headers.get('content-type'), 'application/json')
+
+    return Promise.all([clone.json(), res.json()]).then(function(jsons){
+      assert.deepEqual(jsons[0], jsons[1], 'json of cloned object is the same as original')
+    })
+  })
+
+  ;(Response.prototype.arrayBuffer ? test : test.skip)('clone blob response', function() {
+    return fetch('/binary').then(function(response) {
+      return Promise.all([response.clone().arrayBuffer(), response.arrayBuffer()]).then(function(bufs){
+        bufs.forEach(function(buf){
+          assert(buf instanceof ArrayBuffer, 'buf is an ArrayBuffer instance')
+          assert.equal(buf.byteLength, 256, 'buf.byteLength is correct')
+          var view = new Uint8Array(buf)
+          for (var i = 0; i < 256; i++) {
+            assert.equal(view[i], i)
+          }
+        })
+      })
+    })
+  })
+
   test('error creates error Response', function() {
     var r = Response.error()
     assert(r instanceof Response)
