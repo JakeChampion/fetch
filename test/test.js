@@ -376,6 +376,21 @@ suite('Response', function() {
       return json;
     })
   })
+
+  test('error creates error Response', function() {
+    var r = Response.error()
+    assert(r instanceof Response)
+    assert.equal(r.status, 0)
+    assert.equal(r.statusText, '')
+    assert.equal(r.type, 'error')
+  })
+
+  test('redirect creates redirect Response', function() {
+    var r = Response.redirect('/hello', 301)
+    assert(r instanceof Response);
+    assert.equal(r.status, 301)
+    assert.equal(r.headers.get('Location', '/hello'), '/hello')
+  })
 })
 
 // https://fetch.spec.whatwg.org/#body-mixin
