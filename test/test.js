@@ -372,7 +372,7 @@ suite('Response', function() {
     var r = new Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}});
     assert.equal(r.headers instanceof Headers, true);
     return r.json().then(function(json){
-      assert(json.foo, 'bar');
+      assert.equal(json.foo, 'bar');
       return json;
     })
   })
