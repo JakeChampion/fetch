@@ -376,6 +376,29 @@ suite('Response', function() {
       return json;
     })
   })
+  test('clone text response', function() {
+    var r = new Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}}),
+        clone = r.clone();
+    assert.notEqual(clone.headers, r.headers, 'headers were cloned');
+    assert.equal(clone.headers.get('content-type'), r.headers.get('content-type'), 'header has same value');
+    return Promise.all([clone.json(), r.json()]).then(function(jsons){
+      assert.deepEqual(jsons[0], jsons[1], 'json of cloned object is the same as original');
+    })
+  })
+  ;(Response.prototype.arrayBuffer ? test : test.skip)('clone blob response', function() {
+    return fetch('/binary').then(function(response) {
+      return Promise.all([response.clone().arrayBuffer(), response.arrayBuffer()]).then(function(bufs){
+        bufs.forEach(function(buf){
+          assert(buf instanceof ArrayBuffer, 'buf is an ArrayBuffer instance')
+          assert.equal(buf.byteLength, 256, 'buf.byteLength is correct')
+          var view = new Uint8Array(buf)
+          for (var i = 0; i < 256; i++) {
+            assert.equal(view[i], i)
+          }
+        });
+      })
+    })
+  })
 })
 
 // https://fetch.spec.whatwg.org/#body-mixin
