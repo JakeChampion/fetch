@@ -55,6 +55,14 @@ test.skip('rejects promise for network error', function() {
   })
 })
 
+test('rejects when Request constructor throws', function() {
+  return fetch('/request', { method: 'GET', body: 'invalid' }).then(function() {
+    assert(false, 'Invalid Request init was accepted')
+  }).catch(function(error) {
+    assert(error instanceof TypeError, 'Rejected with Error')
+  })
+})
+
 // https://fetch.spec.whatwg.org/#headers-class
 suite('Headers', function() {
   test('constructor copies headers', function() {
@@ -601,8 +609,7 @@ suite('Methods', function() {
     })
   })
 
-  // TODO: Waiting to verify behavior
-  test.skip('GET with body throws TypeError', function() {
+  test('GET with body throws TypeError', function() {
     assert.throw(function() {
       new Request('', {
         method: 'get',
@@ -611,7 +618,7 @@ suite('Methods', function() {
     }, TypeError)
   })
 
-  test.skip('HEAD with body throws TypeError', function() {
+  test('HEAD with body throws TypeError', function() {
     assert.throw(function() {
       new Request('', {
         method: 'head',
