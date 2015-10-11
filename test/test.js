@@ -394,10 +394,10 @@ suite('Response', function() {
   })
 
   test('redirect creates redirect Response', function() {
-    var r = Response.redirect('/hello', 301)
+    var r = Response.redirect('https://fetch.spec.whatwg.org/', 301)
     assert(r instanceof Response);
     assert.equal(r.status, 301)
-    assert.equal(r.headers.get('Location', '/hello'), '/hello')
+    assert.equal(r.headers.get('Location'), 'https://fetch.spec.whatwg.org/')
   })
 })
 
