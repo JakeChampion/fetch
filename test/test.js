@@ -395,9 +395,10 @@ suite('Response', function() {
 
   test('redirect creates redirect Response', function() {
     var r = Response.redirect('/hello', 301)
+    var expectedUrl = location.protocol + '//' + location.host + '/hello'
     assert(r instanceof Response);
     assert.equal(r.status, 301)
-    assert.equal(r.headers.get('Location', '/hello'), '/hello')
+    assert.deepEqual(r.headers.getAll('Location'), [expectedUrl])
   })
 })
 
