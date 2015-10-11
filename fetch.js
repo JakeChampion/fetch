@@ -292,6 +292,10 @@
       throw new RangeError('Invalid status code')
     }
 
+    var link = document.createElement('a')
+    link.href = url
+    url = link.href.toString()
+
     return new Response(null, {status: status, headers: {location: url}})
   }
 
