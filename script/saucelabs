@@ -9,6 +9,16 @@ node ./script/server $port &>/dev/null &
 server_pid=$!
 trap "kill $server_pid" INT EXIT
 
+make sauce_connect/bin/sc
+sauce_ready="${TMPDIR:-/tmp}/sauce-ready.$$"
+sauce_connect/bin/sc -u "$SAUCE_USERNAME" -k "$SAUCE_ACCESS_KEY" \
+  -i "$TRAVIS_JOB_NUMBER" -l sauce_connect.log -f "$sauce_ready" &>/dev/null &
+sauce_pid=$!
+trap "kill $sauce_pid" INT EXIT
+
+while [ ! -f "$sauce_ready" ]; do sleep .01; done
+rm -f "$sauce_ready"
+
 job=$(./script/saucelabs-start "http://localhost:$port/test/test.html")
 
 while true
