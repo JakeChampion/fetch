@@ -236,17 +236,6 @@
     this._initBody(body)
   }
 
-  function cloneBody(body) {
-    if (body._bodyText) {
-      return body._bodyText
-    } else if (body._bodyBlob) {
-      return body._bodyBlob
-    } else if (body._bodyFormData) {
-      return body._bodyFormData
-    }
-    return null
-  }
-
   Request.prototype.clone = function() {
     return new Request(this)
   }
@@ -295,7 +284,7 @@
   Body.call(Response.prototype)
 
   Response.prototype.clone = function() {
-    return new Response(cloneBody(this), {
+    return new Response(this._bodyInit, {
       status: this.status,
       statusText: this.statusText,
       headers: new Headers(this.headers),
