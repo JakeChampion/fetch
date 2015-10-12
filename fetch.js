@@ -248,13 +248,7 @@
   }
 
   Request.prototype.clone = function() {
-    return new Request(cloneBody(this), {
-      method: this.method,
-      mode: this.mode,
-      credentials: this.credentials,
-      headers: new Headers(this.headers),
-      url: this.url
-    })
+    return new Request(this)
   }
 
   function decode(body) {

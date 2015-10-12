@@ -273,7 +273,7 @@ suite('Request', function() {
     })
   })
 
-  ;(/Chrome\//.test(navigator.userAgent) ? test.skip : test)('construct with used Request body', function() {
+  ;(/Chrome\//.test(navigator.userAgent) && !fetch.polyfill ? test.skip : test)('construct with used Request body', function() {
     var request1 = new Request('https://fetch.spec.whatwg.org/', {
       method: 'post',
       body: 'I work out'
@@ -282,6 +282,36 @@ suite('Request', function() {
     return request1.text().then(function() {
       assert.throws(function() {
         new Request(request1)
+      }, TypeError)
+    })
+  })
+
+  test('clone request', function() {
+    var req = new Request('https://fetch.spec.whatwg.org/', {
+      method: 'post',
+      headers: {'content-type': 'text/plain'},
+      body: 'I work out'
+    })
+    var clone = req.clone()
+
+    assert.equal(clone.method, 'POST')
+    assert.equal(clone.headers.get('content-type'), 'text/plain')
+    assert.notEqual(clone.headers, req.headers)
+
+    return clone.text().then(function(body) {
+      assert.equal(body, 'I work out')
+    })
+  })
+
+  ;(/Chrome\//.test(navigator.userAgent) && !fetch.polyfill ? test.skip : test)('clone with used Request body', function() {
+    var req = new Request('https://fetch.spec.whatwg.org/', {
+      method: 'post',
+      body: 'I work out'
+    })
+
+    return req.text().then(function() {
+      assert.throws(function() {
+        req.clone()
       }, TypeError)
     })
   })
