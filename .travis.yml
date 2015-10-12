@@ -16,9 +16,9 @@ addons:
   sauce_connect: true
 deploy:
   provider: npm
-  email: matt@mattandre.ws
+  email: mislav.marohnic@gmail.com
   api_key:
-    secure: FcQZz0HCJhrz8FZyyfkuXj4cwoBP+PeQ7LzOVU1bG7v3kX7Z33n8glD+32QScT2Uu369exdjkk3mzCaCMsfZTTvRm9STnuJIrPtdB2/FwfaWiyJiB1oZ2UCd5UQM0zMiQrtg+gR8FUBBgi3GICOkzAqTbso+C7P2IJtvpP9RTTI=
+    secure: jDz/nRddGLUsdWS9ZvvqzqXSxEY+c2DS8Pd1SobjDVT8s2F03JzN2McyuMdugCXcFXls2tG/5A/xpCRrnrR4YSz3CQ+Ycrfxivq7lzgCqKB944o4jWWfPhvVqmWeqOylZpb1nDD5vNofHc12uaSImWr0DXBn0O0RX5xH7+D02J0=
   on:
     all_branches: true
     tags: true
