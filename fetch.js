@@ -236,6 +236,10 @@
     this._initBody(body)
   }
 
+  Request.prototype.clone = function() {
+    return new Request(this)
+  }
+
   function decode(body) {
     var form = new FormData()
     body.trim().split('&').forEach(function(bytes) {
@@ -278,6 +282,15 @@
   }
 
   Body.call(Response.prototype)
+
+  Response.prototype.clone = function() {
+    return new Response(this._bodyInit, {
+      status: this.status,
+      statusText: this.statusText,
+      headers: new Headers(this.headers),
+      url: this.url
+    })
+  }
 
   Response.error = function() {
     var response = new Response(null, {status: 0, statusText: ''})
