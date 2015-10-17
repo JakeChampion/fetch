@@ -1,0 +1,247 @@
+<!doctype html>
+<title>fetch documentation</title>
+<meta charset="utf-8">
+
+<style type="text/css">
+  body {
+    font: medium/1.5 Helvetica, sans-serif;
+    margin: 1em auto;
+    color: #333;
+    max-width: 40em;
+  }
+  a[href] {
+    color: #4078c0;
+  }
+  pre {
+    background: #f7f7f7;
+    padding: 1em 2em;
+  }
+  code {
+    font: 1em Consolas, Menlo, Courier, monospace;
+  }
+  li > code, h2 code, h3 code {
+    padding: 2px 4px 0;
+    background: #f7f7f7;
+    border: 1px solid #f1f1f1;
+    border-radius: 3px;
+  }
+  .keyword {
+    color: #a71d5d;
+  }
+  .name {
+    color: #795da3;
+  }
+  .string {
+    color: green;
+  }
+  .comment {
+    color: gray;
+  }
+  section {
+    padding-left: 20px;
+  }
+  section > h2 {
+    margin-left: -20px;
+  }
+  ul {
+    padding-left: 1.2em;
+  }
+  h2:target, h3:target, li:target {
+    background-color: lemonchiffon;
+  }
+</style>
+
+<h1>Fetch</h1>
+
+<p>
+This documents the polyfillable parts of the
+<a href="https://fetch.spec.whatwg.org/">WHATWG fetch spec</a>.
+</p>
+
+<p>
+Usage synopsis (use the argument links to find out more):
+</p>
+
+<pre><code><span class="name">fetch</span>(<a href="#url">url</a>, <a href="#options">options</a>).then(<span class="keyword">function</span>(<a href="#Response">response</a>) {
+  <span class="comment">// handle HTTP response</span>
+}, <span class="keyword">function</span>(<a href="#error">error</a>) {
+  <span class="comment">// handle network error</span>
+})</code></pre>
+
+<p>
+More comprehensive usage example:
+</p>
+
+<pre><code><span class="name">fetch</span>(<a href="#url">url</a>, {
+  method: <span class="string">"POST"</span>,
+  <a href="#request-body">body</a>: <span class="name">JSON</span>.stringify(data),
+  headers: {
+    <span class="string">"Content-Type"</span>: <span class="string">"application/json"</span>
+  },
+  <a href="#credentials">credentials</a>: <span class="string">"same-origin"</span>
+}).then(<span class="keyword">function</span>(<a href="#Response">response</a>) {
+  response.status     <span class="comment">//=&gt; number 100–599</span>
+  response.statusText <span class="comment">//=&gt; String</span>
+  response.headers    <span class="comment">//=&gt; <a href="#Headers">Headers</a></span>
+  response.url        <span class="comment">//=&gt; String</span>
+
+  response.<a href="#response-body">text()</a>.then(<span class="keyword">function</span>(responseText) { ... })
+}, <span class="keyword">function</span>(<a href="#error">error</a>) {
+  error.message <span class="comment">//=&gt; String</span>
+})</code></pre>
+
+<section>
+  <h2 id="Request">Request</h2>
+
+  <p>
+  Synopsis:
+  <code><span class="keyword">new</span> <span class="name">Request</span>(<a href="#url">url</a>, <a href="#options">options</a>)</code>
+  </p>
+
+  <p>
+  Request represents a HTTP request to be performed via <code>fetch()</code>.
+  Typically a Request doesn't need to be constructed manually,
+  as it's instantiated internally when <code>fetch()</code> is called.
+  </p>
+
+  <h3 id="url">URL (String or <a href="#Request">Request</a>)</h3>
+
+  <p>
+  The URL of the resource which is being fetched.
+  Typically this is an absolute URL without the host component, e.g. <code>"/path"</code>.
+  If the URL has the host of another site, the request is performed in accordance to
+  <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS">CORS</a>.
+  </p>
+
+  <p>
+  Alternatively, a request can be initialized using another instance of Request in place of the URL.
+  In that case, the URL and other options are inherited from the provided Request object.
+  </p>
+
+  <h3 id="options">Options</h3>
+
+  <ul>
+    <li><code>method</code> (String) - HTTP request method. Default: <code>"GET"</code></li>
+    <li><code>body</code> (String, Blob, FormData) - HTTP request body</li>
+    <li><code>headers</code> (Object, <a href="#Headers">Headers</a>) - Default: <code>{}</code></li>
+    <li id="credentials"><code>credentials</code> (String) - Authentication credentials mode. Default: <code>"omit"</code>
+      <ul>
+        <li><code>"omit"</code> - don't include authentication credentials (e.g. cookies) in the request</li>
+        <li><code>"same-origin"</code> - include credentials in requests to the same site</li>
+        <li><code>"include"</code> - include credentials in requests to all sites</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3 id="request-body">Body types</h3>
+
+  <p>
+  The request body can be of the type String,
+  <a href="https://developer.mozilla.org/en-US/docs/Web/API/Blob">Blob</a>,
+  or <a href="https://developer.mozilla.org/en-US/docs/Web/API/FormData">FormData</a>.
+  Other data structures need to be encoded before hand as one of these types.
+  For instance, <code>JSON.stringify(data)</code> can be used to serialize a
+  data structure into a JSON string.
+  </p>
+
+  <p>
+  Note that HTTP servers often require that requests that are posted with a body
+  also specify their type via a <code>Content-Type</code> request header.
+  </p>
+</section>
+
+<section>
+  <h2 id="Response">Response</h2>
+
+  <p>
+  Response represents a HTTP response from the server.
+  Typically a Response is not constructed manually,
+  but is available as argument to the resolved promise callback.
+  </p>
+
+  <h3>Properties</h3>
+
+  <ul>
+    <li><code>status</code> (number) - HTTP response code in the 100–599 range</li>
+    <li><code>statusText</code> (String) - Status text as reported by the server, e.g. "Unauthorized"</li>
+    <li><code>ok</code> (boolean) - True if <code>status</code> is HTTP 2xx</li>
+    <li><code>headers</code> (<a href="#Headers">Headers</a>)</li>
+    <li><code>url</code> (String)</li>
+  </ul>
+
+  <h3 id="response-body">Body methods</h3>
+
+  <p>
+  Each of the methods to access the response body returns a Promise that will be
+  resolved when the associated data type is ready.
+  </p>
+
+  <ul>
+    <li><code>text()</code> - yields the response text as String</li>
+    <li><code>json()</code> - yields the result of <code>JSON.parse(responseText)</code></li>
+    <li><code>blob()</code> - yields a <a href="https://developer.mozilla.org/en-US/docs/Web/API/Blob">Blob</a></li>
+    <li><code>arrayBuffer()</code> - yields an <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer">ArrayBuffer</a></li>
+    <li><code>formData()</code> - yields <a href="https://developer.mozilla.org/en-US/docs/Web/API/FormData">FormData</a> that can be forwarded to another request</li>
+  </ul>
+
+  <h3>Other respose methods</h3>
+
+  <ul>
+    <li><code>clone()</code></li>
+    <li><code>Response.error()</code></li>
+    <li><code>Response.redirect()</code></li>
+  </ul>
+</section>
+
+<section>
+  <h2 id="Headers">Headers</h2>
+
+  <p>
+  Synopsis:
+  <code><span class="keyword">new</span> <span class="name">Headers</span>(hash)</code>
+  </p>
+
+  <p>
+  Headers represents a set of request/response HTTP headers.
+  It allows for case-insensitive lookup of header by name,
+  as well as setting and receiving multiple values per header.
+  </p>
+
+  <h3>Methods</h3>
+
+  <ul>
+    <li><code>has(name)</code> (boolean)</li>
+    <li><code>get(name)</code> (String)</li>
+    <li><code>getAll(name)</code> (Array)</li>
+    <li><code>set(name, value)</code></li>
+    <li><code>append(name, value)</code></li>
+    <li><code>delete(name)</code></li>
+    <li><code>forEach(<span class="keyword">function</span>(value, name){ ... }, [thisContext])</code></li>
+  </ul>
+</section>
+
+<section>
+  <h2 id="error">Error</h2>
+
+  <p>
+  If there is a network error or another reason why the HTTP request couldn't be fulfilled,
+  the <code>fetch()</code> promise will be rejected with a reference to that error.
+  </p>
+
+  <p>
+  Note that the promise <strong>won't</strong> be rejected in case of HTTP 4xx or 5xx server responses.
+  The promise will be resolved just as it would be for HTTP 2xx.
+  Inspect the <code>response.status</code> number within the resolved callback to add conditional handling of server errors to your code.
+  </p>
+
+  <pre><code>
+<span class="name">fetch</span>(...).then(<span class="keyword">function</span>(response) {
+  <span class="keyword">if</span> (response.ok) {
+    <span class="keyword">return</span> response
+  } <span class="keyword">else</span> {
+    var error = <span class="keyword">new</span> <span class="name">Error</span>(response.statusText)
+    error.response = response
+    <span class="keyword">throw</span> error
+  }
+})</code></pre>
+</section>
