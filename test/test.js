@@ -205,6 +205,27 @@ suite('Request', function() {
     })
   })
 
+  ;(ArrayBuffer in self ? test : test.skip)('sends ArrayBuffer body', function() {
+    var text = 'name=Hubot'
+
+    var buf = new ArrayBuffer(text.length)
+    var view = new Uint8Array(buf)
+
+    for(var i = 0; i < text.length; i++) {
+      view[i] = text.charCodeAt(i)
+    }
+
+    return fetch('/request', {
+      method: 'post',
+      body: buf
+    }).then(function(response) {
+      return response.json()
+    }).then(function(request) {
+      assert.equal(request.method, 'POST')
+      assert.equal(request.data, 'name=Hubot')
+    })
+  })
+
   test('construct with url', function() {
     var request = new Request('https://fetch.spec.whatwg.org/')
     assert.equal(request.url, 'https://fetch.spec.whatwg.org/')

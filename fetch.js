@@ -116,7 +116,8 @@
         return false
       }
     })(),
-    formData: 'FormData' in self
+    formData: 'FormData' in self,
+    arrayBuffer: 'ArrayBuffer' in self
   }
 
   function Body() {
@@ -133,6 +134,9 @@
         this._bodyFormData = body
       } else if (!body) {
         this._bodyText = ''
+      } else if (support.arrayBuffer && ArrayBuffer.prototype.isPrototypeOf(body)) {
+        // Only support ArrayBuffers for POST method.
+        // Receiving ArrayBuffers happens via Blobs, instead.
       } else {
         throw new Error('unsupported BodyInit type')
       }
