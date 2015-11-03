@@ -16,8 +16,7 @@ deploy:
   provider: npm
   email: mislav.marohnic@gmail.com
   api_key:
-    secure: jDz/nRddGLUsdWS9ZvvqzqXSxEY+c2DS8Pd1SobjDVT8s2F03JzN2McyuMdugCXcFXls2tG/5A/xpCRrnrR4YSz3CQ+Ycrfxivq7lzgCqKB944o4jWWfPhvVqmWeqOylZpb1nDD5vNofHc12uaSImWr0DXBn0O0RX5xH7+D02J0=
+    secure: gt9g5/bXhxSKjxfFSPCdpWGJKBrSG8zdGRYgPouUgRqNeD2Ff4Nc8HGQTxp0OLKnP/jJ5FIru5jUur6LWzJCyEd+aNUEvFf5J078m3pzHN9AP2fiWUkKXcc5lKV0PQnI+JDRxJwd/PggtjubrneGfCzyFoys9apRrd/TzTGEtGw=
   on:
-    all_branches: true
     tags: true
     repo: github/fetch
