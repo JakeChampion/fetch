@@ -2,7 +2,7 @@ importScripts('../node_modules/chai/chai.js')
 importScripts('../node_modules/mocha/mocha.js')
 
 mocha.setup('tdd')
-self.assert = chai.assert
+window.assert = chai.assert
 
 importScripts('../bower_components/es6-promise/promise.js')
 importScripts('../fetch.js')
@@ -15,15 +15,15 @@ function title(test) {
 
 function reporter(runner) {
   runner.on('pending', function(test){
-    self.postMessage({name: 'pending', title: title(test)});
+    window.postMessage({name: 'pending', title: title(test)});
   });
 
   runner.on('pass', function(test){
-    self.postMessage({name: 'pass', title: title(test)});
+    window.postMessage({name: 'pass', title: title(test)});
   });
 
   runner.on('fail', function(test, err){
-    self.postMessage({
+    window.postMessage({
       name: 'fail',
       title: title(test),
       message: err.message,
@@ -32,7 +32,7 @@ function reporter(runner) {
   });
 
   runner.on('end', function(){
-    self.postMessage({name: 'end'});
+    window.postMessage({name: 'end'});
   });
 }
 
