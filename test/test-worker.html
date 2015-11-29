@@ -30,7 +30,7 @@
           })
           break
         case 'end':
-          if (self.mochaPhantomJS) {
+          if (window.mochaPhantomJS) {
             mochaPhantomJS.run()
           } else {
             mocha.run()

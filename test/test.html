@@ -11,7 +11,7 @@
   <script src="../node_modules/mocha/mocha.js"></script>
   <script>
     mocha.setup('tdd')
-    self.assert = chai.assert
+    window.assert = chai.assert
   </script>
 
   <script src="../bower_components/es6-promise/promise.js"></script>
@@ -20,7 +20,7 @@
   <script src="test.js"></script>
 
   <script>
-    if (self.mochaPhantomJS) {
+    if (window.mochaPhantomJS) {
       mochaPhantomJS.run();
     } else {
       var runner = mocha.run();

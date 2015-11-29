@@ -1,5 +1,5 @@
 function readBlobAsText(blob) {
-  if ('FileReader' in self) {
+  if ('FileReader' in window) {
     return new Promise(function(resolve, reject) {
       var reader = new FileReader()
       reader.onload = function() {
@@ -10,7 +10,7 @@ function readBlobAsText(blob) {
       }
       reader.readAsText(blob)
     })
-  } else if ('FileReaderSync' in self) {
+  } else if ('FileReaderSync' in window) {
     return new FileReaderSync().readAsText(blob)
   } else {
     throw new ReferenceError('FileReader is not defined')
@@ -18,7 +18,7 @@ function readBlobAsText(blob) {
 }
 
 function readBlobAsBytes(blob) {
-  if ('FileReader' in self) {
+  if ('FileReader' in window) {
     return new Promise(function(resolve, reject) {
       var reader = new FileReader()
       reader.onload = function() {
@@ -30,7 +30,7 @@ function readBlobAsBytes(blob) {
       }
       reader.readAsArrayBuffer(blob)
     })
-  } else if ('FileReaderSync' in self) {
+  } else if ('FileReaderSync' in window) {
     return new FileReaderSync().readAsArrayBuffer(blob)
   } else {
     throw new ReferenceError('FileReader is not defined')
@@ -205,7 +205,7 @@ suite('Request', function() {
     })
   })
 
-  ;(ArrayBuffer in self ? test : test.skip)('sends ArrayBuffer body', function() {
+  ;(ArrayBuffer in window ? test : test.skip)('sends ArrayBuffer body', function() {
     var text = 'name=Hubot'
 
     var buf = new ArrayBuffer(text.length)
@@ -834,7 +834,7 @@ suite('Atomic HTTP redirect handling', function() {
 
 // https://fetch.spec.whatwg.org/#concept-request-credentials-mode
 suite('credentials mode', function() {
-  var omitSupported = !self.fetch.polyfill
+  var omitSupported = !window.fetch.polyfill
 
   setup(function() {
     return fetch('/cookie?name=foo&value=reset', {credentials: 'same-origin'});

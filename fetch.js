@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  if (self.fetch) {
+  if (typeof window !== 'object' || window.fetch) {
     return
   }
 
@@ -108,7 +108,7 @@
   }
 
   var support = {
-    blob: 'FileReader' in self && 'Blob' in self && (function() {
+    blob: 'FileReader' in window && 'Blob' in window && (function() {
       try {
         new Blob();
         return true
@@ -116,8 +116,8 @@
         return false
       }
     })(),
-    formData: 'FormData' in self,
-    arrayBuffer: 'ArrayBuffer' in self
+    formData: 'FormData' in window,
+    arrayBuffer: 'ArrayBuffer' in window
   }
 
   function Body() {
@@ -312,11 +312,11 @@
     return new Response(null, {status: status, headers: {location: url}})
   }
 
-  self.Headers = Headers;
-  self.Request = Request;
-  self.Response = Response;
+  window.Headers = Headers;
+  window.Request = Request;
+  window.Response = Response;
 
-  self.fetch = function(input, init) {
+  window.fetch = function(input, init) {
     return new Promise(function(resolve, reject) {
       var request
       if (Request.prototype.isPrototypeOf(input) && !init) {
@@ -377,5 +377,5 @@
       xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
     })
   }
-  self.fetch.polyfill = true
+  window.fetch.polyfill = true
 })();
