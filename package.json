@@ -2,6 +2,7 @@
   "name": "whatwg-fetch",
   "version": "0.10.1",
   "main": "fetch.js",
+  "typings": "./fetch.d.ts",
   "repository": "github/fetch",
   "licenses": [
     {
