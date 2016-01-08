@@ -128,10 +128,16 @@
       this._bodyInit = body
       if (typeof body === 'string') {
         this._bodyText = body
+        return 'text/plain;charset=UTF-8'
       } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
         this._bodyBlob = body
+        if (body.type !== '') {
+          return body.type
+        }
       } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
         this._bodyFormData = body
+        // Since we don't know what the multipart/form-data boundary string
+        // will be, we can't set a Content-Type here
       } else if (!body) {
         this._bodyText = ''
       } else if (support.arrayBuffer && ArrayBuffer.prototype.isPrototypeOf(body)) {
@@ -207,6 +213,7 @@
   function Request(input, options) {
     options = options || {}
     var body = options.body
+    var bodyFromOptions = true
     if (Request.prototype.isPrototypeOf(input)) {
       if (input.bodyUsed) {
         throw new TypeError('Already read')
@@ -221,6 +228,7 @@
       if (!body) {
         body = input._bodyInit
         input.bodyUsed = true
+        bodyFromOptions = false
       }
     } else {
       this.url = input
@@ -237,7 +245,10 @@
     if ((this.method === 'GET' || this.method === 'HEAD') && body) {
       throw new TypeError('Body not allowed for GET or HEAD requests')
     }
-    this._initBody(body)
+    var contentType = this._initBody(body)
+    if (bodyFromOptions && contentType && !this.headers.get('Content-Type')) {
+      this.headers.set('Content-Type', contentType)
+    }
   }
 
   Request.prototype.clone = function() {
@@ -276,12 +287,15 @@
       options = {}
     }
 
-    this._initBody(bodyInit)
+    this.headers = options.headers instanceof Headers ? options.headers : new Headers(options.headers)
+    var contentType = this._initBody(bodyInit)
+    if (contentType && !this.headers.get('Content-Type')) {
+      this.headers.set('Content-Type', contentType)
+    }
     this.type = 'default'
     this.status = options.status
     this.ok = this.status >= 200 && this.status < 300
     this.statusText = options.statusText
-    this.headers = options.headers instanceof Headers ? options.headers : new Headers(options.headers)
     this.url = options.url || ''
   }
 

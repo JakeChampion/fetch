@@ -307,6 +307,36 @@ suite('Request', function() {
     })
   })
 
+  test('construct with string body sets Content-Type header', function() {
+    var req = new Request('https://fetch.spec.whatwg.org/', {
+      method: 'post',
+      body: 'I work out'
+    })
+
+    assert.equal(req.headers.get('content-type'), 'text/plain;charset=UTF-8')
+  })
+
+  test('construct with Blob body and type sets Content-Type header', function() {
+    var req = new Request('https://fetch.spec.whatwg.org/', {
+      method: 'post',
+      body: new Blob(['test'], { type: 'text/plain' }),
+    })
+
+    assert.equal(req.headers.get('content-type'), 'text/plain')
+  })
+
+  test('construct with body and explicit header uses header', function() {
+    var req = new Request('https://fetch.spec.whatwg.org/', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'text/plain'
+      },
+      body: 'I work out'
+    })
+
+    assert.equal(req.headers.get('content-type'), 'text/plain')
+  })
+
   test('clone request', function() {
     var req = new Request('https://fetch.spec.whatwg.org/', {
       method: 'post',
@@ -478,6 +508,26 @@ suite('Response', function() {
     assert(r instanceof Response);
     assert.equal(r.status, 301)
     assert.equal(r.headers.get('Location'), 'https://fetch.spec.whatwg.org/')
+  })
+
+  test('construct with string body sets Content-Type header', function() {
+    var r = new Response('I work out')
+    assert.equal(r.headers.get('content-type'), 'text/plain;charset=UTF-8')
+  })
+
+  test('construct with Blob body and type sets Content-Type header', function() {
+    var r = new Response(new Blob(['test'], { type: 'text/plain' }))
+    assert.equal(r.headers.get('content-type'), 'text/plain')
+  })
+
+  test('construct with body and explicit header uses header', function() {
+    var r = new Response('I work out', {
+      headers: {
+        'Content-Type': 'text/plain'
+      },
+    })
+
+    assert.equal(r.headers.get('content-type'), 'text/plain')
   })
 })
 
