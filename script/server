@@ -129,6 +129,7 @@ server = http.createServer(function(req, res) {
   if (route) {
     route(res, req);
   } else {
+    if (pathname == '/') pathname = '/test/test.html'
     fs.readFile(__dirname + '/..' + pathname, function(err, data) {
       if (err) {
         res.writeHead(404, {'Content-Type': types.txt});
