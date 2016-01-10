@@ -10,8 +10,12 @@
   <script src="/node_modules/chai/chai.js"></script>
   <script src="/node_modules/mocha/mocha.js"></script>
   <script>
-    mocha.setup('tdd')
-    self.assert = chai.assert
+    if (self.mocha && mocha.setup) {
+      mocha.setup('tdd')
+      self.assert = chai.assert
+    } else {
+      document.write('<p>Error: please run <code>make</code> to install dependencies and try again.</p>')
+    }
   </script>
 
   <script src="/bower_components/es6-promise/promise.js"></script>
