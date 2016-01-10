@@ -16,7 +16,7 @@
     "jshint": "2.5.2",
     "mocha-phantomjs": "3.5.2",
     "mocha": "2.1.0",
-    "phantomjs": "1.9.13"
+    "phantomjs": "1.9.19"
   },
   "files" : [
     "LICENSE",
