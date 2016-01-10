@@ -316,7 +316,7 @@ suite('Request', function() {
     assert.equal(req.headers.get('content-type'), 'text/plain;charset=UTF-8')
   })
 
-  test('construct with Blob body and type sets Content-Type header', function() {
+  ;(Request.prototype.blob ? test : test.skip)('construct with Blob body and type sets Content-Type header', function() {
     var req = new Request('https://fetch.spec.whatwg.org/', {
       method: 'post',
       body: new Blob(['test'], { type: 'text/plain' }),
@@ -515,7 +515,7 @@ suite('Response', function() {
     assert.equal(r.headers.get('content-type'), 'text/plain;charset=UTF-8')
   })
 
-  test('construct with Blob body and type sets Content-Type header', function() {
+  ;(Response.prototype.blob ? test : test.skip)('construct with Blob body and type sets Content-Type header', function() {
     var r = new Response(new Blob(['test'], { type: 'text/plain' }))
     assert.equal(r.headers.get('content-type'), 'text/plain')
   })
