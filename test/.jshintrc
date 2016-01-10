@@ -12,6 +12,7 @@
     "chai": false,
     "suite": false,
     "setup": false,
+    "suiteSetup": false,
     "test": false,
     "assert": false
   }

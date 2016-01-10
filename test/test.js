@@ -1,3 +1,18 @@
+var support = {
+  blob: 'FileReader' in self && 'Blob' in self && (function() {
+    try {
+      new Blob()
+      return true
+    } catch(e) {
+      return false
+    }
+  })(),
+  formData: 'FormData' in self,
+  arrayBuffer: 'ArrayBuffer' in self,
+  patch: !/PhantomJS/.test(navigator.userAgent),
+  permanentRedirect: !/PhantomJS|Trident/.test(navigator.userAgent)
+}
+
 function readBlobAsText(blob) {
   if ('FileReader' in self) {
     return new Promise(function(resolve, reject) {
@@ -36,6 +51,38 @@ function readBlobAsBytes(blob) {
     throw new ReferenceError('FileReader is not defined')
   }
 }
+
+var native = {}
+var keepGlobals = ['fetch', 'Headers', 'Request', 'Response']
+var exercise = ['polyfill']
+
+// If native fetch implementation exists, save it and allow it to be replaced
+// by the polyfill. Native implementation will be exercised additionally.
+if (self.fetch) {
+  keepGlobals.forEach(function(name) {
+    native[name] = self[name]
+  })
+  self.fetch = undefined
+  exercise.push('native')
+}
+
+var slice = Array.prototype.slice
+
+function featureDependent(testOrSuite, condition) {
+  (condition ? testOrSuite : testOrSuite.skip).apply(this, slice.call(arguments, 2))
+}
+
+exercise.forEach(function(exerciseMode) {
+  suite(exerciseMode, function() {
+    if (exerciseMode === 'native') {
+      suiteSetup(function() {
+        keepGlobals.forEach(function(name) {
+          self[name] = native[name]
+        })
+      })
+    }
+
+    var nativeChrome = /Chrome\//.test(navigator.userAgent) && exerciseMode === 'native'
 
 test('resolves promise on 500 error', function() {
   return fetch('/boom').then(function(response) {
@@ -205,7 +252,7 @@ suite('Request', function() {
     })
   })
 
-  ;(ArrayBuffer in self ? test : test.skip)('sends ArrayBuffer body', function() {
+  featureDependent(test, support.arrayBuffer, 'sends ArrayBuffer body', function() {
     var text = 'name=Hubot'
 
     var buf = new ArrayBuffer(text.length)
@@ -294,7 +341,7 @@ suite('Request', function() {
     })
   })
 
-  ;(/Chrome\//.test(navigator.userAgent) && !fetch.polyfill ? test.skip : test)('construct with used Request body', function() {
+  featureDependent(test, !nativeChrome, 'construct with used Request body', function() {
     var request1 = new Request('https://fetch.spec.whatwg.org/', {
       method: 'post',
       body: 'I work out'
@@ -324,7 +371,7 @@ suite('Request', function() {
     })
   })
 
-  ;(/Chrome\//.test(navigator.userAgent) && !fetch.polyfill ? test.skip : test)('clone with used Request body', function() {
+  featureDependent(test, !nativeChrome, 'clone with used Request body', function() {
     var req = new Request('https://fetch.spec.whatwg.org/', {
       method: 'post',
       body: 'I work out'
@@ -339,7 +386,7 @@ suite('Request', function() {
 
   // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
   suite('BodyInit extract', function() {
-    ;(Request.prototype.blob ? suite : suite.skip)('type Blob', function() {
+    featureDependent(suite, support.blob, 'type Blob', function() {
       test('consume as blob', function() {
         var request = new Request(null, {method: 'POST', body: new Blob(['hello'])})
         return request.blob().then(readBlobAsText).then(function(text) {
@@ -363,7 +410,7 @@ suite('Request', function() {
         })
       })
 
-      ;(Request.prototype.blob ? test : test.skip)('consume as blob', function() {
+      featureDependent(test, support.blob, 'consume as blob', function() {
         var request = new Request(null, {method: 'POST', body: 'hello'})
         return request.blob().then(readBlobAsText).then(function(text) {
           assert.equal(text, 'hello')
@@ -377,7 +424,7 @@ suite('Request', function() {
 suite('Response', function() {
   // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
   suite('BodyInit extract', function() {
-    ;(Response.prototype.blob ? suite : suite.skip)('type Blob', function() {
+    featureDependent(suite, support.blob, 'type Blob', function() {
       test('consume as blob', function() {
         var response = new Response(new Blob(['hello']))
         return response.blob().then(readBlobAsText).then(function(text) {
@@ -401,7 +448,7 @@ suite('Response', function() {
         })
       })
 
-      ;(Response.prototype.blob ? test : test.skip)('consume as blob', function() {
+      featureDependent(test, support.blob, 'consume as blob', function() {
         var response = new Response('hello')
         return response.blob().then(readBlobAsText).then(function(text) {
           assert.equal(text, 'hello')
@@ -450,7 +497,7 @@ suite('Response', function() {
     })
   })
 
-  ;(Response.prototype.arrayBuffer ? test : test.skip)('clone blob response', function() {
+  featureDependent(test, support.arrayBuffer, 'clone blob response', function() {
     return fetch('/binary').then(function(response) {
       return Promise.all([response.clone().arrayBuffer(), response.arrayBuffer()]).then(function(bufs){
         bufs.forEach(function(buf){
@@ -483,7 +530,7 @@ suite('Response', function() {
 
 // https://fetch.spec.whatwg.org/#body-mixin
 suite('Body mixin', function() {
-  ;(Response.prototype.arrayBuffer ? suite : suite.skip)('arrayBuffer', function() {
+  featureDependent(suite, support.arrayBuffer, 'arrayBuffer', function() {
     test('resolves arrayBuffer promise', function() {
       return fetch('/hello').then(function(response) {
         return response.arrayBuffer()
@@ -541,7 +588,7 @@ suite('Body mixin', function() {
     })
   })
 
-  ;(Response.prototype.blob ? suite : suite.skip)('blob', function() {
+  featureDependent(suite, support.blob, 'blob', function() {
     test('resolves blob promise', function() {
       return fetch('/hello').then(function(response) {
         return response.blob()
@@ -591,7 +638,7 @@ suite('Body mixin', function() {
     })
   })
 
-  ;(Response.prototype.formData ? suite : suite.skip)('formData', function() {
+  featureDependent(suite, support.formData, 'formData', function() {
     test('post sets content-type header', function() {
       return fetch('/request', {
         method: 'post',
@@ -604,7 +651,7 @@ suite('Body mixin', function() {
       })
     })
 
-    test('rejects formData promise after body is consumed', function() {
+    featureDependent(test, !nativeChrome, 'rejects formData promise after body is consumed', function() {
       return fetch('/json').then(function(response) {
         assert(response.formData, 'Body does not implement formData')
         response.formData()
@@ -618,7 +665,7 @@ suite('Body mixin', function() {
       })
     })
 
-    test('parses form encoded response', function() {
+    featureDependent(test, !nativeChrome, 'parses form encoded response', function() {
       return fetch('/form').then(function(response) {
         return response.formData()
       }).then(function(form) {
@@ -746,9 +793,7 @@ suite('Methods', function() {
     })
   })
 
-  var patchSupported = !/PhantomJS/.test(navigator.userAgent)
-
-  ;(patchSupported ? test : test.skip)('supports HTTP PATCH', function() {
+  featureDependent(test, support.patch, 'supports HTTP PATCH', function() {
     return fetch('/request', {
       method: 'PATCH',
       body: 'name=Hubot'
@@ -818,9 +863,7 @@ suite('Atomic HTTP redirect handling', function() {
     })
   })
 
-  var permanentRedirectSupported = !/PhantomJS|Trident/.test(navigator.userAgent)
-
-  ;(permanentRedirectSupported ? test : test.skip)('handles 308 redirect response', function() {
+  featureDependent(test, support.permanentRedirect, 'handles 308 redirect response', function() {
     return fetch('/redirect/308').then(function(response) {
       assert.equal(response.status, 200)
       assert.equal(response.ok, true)
@@ -834,13 +877,11 @@ suite('Atomic HTTP redirect handling', function() {
 
 // https://fetch.spec.whatwg.org/#concept-request-credentials-mode
 suite('credentials mode', function() {
-  var omitSupported = !self.fetch.polyfill
-
   setup(function() {
     return fetch('/cookie?name=foo&value=reset', {credentials: 'same-origin'});
   })
 
-  ;(omitSupported ? suite : suite.skip)('omit', function() {
+  featureDependent(suite, exerciseMode === 'native', 'omit', function() {
     test('request credentials defaults to omit', function() {
       var request = new Request('')
       assert.equal(request.credentials, 'omit')
@@ -914,5 +955,8 @@ suite('credentials mode', function() {
         assert.equal(data, 'bar')
       })
     })
+  })
+})
+
   })
 })
