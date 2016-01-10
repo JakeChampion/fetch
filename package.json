@@ -1,5 +1,6 @@
 {
   "name": "whatwg-fetch",
+  "description": "A window.fetch polyfill.",
   "version": "0.10.1",
   "main": "fetch.js",
   "repository": "github/fetch",
