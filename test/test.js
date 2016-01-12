@@ -497,7 +497,7 @@ suite('Response', function() {
     })
   })
 
-  featureDependent(test, support.arrayBuffer, 'clone blob response', function() {
+  featureDependent(test, support.blob, 'clone blob response', function() {
     return fetch('/binary').then(function(response) {
       return Promise.all([response.clone().arrayBuffer(), response.arrayBuffer()]).then(function(bufs){
         bufs.forEach(function(buf){
@@ -530,7 +530,7 @@ suite('Response', function() {
 
 // https://fetch.spec.whatwg.org/#body-mixin
 suite('Body mixin', function() {
-  featureDependent(suite, support.arrayBuffer, 'arrayBuffer', function() {
+  featureDependent(suite, support.blob, 'arrayBuffer', function() {
     test('resolves arrayBuffer promise', function() {
       return fetch('/hello').then(function(response) {
         return response.arrayBuffer()
@@ -577,7 +577,6 @@ suite('Body mixin', function() {
 
     test('rejects arrayBuffer promise after body is consumed', function() {
       return fetch('/hello').then(function(response) {
-        assert(response.arrayBuffer, 'Body does not implement arrayBuffer')
         assert.equal(response.bodyUsed, false)
         response.blob()
         assert.equal(response.bodyUsed, true)
