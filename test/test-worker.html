@@ -3,16 +3,16 @@
 <head>
   <meta charset="utf-8">
   <title>Fetch Worker Tests</title>
-  <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+  <link rel="stylesheet" href="/node_modules/mocha/mocha.css" />
 </head>
 <body>
   <div id="mocha"></div>
-  <script src="../node_modules/mocha/mocha.js"></script>
+  <script src="/node_modules/mocha/mocha.js"></script>
 
   <script>
     mocha.setup('tdd')
 
-    var worker = new Worker('worker.js')
+    var worker = new Worker('/test/worker.js')
 
     worker.addEventListener('message', function(e) {
       switch (e.data.name) {

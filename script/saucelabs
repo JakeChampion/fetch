@@ -25,7 +25,7 @@ job="$(./script/saucelabs-api --raw "js-tests" <<JSON
     "tags": ["$TRAVIS_PULL_REQUEST", "$TRAVIS_BRANCH"],
     "tunnel-identifier": "$TRAVIS_JOB_NUMBER",
     "platforms": [["$SAUCE_PLATFORM", "$SAUCE_BROWSER", "$SAUCE_VERSION"]],
-    "url": "http://localhost:$port/test/test.html",
+    "url": "http://localhost:$port/",
     "framework": "mocha"
   }
 JSON
