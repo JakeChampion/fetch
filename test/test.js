@@ -84,6 +84,7 @@ exercise.forEach(function(exerciseMode) {
 
     var nativeChrome = /Chrome\//.test(navigator.userAgent) && exerciseMode === 'native'
     var nativeFirefox = /Firefox\//.test(navigator.userAgent) && exerciseMode === 'native'
+    var polyfillFirefox = /Firefox\//.test(navigator.userAgent) && exerciseMode === 'polyfill'
 
 test('resolves promise on 500 error', function() {
   return fetch('/boom').then(function(response) {
@@ -696,7 +697,7 @@ suite('Body mixin', function() {
       })
     })
 
-    test('handles json parse error', function() {
+    featureDependent(test, !polyfillFirefox, 'handles json parse error', function() {
       return fetch('/json-error').then(function(response) {
         return response.json()
       }).catch(function(error) {
