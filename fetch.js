@@ -1,7 +1,16 @@
 (function(self) {
   'use strict';
 
-  if (self.fetch) {
+  // In some browsers fetch API is partially implemented which stops it from polyfilling
+  //   while keeps implementation that's lack of some essential methods,
+  //     such as forEach method of Headers interface at the moment which causes problems in Firefox browser v43.0.3 (01-22-2016)
+  // Current specification of Headers interface: https://developer.mozilla.org/en-US/docs/Web/API/Headers
+  function allMethodsAvailable() {
+    if (!self.Headers.prototype.forEach) return false
+    return true
+  }
+
+  if (self.fetch && allMethodsAvailable()) {
     return
   }
 
