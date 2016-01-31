@@ -77,7 +77,7 @@ fetch('/users.json').then(function(response) {
 var form = document.querySelector('form')
 
 fetch('/users', {
-  method: 'post',
+  method: 'POST',
   body: new FormData(form)
 })
 ```
@@ -86,7 +86,7 @@ fetch('/users', {
 
 ```javascript
 fetch('/users', {
-  method: 'post',
+  method: 'POST',
   headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
@@ -108,7 +108,7 @@ data.append('file', input.files[0])
 data.append('user', 'hubot')
 
 fetch('/avatars', {
-  method: 'post',
+  method: 'POST',
   body: data
 })
 ```
