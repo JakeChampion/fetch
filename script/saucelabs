@@ -9,16 +9,45 @@ node ./script/server $port &>/dev/null &
 server_pid=$!
 trap "kill $server_pid" INT EXIT
 
-job=$(./script/saucelabs-start "http://localhost:$port/test/test.html")
+make sauce_connect/bin/sc
+sauce_ready="${TMPDIR:-/tmp}/sauce-ready.$$"
+sauce_connect/bin/sc -u "$SAUCE_USERNAME" -k "$SAUCE_ACCESS_KEY" \
+  -i "$TRAVIS_JOB_NUMBER" -l sauce_connect.log -f "$sauce_ready" &>/dev/null &
+sauce_pid=$!
+trap "kill $sauce_pid" INT EXIT
 
-while true
-do
-  result=$(echo "$job" | ./script/saucelabs-status)
-  [[ $result == *"\"completed\": true"* ]] && break
+while [ ! -f "$sauce_ready" ]; do sleep .01; done
+rm -f "$sauce_ready"
+
+job="$(./script/saucelabs-api --raw "js-tests" <<JSON
+  { "public": "public",
+    "build": "$TRAVIS_BUILD_NUMBER",
+    "tags": ["$TRAVIS_PULL_REQUEST", "$TRAVIS_BRANCH"],
+    "tunnel-identifier": "$TRAVIS_JOB_NUMBER",
+    "platforms": [["$SAUCE_PLATFORM", "$SAUCE_BROWSER", "$SAUCE_VERSION"]],
+    "url": "http://localhost:$port/",
+    "framework": "mocha"
+  }
+JSON
+)"
+
+while true; do
+  result=$(./script/saucelabs-api "js-tests/status" <<<"$job")
+  grep -q "^completed: true" <<<"$result" && break
   sleep 1
   echo -n "."
 done
 
-echo -n ""
+echo
 
-echo "$result" | ./script/saucelabs-result
+awk '
+  /result\.tests:/ { tests+=$(NF) }
+  /result\.passes:/ { passes+=$(NF) }
+  /result\.pending:/ { pending+=$(NF) }
+  /result\.failures:/ { failures+=$(NF) }
+  /\.url:/ { print $(NF) }
+  END {
+    printf "%d passed, %d pending, %d failures\n", passes, pending, failures
+    if (failures > 0 || tests != passes + pending) exit 1
+  }
+' <<<"$result"
