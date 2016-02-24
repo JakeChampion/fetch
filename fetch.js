@@ -1,9 +1,8 @@
+
+var PolyfillFetch = null;
+
 (function(self) {
   'use strict';
-
-  if (self.fetch) {
-    return
-  }
 
   function normalizeName(name) {
     if (typeof name !== 'string') {
@@ -324,7 +323,7 @@
   self.Request = Request;
   self.Response = Response;
 
-  self.fetch = function(input, init) {
+  PolyfillFetch = function(input, init) {
     return new Promise(function(resolve, reject) {
       var request
       if (Request.prototype.isPrototypeOf(input) && !init) {
@@ -380,5 +379,10 @@
       xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
     })
   }
-  self.fetch.polyfill = true
+  PolyfillFetch.polyfill = true
+  if (!self.fetch){
+    self.fetch = PolyfillFetch
+  }
 })(typeof self !== 'undefined' ? self : this);
+
+module.exports = PolyfillFetch;
