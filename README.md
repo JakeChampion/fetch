@@ -126,6 +126,10 @@ bear keeping in mind:
 * By default, `fetch` **won't send any cookies** to the server, resulting in
   unauthenticated requests if the site relies on maintaining a user session.
 
+Additionally some things cannot be polyfilled:
+
+* Due to the limitations of XHR `fetch` [cannot control the redirect mode](https://github.com/github/fetch/issues/137)
+
 #### Handling HTTP error statuses
 
 To have `fetch` Promise reject on HTTP error statuses, i.e. on any non-2xx
