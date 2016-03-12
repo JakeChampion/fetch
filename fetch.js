@@ -5,6 +5,20 @@
     return
   }
 
+  var support = {
+    iterable: 'Symbol' in self && 'iterator' in Symbol,
+    blob: 'FileReader' in self && 'Blob' in self && (function() {
+      try {
+        new Blob()
+        return true
+      } catch(e) {
+        return false
+      }
+    })(),
+    formData: 'FormData' in self,
+    arrayBuffer: 'ArrayBuffer' in self
+  }
+
   function normalizeName(name) {
     if (typeof name !== 'string') {
       name = String(name)
@@ -80,34 +94,62 @@
   Headers.prototype.keys = function() {
     var items = []
     this.forEach(function(value, name) { items.push(name) })
-    return {
+    var iterator = {
       next: function() {
         var value = items.shift()
         return {done: value === undefined, value: value}
       }
     }
+
+    if (support.iterable) {
+      iterator[Symbol.iterator] = function() {
+        return iterator
+      }
+    }
+
+    return iterator
   }
 
   Headers.prototype.values = function() {
     var items = []
     this.forEach(function(value) { items.push(value) })
-    return {
+    var iterator = {
       next: function() {
         var value = items.shift()
         return {done: value === undefined, value: value}
       }
     }
+
+    if (support.iterable) {
+      iterator[Symbol.iterator] = function() {
+        return iterator
+      }
+    }
+
+    return iterator
   }
 
   Headers.prototype.entries = function() {
     var items = []
     this.forEach(function(value, name) { items.push([name, value]) })
-    return {
+    var iterator = {
       next: function() {
         var value = items.shift()
         return {done: value === undefined, value: value}
       }
     }
+
+    if (support.iterable) {
+      iterator[Symbol.iterator] = function() {
+        return iterator
+      }
+    }
+
+    return iterator
+  }
+
+  if (support.iterable) {
+    Headers.prototype[Symbol.iterator] = Headers.prototype.entries
   }
 
   function consumed(body) {
@@ -140,22 +182,8 @@
     return fileReaderReady(reader)
   }
 
-  var support = {
-    blob: 'FileReader' in self && 'Blob' in self && (function() {
-      try {
-        new Blob()
-        return true
-      } catch(e) {
-        return false
-      }
-    })(),
-    formData: 'FormData' in self,
-    arrayBuffer: 'ArrayBuffer' in self
-  }
-
   function Body() {
     this.bodyUsed = false
-
 
     this._initBody = function(body) {
       this._bodyInit = body
