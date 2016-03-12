@@ -244,6 +244,18 @@ suite('Headers', function() {
     assert.deepEqual({done: false, value: 'text/html'}, iterator.next())
     assert.deepEqual({done: true, value: undefined}, iterator.next())
   })
+  test('is iterable with entries', function() {
+    var headers = new Headers()
+    headers.append('Accept', 'application/json')
+    headers.append('Accept', 'text/plain')
+    headers.append('Content-Type', 'text/html')
+
+    var iterator = headers.entries()
+    assert.deepEqual({done: false, value: ['accept', 'application/json']}, iterator.next())
+    assert.deepEqual({done: false, value: ['accept', 'text/plain']}, iterator.next())
+    assert.deepEqual({done: false, value: ['content-type', 'text/html']}, iterator.next())
+    assert.deepEqual({done: true, value: undefined}, iterator.next())
+  })
  })
 
 // https://fetch.spec.whatwg.org/#request-class
