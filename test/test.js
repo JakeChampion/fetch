@@ -220,6 +220,18 @@ suite('Headers', function() {
       assert.equal(this, thisArg)
     }, thisArg)
   })
+  test('is iterable with keys', function() {
+    var headers = new Headers()
+    headers.append('Accept', 'application/json')
+    headers.append('Accept', 'text/plain')
+    headers.append('Content-Type', 'text/html')
+
+    var iterator = headers.keys()
+    assert.deepEqual({done: false, value: 'accept'}, iterator.next())
+    assert.deepEqual({done: false, value: 'accept'}, iterator.next())
+    assert.deepEqual({done: false, value: 'content-type'}, iterator.next())
+    assert.deepEqual({done: true, value: undefined}, iterator.next())
+  })
  })
 
 // https://fetch.spec.whatwg.org/#request-class
