@@ -1,4 +1,5 @@
 var support = {
+  searchParams: 'URLSearchParams' in self,
   blob: 'FileReader' in self && 'Blob' in self && (function() {
     try {
       new Blob()
@@ -311,6 +312,18 @@ suite('Request', function() {
     })
   })
 
+  featureDependent(test, support.searchParams, 'sends URLSearchParams body', function() {
+    return fetch('/request', {
+      method: 'post',
+      body: new URLSearchParams('a=1&b=2')
+    }).then(function(response) {
+      return response.json()
+    }).then(function(request) {
+      assert.equal(request.method, 'POST')
+      assert.equal(request.data, 'a=1&b=2')
+    })
+  })
+
   test('construct with url', function() {
     var request = new Request('https://fetch.spec.whatwg.org/')
     assert.equal(request.url, 'https://fetch.spec.whatwg.org/')
@@ -437,6 +450,25 @@ suite('Request', function() {
       method: 'post',
       headers: { 'Content-Type': 'image/png' },
       body: new Blob(['test'], { type: 'text/plain' })
+    })
+
+    assert.equal(req.headers.get('content-type'), 'image/png')
+  })
+
+  featureDependent(test, support.searchParams, 'construct with URLSearchParams body sets Content-Type header', function() {
+    var req = new Request('https://fetch.spec.whatwg.org/', {
+      method: 'post',
+      body: new URLSearchParams('a=1&b=2')
+    })
+
+    assert.equal(req.headers.get('content-type'), 'application/x-www-form-urlencoded;charset=UTF-8')
+  })
+
+  featureDependent(test, support.searchParams, 'construct with URLSearchParams body and explicit Content-Type header', function() {
+    var req = new Request('https://fetch.spec.whatwg.org/', {
+      method: 'post',
+      headers: { 'Content-Type': 'image/png' },
+      body: new URLSearchParams('a=1&b=2')
     })
 
     assert.equal(req.headers.get('content-type'), 'image/png')
