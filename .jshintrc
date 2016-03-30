@@ -19,6 +19,7 @@
   "browser": true,
   "worker": true,
   "globals": {
-    "JSON": false
+    "JSON": false,
+    "URLSearchParams": false
   }
 }
