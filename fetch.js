@@ -368,6 +368,10 @@
         reject(new TypeError('Network request failed'))
       }
 
+      xhr.ontimeout = function() {
+        reject(new TypeError('Network request failed'))
+      }
+
       xhr.open(request.method, request.url, true)
 
       if (request.credentials === 'include') {
