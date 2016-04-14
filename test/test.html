@@ -11,6 +11,10 @@
   <script src="/node_modules/chai/chai.js"></script>
   <script src="/node_modules/mocha/mocha.js"></script>
   <script>
+    if (self.initMochaPhantomJS) {
+      self.initMochaPhantomJS()
+    }
+
     if (self.mocha && mocha.setup) {
       mocha.setup('tdd')
       self.assert = chai.assert
@@ -24,31 +28,27 @@
   <script src="/fetch.js"></script>
 
   <script>
-    if (self.mochaPhantomJS) {
-      mochaPhantomJS.run();
-    } else {
-      var runner = mocha.run();
+    var runner = mocha.run();
 
-      var failedTests = [];
+    var failedTests = [];
 
-      runner.on('end', function(){
-        window.mochaResults = runner.stats;
-        window.mochaResults.reports = failedTests;
-      });
+    runner.on('end', function(){
+      window.mochaResults = runner.stats;
+      window.mochaResults.reports = failedTests;
+    });
 
-      runner.on('fail', function(test, err){
-        function flattenTitles(test){
-          var titles = [];
-          while (test.parent.title){
-            titles.push(test.parent.title);
-            test = test.parent;
-          }
-          return titles.reverse();
-        };
+    runner.on('fail', function(test, err){
+      function flattenTitles(test){
+        var titles = [];
+        while (test.parent.title){
+          titles.push(test.parent.title);
+          test = test.parent;
+        }
+        return titles.reverse();
+      };
 
-        failedTests.push({name: test.title, result: false, message: err.message, stack: err.stack, titles: flattenTitles(test) });
-      });
-    }
+      failedTests.push({name: test.title, result: false, message: err.message, stack: err.stack, titles: flattenTitles(test) });
+    });
   </script>
 </body>
 </html>
