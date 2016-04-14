@@ -11,7 +11,12 @@
   <script src="/node_modules/mocha/mocha.js"></script>
 
   <script>
+    if (self.initMochaPhantomJS) {
+      self.initMochaPhantomJS()
+    }
+
     mocha.setup('tdd')
+    mocha.suite.suites.unshift(Mocha.Suite.create(mocha.suite, "worker"))
 
     var worker = new Worker('/test/worker.js')
 
@@ -31,11 +36,7 @@
           })
           break
         case 'end':
-          if (self.mochaPhantomJS) {
-            mochaPhantomJS.run()
-          } else {
-            mocha.run()
-          }
+          mocha.run()
           break
       }
     })

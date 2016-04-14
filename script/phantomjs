@@ -14,12 +14,16 @@ trap "kill $server_pid" INT EXIT
 
 STATUS=0
 
+reporter=dot
+[ -z "$CI" ] || reporter=spec
+
 run() {
-  node ./node_modules/.bin/mocha-phantomjs \
-    -s localToRemoteUrlAccessEnabled=true \
-    -s webSecurityEnabled=false \
-    "$@" || STATUS=$?
+  phantomjs ./node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js \
+    "$1" $reporter "{\"useColors\":true, \"hooks\":\"$PWD/test/mocha-phantomjs-hooks.js\"}" \
+    || STATUS=$?
 }
+
+[ -z "$CI" ] || echo "phantomjs $(phantomjs -v)"
 
 run "http://localhost:$port/"
 run "http://localhost:$port/test/test-worker.html"
