@@ -37,6 +37,24 @@
     return value
   }
 
+  // Build a destructive iterator for the value list
+  function iteratorFor(items) {
+    var iterator = {
+      next: function() {
+        var value = items.shift()
+        return {done: value === undefined, value: value}
+      }
+    }
+
+    if (support.iterable) {
+      iterator[Symbol.iterator] = function() {
+        return iterator
+      }
+    }
+
+    return iterator
+  }
+
   function Headers(headers) {
     this.map = {}
 
@@ -95,58 +113,19 @@
   Headers.prototype.keys = function() {
     var items = []
     this.forEach(function(value, name) { items.push(name) })
-    var iterator = {
-      next: function() {
-        var value = items.shift()
-        return {done: value === undefined, value: value}
-      }
-    }
-
-    if (support.iterable) {
-      iterator[Symbol.iterator] = function() {
-        return iterator
-      }
-    }
-
-    return iterator
+    return iteratorFor(items)
   }
 
   Headers.prototype.values = function() {
     var items = []
     this.forEach(function(value) { items.push(value) })
-    var iterator = {
-      next: function() {
-        var value = items.shift()
-        return {done: value === undefined, value: value}
-      }
-    }
-
-    if (support.iterable) {
-      iterator[Symbol.iterator] = function() {
-        return iterator
-      }
-    }
-
-    return iterator
+    return iteratorFor(items)
   }
 
   Headers.prototype.entries = function() {
     var items = []
     this.forEach(function(value, name) { items.push([name, value]) })
-    var iterator = {
-      next: function() {
-        var value = items.shift()
-        return {done: value === undefined, value: value}
-      }
-    }
-
-    if (support.iterable) {
-      iterator[Symbol.iterator] = function() {
-        return iterator
-      }
-    }
-
-    return iterator
+    return iteratorFor(items)
   }
 
   if (support.iterable) {
