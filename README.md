@@ -29,7 +29,11 @@ $ npm install whatwg-fetch --save
 
 For a node.js implementation, try [node-fetch](https://github.com/bitinn/node-fetch).
 
-For use with webpack, refer to [Using WebPack with shims and polyfills](http://mts.io/2015/04/08/webpack-shims-polyfills/).
+For use with webpack, add this package in the `entry` configuration option before your application entry point:
+
+```javascript
+entry: ['whatwg-fetch', ...]
+```
 
 For babel and es2015+, make sure to import the file:
 
