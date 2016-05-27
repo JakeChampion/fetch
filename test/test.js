@@ -494,13 +494,12 @@ suite('Request', function() {
   test('clone request bodies', function() {
     var r1 = new Request('https://fetch.spec.whatwg.org/', {
       method: 'post',
-      headers: {'content-type': 'text/plain'},
       body: 'I work out'
     })
     var r2 = r1.clone()
 
     return Promise.all([r1.text(), r2.text()]).then(function(texts){
-      return assert.equal(texts[0], texts[1], 'both requests succeed with equal texts')
+      assert.equal(texts[0], texts[1], 'both requests succeed with equal texts')
     })
   })
 

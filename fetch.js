@@ -299,9 +299,7 @@
   }
 
   Request.prototype.clone = function() {
-    var newRequest = new Request(this, { body: 'clone' })
-    newRequest._initBody(this._bodyInit)
-    return newRequest
+    return new Request(this, { body: this._bodyInit })
   }
 
   function decode(body) {
