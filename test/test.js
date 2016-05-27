@@ -503,6 +503,19 @@ suite('Request', function() {
     })
   })
 
+  featureDependent(test, support.blob, 'clone with body Blob and test independence', function() {
+    var r1 = new Request('https://fetch.spec.whatwg.org/', {
+      method: 'post',
+      body: new Blob(['I work out'])
+    })
+    var r2 = r1.clone()
+
+    return Promise.all([r1.blob().then(readBlobAsText), r2.blob().then(readBlobAsText)]).then(function(texts) {
+      assert.equal(texts[0], 'I work out', 'request original body blob read succeed')
+      assert.equal(texts[1], 'I work out', 'request clone body blob read succeed')
+    })
+  })
+
   featureDependent(test, !nativeChrome, 'clone with used Request body', function() {
     var req = new Request('https://fetch.spec.whatwg.org/', {
       method: 'post',
