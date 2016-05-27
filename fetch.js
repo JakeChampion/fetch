@@ -167,6 +167,11 @@
 
     this._initBody = function(body) {
       this._bodyInit = body
+
+      delete this._bodyText
+      delete this._bodyBlob
+      delete this._bodyFormData
+
       if (typeof body === 'string') {
         this._bodyText = body
       } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
@@ -294,7 +299,9 @@
   }
 
   Request.prototype.clone = function() {
-    return new Request(this)
+    var newRequest = new Request(this, { body: 'clone' })
+    newRequest._initBody(this._bodyInit)
+    return newRequest
   }
 
   function decode(body) {
