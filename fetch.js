@@ -168,10 +168,6 @@
     this._initBody = function(body) {
       this._bodyInit = body
 
-      delete this._bodyText
-      delete this._bodyBlob
-      delete this._bodyFormData
-
       if (typeof body === 'string') {
         this._bodyText = body
       } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
