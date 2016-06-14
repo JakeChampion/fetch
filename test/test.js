@@ -444,6 +444,28 @@ suite('Request', function() {
       })
     })
 
+    featureDependent(suite, support.arrayBuffer, 'type ArrayBuffer', function() {
+      test('consume as array buffer', function() {
+        var text = 'name=Hubot'
+
+        var buf = new ArrayBuffer(text.length)
+        var view = new Uint8Array(buf)
+
+        for(var i = 0; i < text.length; i++) {
+          view[i] = text.charCodeAt(i)
+        }
+
+        var request = new Request('', {method: 'POST', body: buf})
+        return request.arrayBuffer().then(function(buffer) {
+          var bufView = new Uint8Array(buffer)
+          assert.equal(bufView.byteLength, view.length)
+          for(var i = 0; i < bufView.length; i++) {
+            assert.equal(bufView[i], view[i])
+          }
+        })
+      })
+    })
+
     suite('type USVString', function() {
       test('consume as text', function() {
         var request = new Request('', {method: 'POST', body: 'hello'})
@@ -478,6 +500,28 @@ suite('Response', function() {
         var response = new Response(new Blob(['hello']))
         return response.text().then(function(text) {
           assert.equal(text, 'hello')
+        })
+      })
+    })
+
+    featureDependent(suite, support.arrayBuffer, 'type ArrayBuffer', function() {
+      test('consume as array buffer', function() {
+        var text = 'name=Hubot'
+
+        var buf = new ArrayBuffer(text.length)
+        var view = new Uint8Array(buf)
+
+        for(var i = 0; i < text.length; i++) {
+          view[i] = text.charCodeAt(i)
+        }
+
+        var response = new Response(buf)
+        return response.arrayBuffer().then(function(buffer) {
+          var bufView = new Uint8Array(buffer)
+          assert.equal(bufView.byteLength, view.byteLength)
+          for(var i = 0; i < bufView.byteLength; i++) {
+            assert.equal(bufView[i], view[i])
+          }
         })
       })
     })

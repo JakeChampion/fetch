@@ -178,8 +178,12 @@
       } else if (!body) {
         this._bodyText = ''
       } else if (support.arrayBuffer && ArrayBuffer.prototype.isPrototypeOf(body)) {
-        // Only support ArrayBuffers for POST method.
-        // Receiving ArrayBuffers happens via Blobs, instead.
+        if (body.slice) {
+          this._bodyArrayBuffer = new Uint8Array(body.slice(0))
+        } else {
+          this._bodyArrayBuffer = new Uint8Array(body.byteLength)
+          this._bodyArrayBuffer.set(new Uint8Array(body))
+        }
       } else {
         throw new Error('unsupported BodyInit type')
       }
@@ -211,10 +215,6 @@
         }
       }
 
-      this.arrayBuffer = function() {
-        return this.blob().then(readBlobAsArrayBuffer)
-      }
-
       this.text = function() {
         var rejected = consumed(this)
         if (rejected) {
@@ -231,8 +231,17 @@
       }
     } else {
       this.text = function() {
-        var rejected = consumed(this)
-        return rejected ? rejected : Promise.resolve(this._bodyText)
+        return consumed(this) || Promise.resolve(this._bodyText)
+      }
+    }
+
+    if (support.arrayBuffer) {
+      this.arrayBuffer = function() {
+        if (this._bodyArrayBuffer) {
+          return consumed(this) || Promise.resolve(this._bodyArrayBuffer.buffer)
+        } else {
+          return this.blob().then(readBlobAsArrayBuffer)
+        }
       }
     }
 
