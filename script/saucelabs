@@ -16,7 +16,16 @@ sauce_connect/bin/sc -u "$SAUCE_USERNAME" -k "$SAUCE_ACCESS_KEY" \
 sauce_pid=$!
 trap "kill $sauce_pid" INT EXIT
 
-while [ ! -f "$sauce_ready" ]; do sleep .01; done
+sauce_waited=0
+while [ ! -f "$sauce_ready" ]; do
+  if [ "$sauce_waited" -gt 60000 ]; then
+    echo "sauce_connect failed to start within 60 seconds" >&2
+    exit 1
+  fi
+  sleep .01
+  sauce_waited=$((sauce_waited + 10))
+done
+echo "sauce_connect started within $sauce_waited ms"
 rm -f "$sauce_ready"
 
 job="$(./script/saucelabs-api --raw "js-tests" <<JSON
@@ -31,10 +40,14 @@ job="$(./script/saucelabs-api --raw "js-tests" <<JSON
 JSON
 )"
 
-while true; do
+while sleep 5; do
   result=$(./script/saucelabs-api "js-tests/status" <<<"$job")
+  if grep -q '.status: test error' <<<"$result"; then
+    echo
+    echo "$result" >&2
+    exit 1
+  fi
   grep -q "^completed: true" <<<"$result" && break
-  sleep 1
   echo -n "."
 done
 
@@ -48,6 +61,6 @@ awk '
   /\.url:/ { print $(NF) }
   END {
     printf "%d passed, %d pending, %d failures\n", passes, pending, failures
-    if (failures > 0 || tests != passes + pending) exit 1
+    if (failures > 0 || tests != passes + pending || tests == 0) exit 1
   }
 ' <<<"$result"

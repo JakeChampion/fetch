@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -o pipefail
 
 raw=""
 if [ "$1" = "--raw" ]; then
@@ -9,7 +10,7 @@ fi
 
 endpoint="$1"
 
-curl -fs -X POST "https://saucelabs.com/rest/v1/$SAUCE_USERNAME/${endpoint}" \
+curl -fsS -X POST "https://saucelabs.com/rest/v1/$SAUCE_USERNAME/${endpoint}" \
   -u "$SAUCE_USERNAME:$SAUCE_ACCESS_KEY" \
   -H "Content-Type: application/json" -d "@-" | \
 {
