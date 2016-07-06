@@ -393,24 +393,39 @@
         return
       }
 
-      xhr.onload = function() {
-        var options = {
-          status: xhr.status,
-          statusText: xhr.statusText,
-          headers: headers(xhr),
-          url: responseURL()
-        }
-        var body = 'response' in xhr ? xhr.response : xhr.responseText
-        resolve(new Response(body, options))
-      }
+  	  function getResponse() {
+	      var options = {
+	          status: xhr.status,
+	          statusText: xhr.statusText,
+	          headers: headers(xhr),
+	          url: responseURL()
+	      }
+	      if ('response' in xhr) {
+	          return new Response(xhr.response, options);
+	      }
+	      if ('responseText' in xhr) {
+	          return new Response(xhr.responseText, options);
+	      }
+	      return;
+	  }
 
-      xhr.onerror = function() {
-        reject(new TypeError('Network request failed'))
-      }
+	  xhr.onload = function() {
+	      resolve(getResponse());
+	  }
 
-      xhr.ontimeout = function() {
-        reject(new TypeError('Network request failed'))
-      }
+	  xhr.onerror = function() {
+	      reject({
+	          error: 'Network request failed',
+	          response: getResponse()
+	      });
+	  }
+
+	  xhr.ontimeout = function() {
+	      reject({
+	          error: 'Network request timed out',
+	          response: getResponse()
+	      });
+	  }
 
       xhr.open(request.method, request.url, true)
 
