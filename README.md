@@ -190,7 +190,6 @@ fetch('https://example.com:1234/users', {
 })
 ```
 
-
 #### Receiving cookies
 
 Like with XMLHttpRequest, the `Set-Cookie` response header returned from the
@@ -220,6 +219,10 @@ Firefox < 32, Chrome < 37, Safari, or IE.
 
 ## Browser Support
 
-![Chrome](https://raw.github.com/alrra/browser-logos/master/chrome/chrome_48x48.png) | ![Firefox](https://raw.github.com/alrra/browser-logos/master/firefox/firefox_48x48.png) | ![IE](https://raw.github.com/alrra/browser-logos/master/internet-explorer/internet-explorer_48x48.png) | ![Opera](https://raw.github.com/alrra/browser-logos/master/opera/opera_48x48.png) | ![Safari](https://raw.github.com/alrra/browser-logos/master/safari/safari_48x48.png)
---- | --- | --- | --- | --- |
-Latest ✔ | Latest ✔ | 10+ ✔ | Latest ✔ | 6.1+ ✔ |
+- Chrome
+- Firefox
+- Safari 6.1+
+- Internet Explorer 10+
+- Microsoft Edge
+
+Note: Chrome, Firefox, Microsft Edge, and Safari 10 contain native implementations of `window.fetch`, so this polyfill code does not run in those browsers.
