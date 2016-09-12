@@ -137,6 +137,8 @@ bear keeping in mind:
 * By default, `fetch` **won't send any cookies** to the server, resulting in
   unauthenticated requests if the site relies on maintaining a user session.
 
+* By default, the **browser will not store any cookies** set in `fetch()` responses.
+
 #### Handling HTTP error statuses
 
 To have `fetch` Promise reject on HTTP error statuses, i.e. on any non-2xx
@@ -191,6 +193,9 @@ fetch('https://example.com:1234/users', {
 ```
 
 #### Receiving cookies
+
+By default, the browser will ignore the `Set-Cookie` response header unless the
+`credentials` option is provided.
 
 Like with XMLHttpRequest, the `Set-Cookie` response header returned from the
 server is a [forbidden header name][] and therefore can't be programatically
