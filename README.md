@@ -126,7 +126,7 @@ fetch('/avatars', {
 
 ### Caveats
 
-The `fetch` specification differs from `jQuery.ajax()` in mainly two ways that
+The `fetch` specification differs from `jQuery.ajax()` in mainly three ways that
 bear keeping in mind:
 
 * The Promise returned from `fetch()` **won't reject on HTTP error status**
