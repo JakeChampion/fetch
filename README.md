@@ -225,4 +225,4 @@ Firefox < 32, Chrome < 37, Safari, or IE.
 - Internet Explorer 10+
 - Microsoft Edge
 
-Note: Chrome, Firefox, Microsft Edge, and Safari 10 contain native implementations of `window.fetch`, so this polyfill code does not run in those browsers.
+Note: Chrome, Firefox, and Microsoft Edge contain native implementations of `window.fetch`, so this polyfill code does not run in those browsers.
