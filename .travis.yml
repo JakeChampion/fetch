@@ -2,16 +2,6 @@ sudo: false
 language: node_js
 before_script: make
 script: make test
-env:
-  global:
-    - SAUCE_USERNAME=github-fetch
-    - SAUCE_ACCESS_KEY=c3d37f93-0c2e-4834-9da5-eddc0d8c6299
-  matrix:
-    - PHANTOMJS=1
-    - SAUCE_PLATFORM="Windows 7" SAUCE_BROWSER="firefox" SAUCE_VERSION=""
-    - SAUCE_PLATFORM="Windows 7" SAUCE_BROWSER="googlechrome" SAUCE_VERSION=""
-    - SAUCE_PLATFORM="Windows 7" SAUCE_BROWSER="internet explorer" SAUCE_VERSION="11"
-    - SAUCE_PLATFORM="Windows 7" SAUCE_BROWSER="internet explorer" SAUCE_VERSION="10"
 deploy:
   provider: npm
   email: mislav.marohnic@gmail.com
