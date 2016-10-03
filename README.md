@@ -224,7 +224,7 @@ Firefox < 32, Chrome < 37, Safari, or IE.
 - Safari 6.1+
 - Internet Explorer 10+
 
-Note: modern browsers such as Chrome, Firefox, and Microsft Edge contain native
+Note: modern browsers such as Chrome, Firefox, and Microsoft Edge contain native
 implementations of `window.fetch`, so the code from this polyfill doesn't
 have any affect on those browsers. If you believe you've encountered an error
 with how `window.fetch` is implemented in any of these browsers, you should file
