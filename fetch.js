@@ -177,6 +177,8 @@
         this._bodyText = body.toString()
       } else if (!body) {
         this._bodyText = ''
+      } else if (body.getReader) {
+        this._bodyStream = body
       } else if (support.arrayBuffer && ArrayBuffer.prototype.isPrototypeOf(body)) {
         // Only support ArrayBuffers for POST method.
         // Receiving ArrayBuffers happens via Blobs, instead.
@@ -204,6 +206,21 @@
 
         if (this._bodyBlob) {
           return Promise.resolve(this._bodyBlob)
+        } else if (this._bodyStream) {
+          var reader = this._bodyStream.getReader();
+          var chunks = [];
+          var pump = function(){
+            return reader.read().then(function(result){
+              if(!result.done){
+                chunks.push(result.value)
+                return pump()
+              }
+            })
+          }
+
+          return pump().then(function(){
+            return new Blob(chunks)
+          });
         } else if (this._bodyFormData) {
           throw new Error('could not read FormData body as blob')
         } else {
@@ -216,6 +233,10 @@
       }
 
       this.text = function() {
+        if (this._bodyStream) {
+          return this.blob().then(readBlobAsText)
+        }
+
         var rejected = consumed(this)
         if (rejected) {
           return rejected
