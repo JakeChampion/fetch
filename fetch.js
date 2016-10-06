@@ -178,7 +178,7 @@
       } else if (!body) {
         this._bodyText = ''
       } else if (body.getReader) {
-        this._bodyStream = body
+        this.body = body
       } else if (support.arrayBuffer && ArrayBuffer.prototype.isPrototypeOf(body)) {
         // Only support ArrayBuffers for POST method.
         // Receiving ArrayBuffers happens via Blobs, instead.
