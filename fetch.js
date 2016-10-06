@@ -206,8 +206,8 @@
 
         if (this._bodyBlob) {
           return Promise.resolve(this._bodyBlob)
-        } else if (this._bodyStream) {
-          var reader = this._bodyStream.getReader();
+        } else if (this.body) {
+          var reader = this.body.getReader();
           var chunks = [];
           var pump = function(){
             return reader.read().then(function(result){
@@ -233,7 +233,7 @@
       }
 
       this.text = function() {
-        if (this._bodyStream) {
+        if (this.body) {
           return this.blob().then(readBlobAsText)
         }
 
