@@ -207,11 +207,11 @@
         if (this._bodyBlob) {
           return Promise.resolve(this._bodyBlob)
         } else if (this.body) {
-          var reader = this.body.getReader();
-          var chunks = [];
-          var pump = function(){
-            return reader.read().then(function(result){
-              if(!result.done){
+          var reader = this.body.getReader()
+          var chunks = []
+          var pump = function() {
+            return reader.read().then(function(result) {
+              if (!result.done) {
                 chunks.push(result.value)
                 return pump()
               }
@@ -220,7 +220,7 @@
 
           return pump().then(function(){
             return new Blob(chunks)
-          });
+          })
         } else if (this._bodyFormData) {
           throw new Error('could not read FormData body as blob')
         } else {
