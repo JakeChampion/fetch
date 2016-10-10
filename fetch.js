@@ -373,7 +373,7 @@
     var clone
 
     if (this.bodyUsed) {
-      throw new TypeError("Failed to execute 'clone' on 'Response': Response body is already used")
+      throw new TypeError('Failed to execute \'clone\' on \'Response\': Response body is already used')
     }
 
     if(this.body) {

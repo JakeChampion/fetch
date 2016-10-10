@@ -14,6 +14,16 @@ var support = {
   permanentRedirect: !/PhantomJS|Trident/.test(navigator.userAgent)
 }
 
+// Workaround hack for PhantomJS
+// Can only construct a ReadableStream outside of
+// the test for some werd reason
+function stream(cb, source) {
+  var rs = new ReadableStream(source)
+  return function(){
+    cb.apply(null, [rs])
+  }
+}
+
 function readBlobAsText(blob) {
   if ('FileReader' in self) {
     return new Promise(function(resolve, reject) {
@@ -577,11 +587,10 @@ suite('Response', function() {
     })
   })
 
-  test('Response should accept ReadableStream', function() {
-    var rs = new ReadableStream({})
-    var response = new Response(rs)
-    assert.equal(typeof response.body, 'object')
-  })
+  test('Response should accept ReadableStream', stream(function(readable){
+    var res = new Response(readable)
+    assert.equal(typeof res.body, 'object')
+  }))
 
   test('populates response body', function() {
     return fetch('/hello').then(function(response) {

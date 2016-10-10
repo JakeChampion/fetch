@@ -65,3 +65,5 @@ if (typeof Object.assign !== 'function') {
     return output;
   }
 }
+
+Number.isNaN = Number.isNaN || function(obj){ return obj !== obj }
