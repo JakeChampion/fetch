@@ -580,10 +580,7 @@ suite('Response', function() {
   test('Response should accept ReadableStream', function() {
     var rs = new ReadableStream({})
     var response = new Response(rs)
-    assert.equal(response.bodyUsed, false)
-    var reader = response.body.getReader()
-    reader.read()
-    assert.equal(response.bodyUsed, true)
+    assert.equal(typeof response.body, 'object')
   })
 
   test('populates response body', function() {
