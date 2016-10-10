@@ -162,6 +162,23 @@
     return fileReaderReady(reader)
   }
 
+  function readStreamAsBlob(body) {
+    var reader = body.getReader()
+    var chunks = []
+    var pump = function() {
+      return reader.read().then(function(result) {
+        if (!result.done) {
+          chunks.push(result.value)
+          return pump()
+        }
+      })
+    }
+
+    return pump().then(function() {
+      return new Blob(chunks)
+    })
+  }
+
   function Body() {
     this.bodyUsed = false
 
@@ -207,20 +224,7 @@
         if (this._bodyBlob) {
           return Promise.resolve(this._bodyBlob)
         } else if (this.body) {
-          var reader = this.body.getReader()
-          var chunks = []
-          var pump = function() {
-            return reader.read().then(function(result) {
-              if (!result.done) {
-                chunks.push(result.value)
-                return pump()
-              }
-            })
-          }
-
-          return pump().then(function(){
-            return new Blob(chunks)
-          })
+          return readStreamAsBlob(this.body)
         } else if (this._bodyFormData) {
           throw new Error('could not read FormData body as blob')
         } else {
@@ -233,10 +237,6 @@
       }
 
       this.text = function() {
-        if (this.body) {
-          return this.blob().then(readBlobAsText)
-        }
-
         var rejected = consumed(this)
         if (rejected) {
           return rejected
@@ -244,6 +244,8 @@
 
         if (this._bodyBlob) {
           return readBlobAsText(this._bodyBlob)
+        } else if (this.body) {
+          return readStreamAsBlob(this.body).then(readBlobAsText)
         } else if (this._bodyFormData) {
           throw new Error('could not read FormData body as text')
         } else {
