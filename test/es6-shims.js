@@ -45,7 +45,7 @@ if (typeof Symbol === 'undefined') {
   }(Object));
 }
 
-if (typeof Object.assign != 'function') {
+if (typeof Object.assign !== 'function') {
   Object.assign = function (target) {
     if (target == null) {
       throw new TypeError('Cannot convert undefined or null to object');
