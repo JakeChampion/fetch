@@ -364,7 +364,19 @@
   Body.call(Response.prototype)
 
   Response.prototype.clone = function() {
-    return new Response(this._bodyInit, {
+    var clone
+
+    if (this.bodyUsed) {
+      throw new TypeError("Failed to execute 'clone' on 'Response': Response body is already used")
+    }
+
+    if(this.body) {
+      var tee = this.body.tee()
+      this.body = tee[0]
+      clone = tee[1]
+    }
+
+    return new Response(clone || this._bodyInit, {
       status: this.status,
       statusText: this.statusText,
       headers: new Headers(this.headers),

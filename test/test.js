@@ -626,6 +626,12 @@ suite('Response', function() {
     })
   })
 
+  test('clone used response throws error', function() {
+    var res = new Response('foo')
+    res.text()
+    assert.throws(function() { res.clone() }, TypeError)
+  })
+
   featureDependent(test, support.blob, 'clone blob response', function() {
     return fetch('/binary').then(function(response) {
       return Promise.all([response.clone().arrayBuffer(), response.arrayBuffer()]).then(function(bufs){
