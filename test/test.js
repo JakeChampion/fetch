@@ -1,3 +1,4 @@
+var isPhantomJS = /PhantomJS/.test(navigator.userAgent)
 var support = {
   searchParams: 'URLSearchParams' in self,
   blob: 'FileReader' in self && 'Blob' in self && (function() {
@@ -10,18 +11,16 @@ var support = {
   })(),
   formData: 'FormData' in self,
   arrayBuffer: 'ArrayBuffer' in self,
-  patch: !/PhantomJS/.test(navigator.userAgent),
+  stream: (function(){
+    try {
+      new Response('').body.getReader()
+      return true
+    } catch (e) {
+      return false
+    }
+  })(),
+  patch: !isPhantomJS,
   permanentRedirect: !/PhantomJS|Trident/.test(navigator.userAgent)
-}
-
-// Workaround hack for PhantomJS
-// Can only construct a ReadableStream outside of
-// the test for some werd reason
-function stream(cb, source) {
-  var rs = new ReadableStream(source)
-  return function(){
-    cb.apply(null, [rs])
-  }
 }
 
 function readBlobAsText(blob) {
@@ -64,7 +63,7 @@ function readBlobAsBytes(blob) {
 }
 
 var native = {}
-var keepGlobals = ['fetch', 'Headers', 'Request', 'Response']
+var keepGlobals = ['fetch', 'Headers', 'Request', 'Response', 'ReadableStream']
 var exercise = ['polyfill']
 
 // If native fetch implementation exists, save it and allow it to be replaced
@@ -587,10 +586,14 @@ suite('Response', function() {
     })
   })
 
-  test('Response should accept ReadableStream', stream(function(readable){
-    var res = new Response(readable)
+  // Firefox & Edge partially support fetch (but don't have stream support)
+  // However the polyfilled Response do support it (With web-streams-polyfill)
+  // PhantomJS can use the polyfill but failes togheter with mocha
+  featureDependent(test, !isPhantomJS && support.stream, 'Response should accept ReadableStream', function() {
+    var rs = new ReadableStream()
+    var res = new Response(rs)
     assert.equal(typeof res.body, 'object')
-  }))
+  })
 
   test('populates response body', function() {
     return fetch('/hello').then(function(response) {
