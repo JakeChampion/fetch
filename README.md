@@ -178,7 +178,7 @@ fetch('/users', {
 })
 ```
 
-This option makes `fetch` behave similar to XMLHttpRequest with regards to
+This option makes `fetch` behave similarly to XMLHttpRequest with regards to
 cookies. Otherwise, cookies won't get sent, resulting in these requests not
 preserving the authentication session.
 
