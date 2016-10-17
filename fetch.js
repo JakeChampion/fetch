@@ -139,6 +139,12 @@
     body.bodyUsed = true
   }
 
+  function locked(res) {
+    if (res.body && res.body.locked) {
+      return Promise.reject(new TypeError('Body is locked to a reader'))
+    }
+  }
+
   function fileReaderReady(reader) {
     return new Promise(function(resolve, reject) {
       reader.onload = function() {
@@ -196,12 +202,6 @@
         this._bodyText = ''
       } else if (body.getReader) {
         this.body = body
-        Object.defineProperty(this, 'bodyUsed', {
-          enumerable: true,
-          get: function() {
-            return body.locked
-          }
-        })
       } else if (support.arrayBuffer && ArrayBuffer.prototype.isPrototypeOf(body)) {
         // Only support ArrayBuffers for POST method.
         // Receiving ArrayBuffers happens via Blobs, instead.
@@ -222,7 +222,7 @@
 
     if (support.blob) {
       this.blob = function() {
-        var rejected = consumed(this)
+        var rejected = consumed(this) || locked(this)
         if (rejected) {
           return rejected
         }
@@ -243,7 +243,7 @@
       }
 
       this.text = function() {
-        var rejected = consumed(this)
+        var rejected = consumed(this) || locked(this)
         if (rejected) {
           return rejected
         }
@@ -260,7 +260,7 @@
       }
     } else {
       this.text = function() {
-        var rejected = consumed(this)
+        var rejected = consumed(this) || locked(this)
         return rejected ? rejected : Promise.resolve(this._bodyText)
       }
     }
