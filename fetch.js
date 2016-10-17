@@ -8,6 +8,14 @@
   var support = {
     searchParams: 'URLSearchParams' in self,
     iterable: 'Symbol' in self && 'iterator' in Symbol,
+    blob: 'FileReader' in self && 'Blob' in self && (function() {
+      try {
+        new Blob()
+        return true
+      } catch(e) {
+        return false
+      }
+    })(),
     formData: 'FormData' in self,
     arrayBuffer: 'ArrayBuffer' in self
   }
@@ -161,7 +169,7 @@
       this._bodyInit = body
       if (typeof body === 'string') {
         this._bodyText = body
-      } else if (self.Blob && Blob.prototype.isPrototypeOf(body)) {
+      } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
         this._bodyBlob = body
       } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
         this._bodyFormData = body
@@ -199,11 +207,7 @@
       } else if (this._bodyFormData) {
         throw new Error('could not read FormData body as blob')
       } else {
-        try {
-          return Promise.resolve(new Blob([this._bodyText]))
-        } catch(e) {
-          throw new Error('Failed to construct a Blob, Include a Blob polyfill')
-        }
+        return Promise.resolve(new Blob([this._bodyText]))
       }
     }
 
@@ -408,7 +412,9 @@
         xhr.withCredentials = true
       }
 
-      xhr.responseType = 'blob'
+      if ('responseType' in xhr && support.blob) {
+        xhr.responseType = 'blob'
+      }
 
       request.headers.forEach(function(value, name) {
         xhr.setRequestHeader(name, value)
