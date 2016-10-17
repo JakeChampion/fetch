@@ -207,8 +207,9 @@
       } else if (this._bodyFormData) {
         throw new Error('could not read FormData body as blob')
       } else {
+        var self = this
         return new Promise(function(resolve){
-          resolve(new Blob([this._bodyText]))
+          resolve(new Blob([self._bodyText]))
         })
       }
     }
