@@ -120,58 +120,30 @@
     return iterator
   }
 
-  function streamFormData(fd, klass) {
-    var boundary = '--------FetchPolyfill' + Math.random()
-    var entries = fd.entries()
-    var fileReader = null
+  function formData2blob(fd) {
+    var boundary = "----FormData" + Math.random()
+    var chunks = []
 
-    klass.headers.set('Content-Type', 'multipart/form-data; boundary='+ boundary)
+    fd.forEach(function(key, value){
+      chunks.push('--' + boundary + '\r\n')
 
-    return new ReadableStream({
-      start: function(controller){
-        controller.enqueue(asciiToBytes(boundary))
-      },
-      pull: function(controller) {
-        klass.bodyUsed = true
-
-        if (fileReader) {
-          return fileReader.read(function(result){
-            if (result.done) {
-              controller.enqueue(asciiToBytes('\r\n'))
-              fileReader = null
-              return
-            }
-            controller.enqueue(result.value)
-          })
-        }
-
-        var result = entries.next()
-        var str = '--' + boundary + '\r\n'
-
-        if (result.done) {
-          str = '--' + boundary + '--'
-          controller.enqueue(asciiToBytes(str))
-          return controller.close()
-        }
-
-        var name = result[0]
-        var value = result[1]
-
-        controller.enqueue(asciiToBytes(str))
-        if (value instanceof blob) {
-          var file = result[1]
-          str += 'Content-Disposition: form-data; name="' + name + '"; filename="' + value.name + '"\r\n'
-          str += 'Content-Type: ' + value.type + '\r\n\r\n'
-          fileReader = streamBlob(value).getReader()
-        } else {
-          str = 'Content-Disposition: form-data; name="'
-          str += name
-          str += '";\r\n\r\n'
-          str += value + '\r\n'
-          controller.enqueue(str)
-        }
+      if (value instanceof File) {
+        chunks.push(
+          'Content-Disposition: form-data; name="' + name + '"; filename="' + value.name + '"\r\n',
+          'Content-Type: ' + value.type + '\r\n\r\n',
+          value,
+          '\r\n'
+        )
+      } else {
+        chunks.push(
+          'Content-Disposition: form-data; name="' + name + '"\r\n\r\n${value}\r\n'
+        )
       }
-    })
+    }
+
+    chunks.push('--' + boundary + '--')
+
+    return new Blob(chunks, {type: 'multipart/form-data; boundary=' + boundary})
   }
 
   function streamBlob(blob){
@@ -331,7 +303,9 @@
       content && body.type && klass.headers.set('content-type', body.type)
       klass.body = streamBlob(body.slice(), klass)
     } else if (body instanceof FormData) {
-      klass.body = streamFormData(body, klass)
+      body = formData2blob(body)
+      content && klass.headers.set('content-type', body.type)
+      klass.body = streamBlob(body.slice(), klass)
     } else if (body instanceof URLSearchParams) {
       content && klass.headers.set('content-type', 'application/x-www-form-urlencoded;charset=UTF-8')
       bytes = new TextEncoder('UTF-8').encode(body)
