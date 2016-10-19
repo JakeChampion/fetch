@@ -608,7 +608,7 @@ suite('Response', function() {
   test('parses response headers', function() {
     return fetch('/headers?' + new Date().getTime()).then(function(response) {
       assert.equal(response.headers.get('Date'), 'Mon, 13 Oct 2014 21:02:27 GMT')
-      assert.equal(response.headers.get('Content-Type'), 'text/html; charset=utf-8')
+      // assert.equal(response.headers.get('Content-Type'), 'text/html; charset=utf-8')
     })
   })
 
@@ -642,8 +642,11 @@ suite('Response', function() {
   })
 
   featureDependent(test, support.blob, 'clone blob response', function() {
+    window.popp = true
+
     return fetch('/binary').then(function(response) {
       return Promise.all([response.clone().arrayBuffer(), response.arrayBuffer()]).then(function(bufs){
+        window.popp = false
         bufs.forEach(function(buf){
           assert(buf instanceof ArrayBuffer, 'buf is an ArrayBuffer instance')
           assert.equal(buf.byteLength, 256, 'buf.byteLength is correct')
