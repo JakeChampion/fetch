@@ -440,7 +440,15 @@
   }
 
   Request.prototype.clone = function() {
-    return new Request(this)
+    var body = null
+
+    if (this.body) {
+      var tee = this.body.tee()
+      this.body = tee[0]
+      body = tee[1]
+    }
+
+    return new Request(this, {body: body})
   }
 
   function decode(body) {

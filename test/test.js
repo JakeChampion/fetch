@@ -401,6 +401,17 @@ suite('Request', function() {
     })
   })
 
+  // #411
+  test('construct with Request sets bodyUsed properly', function() {
+    var x = new Request('x')
+    var y = new Request(x)
+    assert.equal(x.bodyUsed, false)
+
+    x = new Request('x', {method: 'post', body: 'x'})
+    y = new Request(x)
+    assert.equal(x.bodyUsed, true)
+  })
+
   featureDependent(test, !nativeChrome, 'construct with used Request body', function() {
     var request1 = new Request('https://fetch.spec.whatwg.org/', {
       method: 'post',
@@ -418,6 +429,18 @@ suite('Request', function() {
     var req = new Request('https://fetch.spec.whatwg.org/')
     assert.equal(req.headers.get('content-type'), undefined)
   })
+
+  // test('Clone request', function() {
+  //   var r1 = new Request('https://fetch.spec.whatwg.org/', {
+  //     method: 'POST',
+  //     body: 'I work out'
+  //   })
+  //   var r2 = r1.clone()
+  //
+  //   return Promise.all([r1.text(), r2.text()]).then(function(text){
+  //     assert.deepEqual(text[0], text[1], 'I work out')
+  //   })
+  // })
 
   test('POST with blank body should not have implicit Content-Type', function() {
     var req = new Request('https://fetch.spec.whatwg.org/', {
@@ -495,8 +518,10 @@ suite('Request', function() {
     assert.equal(clone.headers.get('content-type'), 'text/plain')
     assert.notEqual(clone.headers, req.headers)
 
-    return clone.text().then(function(body) {
-      assert.equal(body, 'I work out')
+    // #308
+    return Promise.all([clone.text(), req.text()]).then(function(body) {
+      assert.equal(body[0], 'I work out')
+      assert.equal(body[1], 'I work out')
     })
   })
 
