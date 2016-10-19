@@ -642,11 +642,8 @@ suite('Response', function() {
   })
 
   featureDependent(test, support.blob, 'clone blob response', function() {
-    window.popp = true
-
     return fetch('/binary').then(function(response) {
       return Promise.all([response.clone().arrayBuffer(), response.arrayBuffer()]).then(function(bufs){
-        window.popp = false
         bufs.forEach(function(buf){
           assert(buf instanceof ArrayBuffer, 'buf is an ArrayBuffer instance')
           assert.equal(buf.byteLength, 256, 'buf.byteLength is correct')

@@ -66,10 +66,6 @@
     xhr.onprogress = function () {
       var chunk = xhr.response.substr(offset)
       var buffer = asciiToBytes(chunk)
-      // if(window.popp) {
-      //   console.log(buffer.length, chunk.length)
-      //   console.log()
-      // }
       offset = xhr.response.length
       controller.enqueue(new Uint8Array(buffer))
     }
