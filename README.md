@@ -82,6 +82,9 @@ import 'whatwg-fetch'
 
 ## Usage
 
+For a more comprehensive API reference that this polyfill supports, refer to
+https://github.github.io/fetch/.
+
 ### HTML
 
 ```javascript
