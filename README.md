@@ -1,51 +1,89 @@
 # window.fetch polyfill
 
-This project adheres to the [Open Code of Conduct][code-of-conduct]. By participating, you are expected to uphold this code.
-[code-of-conduct]: http://todogroup.org/opencodeofconduct/#fetch/opensource@github.com
+The `fetch()` function is a Promise-based mechanism for programatically making
+web requests in the browser. This project is a polyfill that implements a subset
+of the standard [Fetch specification][], enough to make `fetch` a viable
+replacement for most uses of XMLHttpRequest in traditional web applications.
 
-The global `fetch` function is an easier way to make web requests and handle
-responses than using an XMLHttpRequest. This polyfill is written as closely as
-possible to the standard Fetch specification at https://fetch.spec.whatwg.org.
+This project adheres to the [Open Code of Conduct][]. By participating, you are
+expected to uphold this code.
+
+## Table of Contents
+
+* [Read this first](#read-this-first)
+* [Installation](#installation)
+* [Usage](#usage)
+  * [HTML](#html)
+  * [JSON](#json)
+  * [Response metadata](#response-metadata)
+  * [Post form](#post-form)
+  * [Post JSON](#post-json)
+  * [File upload](#file-upload)
+  * [Caveats](#caveats)
+    * [Handling HTTP error statuses](#handling-http-error-statuses)
+    * [Sending cookies](#sending-cookies)
+    * [Receiving cookies](#receiving-cookies)
+    * [Obtaining the Response URL](#obtaining-the-response-url)
+* [Browser Support](#browser-support)
+
+## Read this first
+
+* If you believe you found a bug with how `fetch` behaves in Chrome or Firefox,
+  please **avoid opening an issue in this repository**. This project is a
+  _polyfill_, and since Chrome and Firefox both implement the `window.fetch`
+  function natively, no code from this project actually takes any effect in
+  these browsers. See [Browser support](#browser-support) for detailed
+  information.
+
+* If you have trouble **making a request to another domain** (a different
+  subdomain or port number also constitutes as another domain), please
+  familiarize yourself with all the intricacies and limitations of [CORS][]
+  requests. Because CORS requires participation of the server by implementing
+  specific HTTP response headers, it is often nontrivial to set up or debug.
+  CORS is exclusively handled by the browser's internal mechanisms which this
+  polyfill cannot influence.
+
+* If you have trouble **maintaining the user's session** or [CSRF][] protection
+  through `fetch` requests, please ensure that you've read and understood the
+  [Sending cookies](#sending-cookies) section.
+
+* If this polyfill **doesn't work under Node.js environment**, that is expected,
+  because this project is meant for web browsers only. You should ensure that your
+  application doesn't try to package and run this on the server.
+
+* If you have an idea for a new feature of `fetch`, please understand that we
+  are only ever going to add features and APIs that are a part of the
+  [Fetch specification][]. You should **submit your feature requests** to the
+  [repository of the specification](https://github.com/whatwg/fetch/issues)
+  itself, rather than this repository.
 
 ## Installation
 
-Available on [Bower](http://bower.io) as **fetch**.
+* `npm install whatwg-fetch --save`; or
 
-```sh
-$ bower install fetch
-```
+* `bower install fetch`.
 
-You'll also need a Promise polyfill for [older browsers](http://caniuse.com/#feat=promises).
+You will also need a Promise polyfill for [older browsers](http://caniuse.com/#feat=promises).
+We recommend [taylorhakes/promise-polyfill](https://github.com/taylorhakes/promise-polyfill)
+for its small size and Promises/A+ compatibility.
 
-```sh
-$ bower install es6-promise
-```
-
-This can also be installed with `npm`.
-
-```sh
-$ npm install whatwg-fetch --save
-```
-
-For a node.js implementation, try [node-fetch](https://github.com/bitinn/node-fetch).
-
-For use with webpack, add this package in the `entry` configuration option before your application entry point:
+For use with webpack, add this package in the `entry` configuration option
+before your application entry point:
 
 ```javascript
 entry: ['whatwg-fetch', ...]
 ```
 
-For babel and es2015+, make sure to import the file:
+For Babel and ES2015+, make sure to import the file:
 
 ```javascript
-import 'whatwg-fetch';
-fetch(...);
+import 'whatwg-fetch'
 ```
 
 ## Usage
 
-The `fetch` function supports any HTTP method. We'll focus on GET and POST
-example requests.
+For a more comprehensive API reference that this polyfill supports, refer to
+https://github.github.io/fetch/.
 
 ### HTML
 
@@ -99,7 +137,6 @@ fetch('/users', {
 fetch('/users', {
   method: 'POST',
   headers: {
-    'Accept': 'application/json',
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
@@ -134,8 +171,10 @@ bear keeping in mind:
   and it will only reject on network failure, or if anything prevented the
   request from completing.
 
-* By default, `fetch` **won't send any cookies** to the server, resulting in
-  unauthenticated requests if the site relies on maintaining a user session.
+* By default, `fetch` **won't send or receive any cookies** from the server,
+  resulting in unauthenticated requests if the site relies on maintaining a user
+  session. See [Sending cookies](#sending-cookies) for how to opt into cookie
+  handling.
 
 #### Handling HTTP error statuses
 
@@ -178,11 +217,12 @@ fetch('/users', {
 })
 ```
 
-This option makes `fetch` behave similarly to XMLHttpRequest with regards to
-cookies. Otherwise, cookies won't get sent, resulting in these requests not
-preserving the authentication session.
+The "same-origin" value makes `fetch` behave similarly to XMLHttpRequest with
+regards to cookies. Otherwise, cookies won't get sent, resulting in these
+requests not preserving the authentication session.
 
-Use the `include` value to send cookies in a [cross-origin resource sharing](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) (CORS) request.
+For [CORS][] requests, use the "include" value to allow sending credentials to
+other domains:
 
 ```javascript
 fetch('https://example.com:1234/users', {
@@ -198,7 +238,9 @@ read with `response.headers.get()`. Instead, it's the browser's responsibility
 to handle new cookies being set (if applicable to the current URL). Unless they
 are HTTP-only, new cookies will be available through `document.cookie`.
 
-  [forbidden header name]: https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name
+Bear in mind that the default behavior of `fetch` is to ignore the `Set-Cookie`
+header completely. To opt into accepting cookies from the server, you must use
+the `credentials` option.
 
 #### Obtaining the Response URL
 
@@ -225,7 +267,16 @@ Firefox < 32, Chrome < 37, Safari, or IE.
 - Internet Explorer 10+
 
 Note: modern browsers such as Chrome, Firefox, and Microsoft Edge contain native
-implementations of `window.fetch`, so the code from this polyfill doesn't
+implementations of `window.fetch`, therefore the code from this polyfill doesn't
 have any affect on those browsers. If you believe you've encountered an error
 with how `window.fetch` is implemented in any of these browsers, you should file
 an issue with that browser vendor instead on this project.
+
+
+  [fetch specification]: https://fetch.spec.whatwg.org
+  [open code of conduct]: http://todogroup.org/opencodeofconduct/#fetch/opensource@github.com
+  [cors]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
+    "Cross-origin resource sharing"
+  [csrf]: https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet
+    "Cross-site request forgery"
+  [forbidden header name]: https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name
