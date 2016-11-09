@@ -1,11 +1,12 @@
 # window.fetch polyfill
 
-This project adheres to the [Open Code of Conduct][code-of-conduct]. By participating, you are expected to uphold this code.
-[code-of-conduct]: http://todogroup.org/opencodeofconduct/#fetch/opensource@github.com
+The `fetch()` function is a Promise-based mechanism for programatically making
+web requests in the browser. This project is a polyfill that implements a subset
+of the standard [Fetch specification][], enough to make `fetch` a viable
+replacement for most uses of XMLHttpRequest in traditional web applications.
 
-The global `fetch` function is an easier way to make web requests and handle
-responses than using an XMLHttpRequest. This polyfill is written as closely as
-possible to the standard Fetch specification at https://fetch.spec.whatwg.org.
+This project adheres to the [Open Code of Conduct][]. By participating, you are
+expected to uphold this code.
 
 ## Installation
 
@@ -31,9 +32,6 @@ import 'whatwg-fetch'
 ```
 
 ## Usage
-
-The `fetch` function supports any HTTP method. We'll focus on GET and POST
-example requests.
 
 ### HTML
 
@@ -87,7 +85,6 @@ fetch('/users', {
 fetch('/users', {
   method: 'POST',
   headers: {
-    'Accept': 'application/json',
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
@@ -168,11 +165,12 @@ fetch('/users', {
 })
 ```
 
-This option makes `fetch` behave similarly to XMLHttpRequest with regards to
-cookies. Otherwise, cookies won't get sent, resulting in these requests not
-preserving the authentication session.
+The "same-origin" value makes `fetch` behave similarly to XMLHttpRequest with
+regards to cookies. Otherwise, cookies won't get sent, resulting in these
+requests not preserving the authentication session.
 
-Use the `include` value to send cookies in a [cross-origin resource sharing](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) (CORS) request.
+For [CORS][] requests, use the "include" value to allow sending credentials to
+other domains:
 
 ```javascript
 fetch('https://example.com:1234/users', {
@@ -191,8 +189,6 @@ are HTTP-only, new cookies will be available through `document.cookie`.
 Bear in mind that the default behavior of `fetch` is to ignore the `Set-Cookie`
 header completely. To opt into accepting cookies from the server, you must use
 the `credentials` option.
-
-  [forbidden header name]: https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name
 
 #### Obtaining the Response URL
 
@@ -219,7 +215,14 @@ Firefox < 32, Chrome < 37, Safari, or IE.
 - Internet Explorer 10+
 
 Note: modern browsers such as Chrome, Firefox, and Microsoft Edge contain native
-implementations of `window.fetch`, so the code from this polyfill doesn't
+implementations of `window.fetch`, therefore the code from this polyfill doesn't
 have any affect on those browsers. If you believe you've encountered an error
 with how `window.fetch` is implemented in any of these browsers, you should file
 an issue with that browser vendor instead on this project.
+
+
+  [fetch specification]: https://fetch.spec.whatwg.org
+  [open code of conduct]: http://todogroup.org/opencodeofconduct/#fetch/opensource@github.com
+  [cors]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
+    "Cross-origin resource sharing"
+  [forbidden header name]: https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name
