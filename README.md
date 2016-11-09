@@ -9,37 +9,25 @@ possible to the standard Fetch specification at https://fetch.spec.whatwg.org.
 
 ## Installation
 
-Available on [Bower](http://bower.io) as **fetch**.
+* `npm install whatwg-fetch --save`; or
 
-```sh
-$ bower install fetch
-```
+* `bower install fetch`.
 
-You'll also need a Promise polyfill for [older browsers](http://caniuse.com/#feat=promises).
+You will also need a Promise polyfill for [older browsers](http://caniuse.com/#feat=promises).
+We recommend [taylorhakes/promise-polyfill](https://github.com/taylorhakes/promise-polyfill)
+for its small size and Promises/A+ compatibility.
 
-```sh
-$ bower install es6-promise
-```
-
-This can also be installed with `npm`.
-
-```sh
-$ npm install whatwg-fetch --save
-```
-
-For a node.js implementation, try [node-fetch](https://github.com/bitinn/node-fetch).
-
-For use with webpack, add this package in the `entry` configuration option before your application entry point:
+For use with webpack, add this package in the `entry` configuration option
+before your application entry point:
 
 ```javascript
 entry: ['whatwg-fetch', ...]
 ```
 
-For babel and es2015+, make sure to import the file:
+For Babel and ES2015+, make sure to import the file:
 
 ```javascript
-import 'whatwg-fetch';
-fetch(...);
+import 'whatwg-fetch'
 ```
 
 ## Usage
