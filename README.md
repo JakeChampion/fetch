@@ -134,8 +134,10 @@ bear keeping in mind:
   and it will only reject on network failure, or if anything prevented the
   request from completing.
 
-* By default, `fetch` **won't send any cookies** to the server, resulting in
-  unauthenticated requests if the site relies on maintaining a user session.
+* By default, `fetch` **won't send or receive any cookies** from the server,
+  resulting in unauthenticated requests if the site relies on maintaining a user
+  session. See [Sending cookies](#sending-cookies) for how to opt into cookie
+  handling.
 
 #### Handling HTTP error statuses
 
@@ -197,6 +199,10 @@ server is a [forbidden header name][] and therefore can't be programatically
 read with `response.headers.get()`. Instead, it's the browser's responsibility
 to handle new cookies being set (if applicable to the current URL). Unless they
 are HTTP-only, new cookies will be available through `document.cookie`.
+
+Bear in mind that the default behavior of `fetch` is to ignore the `Set-Cookie`
+header completely. To opt into accepting cookies from the server, you must use
+the `credentials` option.
 
   [forbidden header name]: https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name
 
