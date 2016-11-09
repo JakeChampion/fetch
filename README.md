@@ -8,6 +8,55 @@ replacement for most uses of XMLHttpRequest in traditional web applications.
 This project adheres to the [Open Code of Conduct][]. By participating, you are
 expected to uphold this code.
 
+## Table of Contents
+
+* [Read this first](#read-this-first)
+* [Installation](#installation)
+* [Usage](#usage)
+  * [HTML](#html)
+  * [JSON](#json)
+  * [Response metadata](#response-metadata)
+  * [Post form](#post-form)
+  * [Post JSON](#post-json)
+  * [File upload](#file-upload)
+  * [Caveats](#caveats)
+    * [Handling HTTP error statuses](#handling-http-error-statuses)
+    * [Sending cookies](#sending-cookies)
+    * [Receiving cookies](#receiving-cookies)
+    * [Obtaining the Response URL](#obtaining-the-response-url)
+* [Browser Support](#browser-support)
+
+## Read this first
+
+* If you believe you found a bug with how `fetch` behaves in Chrome or Firefox,
+  please **avoid opening an issue in this repository**. This project is a
+  _polyfill_, and since Chrome and Firefox both implement the `window.fetch`
+  function natively, no code from this project actually takes any effect in
+  these browsers. See [Browser support](#browser-support) for detailed
+  information.
+
+* If you have trouble **making a request to another domain** (a different
+  subdomain or port number also constitutes as another domain), please
+  familiarize yourself with all the intricacies and limitations of [CORS][]
+  requests. Because CORS requires participation of the server by implementing
+  specific HTTP response headers, it is often nontrivial to set up or debug.
+  CORS is exclusively handled by the browser's internal mechanisms which this
+  polyfill cannot influence.
+
+* If you have trouble **maintaining the user's session** or [CSRF][] protection
+  through `fetch` requests, please ensure that you've read and understood the
+  [Sending cookies](#sending-cookies) section.
+
+* If this polyfill **doesn't work under Node.js environment**, that is expected,
+  because this project is meant for web browsers only. You should ensure that your
+  application doesn't try to package and run this on the server.
+
+* If you have an idea for a new feature of `fetch`, please understand that we
+  are only ever going to add features and APIs that are a part of the
+  [Fetch specification][]. You should **submit your feature requests** to the
+  [repository of the specification](https://github.com/whatwg/fetch/issues)
+  itself, rather than this repository.
+
 ## Installation
 
 * `npm install whatwg-fetch --save`; or
@@ -225,4 +274,6 @@ an issue with that browser vendor instead on this project.
   [open code of conduct]: http://todogroup.org/opencodeofconduct/#fetch/opensource@github.com
   [cors]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
     "Cross-origin resource sharing"
+  [csrf]: https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet
+    "Cross-site request forgery"
   [forbidden header name]: https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name
