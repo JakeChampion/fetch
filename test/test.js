@@ -84,7 +84,6 @@ exercise.forEach(function(exerciseMode) {
     }
 
     var nativeChrome = /Chrome\//.test(navigator.userAgent) && exerciseMode === 'native'
-    var nativeFirefox = /Firefox\//.test(navigator.userAgent) && exerciseMode === 'native'
     var polyfillFirefox = /Firefox\//.test(navigator.userAgent) && exerciseMode === 'polyfill'
 
 test('resolves promise on 500 error', function() {
@@ -186,7 +185,7 @@ suite('Headers', function() {
       headers.set({field: 'value'}, 'application/json')
     }, TypeError)
   })
-  featureDependent(test, !nativeFirefox, 'is iterable with forEach', function() {
+  test('is iterable with forEach', function() {
     var headers = new Headers()
     headers.append('Accept', 'application/json')
     headers.append('Accept', 'text/plain')
@@ -201,7 +200,7 @@ suite('Headers', function() {
     assert.deepEqual({key: 'accept', value: 'application/json,text/plain', object: headers}, results[0])
     assert.deepEqual({key: 'content-type', value: 'text/html', object: headers}, results[1])
   })
-  featureDependent(test, !nativeFirefox, 'forEach accepts second thisArg argument', function() {
+  test('forEach accepts second thisArg argument', function() {
     var headers = new Headers({'Accept': 'application/json'})
     var thisArg = 42
     headers.forEach(function() {
