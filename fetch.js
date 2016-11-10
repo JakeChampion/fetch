@@ -20,6 +20,71 @@
     arrayBuffer: 'ArrayBuffer' in self
   }
 
+  var parseResponse = testResType('moz-chunked-arraybuffer') ? mozParser : defaultParser
+
+  function mozParser(xhr, controller) {
+    xhr.responseType = 'moz-chunked-arraybuffer'
+    xhr.onprogress = function () {
+      controller.enqueue(new Uint8Array(xhr.response))
+    }
+  }
+
+  /* Don't have IE
+  function msParser(xhr, controller) {
+    // only avalible on stage 3?
+    var msstream = xhr.response // MSStream object
+    var stream = msstream.msDetachStream() // IInputStreamObject
+
+    var reader = new MSStreamReader()
+    reader.onprogress = function () {
+      // enqueue chunk (Uint8Array) to ReadableStream
+      controller.enqueue(new Uint8Array(reader.result))
+    }
+
+    reader.readAsArrayBuffer(msstream) // or
+    reader.readAsArrayBuffer(stream)
+  }
+  */
+
+  function asciiToBytes(str) {
+    var len = str.length
+    var byteArray = new Uint8Array(len)
+    for (var i = 0; i < len; i++) {
+      // Node's code seems to be doing this and not & 0x7F..
+      byteArray[i] = str.charCodeAt(i) & 0xFF
+    }
+    return byteArray
+  }
+
+  function defaultParser(xhr, controller) {
+    var encoder = new TextEncoder()
+    var offset = 0
+
+    xhr.responseType = 'text'
+    // Don't let browser modify the response text
+    xhr.overrideMimeType('text/plain; charset=x-user-defined')
+    xhr.onprogress = function () {
+      var chunk = xhr.response.substr(offset)
+      var buffer = asciiToBytes(chunk)
+      offset = xhr.response.length
+      controller.enqueue(new Uint8Array(buffer))
+    }
+    xhr.onload = function() {
+      xhr.onprogress()
+      controller.close()
+    }
+  }
+
+  function testResType(type) {
+    /* IE throws on setting responseType to an unsupported value */
+    try {
+      var xhr = new XMLHttpRequest()
+      return 'responseType' in xhr && (xhr.responseType = type) === xhr.responseType
+    } catch (err) {
+      return false
+    }
+  }
+
   function normalizeName(name) {
     if (typeof name !== 'string') {
       name = String(name)
@@ -53,6 +118,54 @@
     }
 
     return iterator
+  }
+
+  function formData2blob(fd) {
+    var boundary = "----FormData" + Math.random()
+    var chunks = []
+
+    fd.forEach(function(key, value){
+      chunks.push('--' + boundary + '\r\n')
+
+      if (value instanceof File) {
+        chunks.push(
+          'Content-Disposition: form-data; name="' + name + '"; filename="' + value.name + '"\r\n',
+          'Content-Type: ' + value.type + '\r\n\r\n',
+          value,
+          '\r\n'
+        )
+      } else {
+        chunks.push(
+          'Content-Disposition: form-data; name="' + name + '"\r\n\r\n${value}\r\n'
+        )
+      }
+    }
+
+    chunks.push('--' + boundary + '--')
+
+    return new Blob(chunks, {type: 'multipart/form-data; boundary=' + boundary})
+  }
+
+  function streamBlob(blob){
+    var position = 0
+    var fr = new FileReader()
+
+    return new ReadableStream({
+      pull: function (controller) {
+        var chunk = blob.slice(position, position += 524288)
+
+        return new Promise(function(resolve) {
+          fr.onload = function(){
+            controller.enqueue(new Uint8Array(fr.result))
+            if(position => blob.size)
+              controller.close()
+            resolve()
+          }
+
+          fr.readAsArrayBuffer(chunk)
+        })
+      }
+    })
   }
 
   function Headers(headers) {
@@ -132,114 +245,116 @@
     Headers.prototype[Symbol.iterator] = Headers.prototype.entries
   }
 
-  function consumed(body) {
-    if (body.bodyUsed) {
-      return Promise.reject(new TypeError('Already read'))
-    }
-    body.bodyUsed = true
+  function concatenate(arrays) {
+    var size = arrays.reduce(function(a,b) {
+      return  a + b.byteLength
+    }, 0)
+
+    var result = new Uint8Array(size)
+
+    var offset = 0
+    arrays.forEach(function(arr) {
+      result.set(arr, offset)
+      offset += arr.byteLength
+    })
+
+    return result
   }
 
-  function fileReaderReady(reader) {
-    return new Promise(function(resolve, reject) {
-      reader.onload = function() {
-        resolve(reader.result)
-      }
-      reader.onerror = function() {
-        reject(reader.error)
-      }
+  function concatStream(res) {
+    if (res.bodyUsed) {
+      return Promise.reject(new TypeError('Already read'))
+    }
+
+    if (res.body && res.body.locked) {
+      return Promise.reject(new TypeError('Body is locked to a reader'))
+    }
+
+    if (!res.body) return Promise.resolve(new Uint8Array())
+
+    var chunks = []
+    var reader = res.body.getReader()
+    var pump = function() {
+      return reader.read().then(function(result) {
+        if (!result.done) {
+          chunks.push(result.value)
+          return pump()
+        }
+      })
+    }
+
+    res.bodyUsed = true
+
+    return pump().then(function() {
+      return concatenate(chunks)
     })
   }
 
-  function readBlobAsArrayBuffer(blob) {
-    var reader = new FileReader()
-    reader.readAsArrayBuffer(blob)
-    return fileReaderReady(reader)
-  }
+  function initBody(klass, body) {
+    var content = !klass.headers.get('content-type')
+    var bytes
 
-  function readBlobAsText(blob) {
-    var reader = new FileReader()
-    reader.readAsText(blob)
-    return fileReaderReady(reader)
+    // Don't use strict equal. undefined and null should result in null
+    if (body == null) {
+      return klass.body = null
+    }
+
+    if (body instanceof Blob) {
+      content && body.type && klass.headers.set('content-type', body.type)
+      klass.body = streamBlob(body.slice(), klass)
+    } else if (body instanceof FormData) {
+      body = formData2blob(body)
+      content && klass.headers.set('content-type', body.type)
+      klass.body = streamBlob(body.slice(), klass)
+    } else if (body instanceof URLSearchParams) {
+      content && klass.headers.set('content-type', 'application/x-www-form-urlencoded;charset=UTF-8')
+      bytes = new TextEncoder('UTF-8').encode(body)
+    } else if (body.getReader) {
+      klass.body = body
+    } else if (body instanceof ArrayBuffer || ArrayBuffer.isView(body)) {
+      bytes = new Uint8Array(body.slice())
+    } else {
+      // Rest is converted to a string
+      content && klass.headers.set('content-type', 'text/plain;charset=UTF-8')
+      bytes = new TextEncoder('UTF-8').encode(body)
+    }
+
+    if (bytes) {
+      klass.body = new ReadableStream({
+        start: function(controller) {
+          controller.enqueue(bytes)
+          controller.close()
+        },
+        pull: function() {
+          klass.bodyUsed = true
+        }
+      })
+    }
   }
 
   function Body() {
     this.bodyUsed = false
 
-    this._initBody = function(body) {
-      this._bodyInit = body
-      if (typeof body === 'string') {
-        this._bodyText = body
-      } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
-        this._bodyBlob = body
-      } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
-        this._bodyFormData = body
-      } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
-        this._bodyText = body.toString()
-      } else if (!body) {
-        this._bodyText = ''
-      } else if (support.arrayBuffer && ArrayBuffer.prototype.isPrototypeOf(body)) {
-        // Only support ArrayBuffers for POST method.
-        // Receiving ArrayBuffers happens via Blobs, instead.
-      } else {
-        throw new Error('unsupported BodyInit type')
-      }
-
-      if (!this.headers.get('content-type')) {
-        if (typeof body === 'string') {
-          this.headers.set('content-type', 'text/plain;charset=UTF-8')
-        } else if (this._bodyBlob && this._bodyBlob.type) {
-          this.headers.set('content-type', this._bodyBlob.type)
-        } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
-          this.headers.set('content-type', 'application/x-www-form-urlencoded;charset=UTF-8')
-        }
-      }
+    this.blob = function() {
+      return concatStream(this).then(function(buffer) {
+        return new Blob([buffer])
+      })
     }
 
-    if (support.blob) {
-      this.blob = function() {
-        var rejected = consumed(this)
-        if (rejected) {
-          return rejected
-        }
-
-        if (this._bodyBlob) {
-          return Promise.resolve(this._bodyBlob)
-        } else if (this._bodyFormData) {
-          throw new Error('could not read FormData body as blob')
-        } else {
-          return Promise.resolve(new Blob([this._bodyText]))
-        }
-      }
-
-      this.arrayBuffer = function() {
-        return this.blob().then(readBlobAsArrayBuffer)
-      }
-
-      this.text = function() {
-        var rejected = consumed(this)
-        if (rejected) {
-          return rejected
-        }
-
-        if (this._bodyBlob) {
-          return readBlobAsText(this._bodyBlob)
-        } else if (this._bodyFormData) {
-          throw new Error('could not read FormData body as text')
-        } else {
-          return Promise.resolve(this._bodyText)
-        }
-      }
-    } else {
-      this.text = function() {
-        var rejected = consumed(this)
-        return rejected ? rejected : Promise.resolve(this._bodyText)
-      }
+    this.arrayBuffer = function() {
+      return concatStream(this).then(function(buffer) {
+        return buffer.buffer
+      })
     }
 
-    if (support.formData) {
-      this.formData = function() {
-        return this.text().then(decode)
-      }
+    this.text = function() {
+      return concatStream(this).then(function(buffer) {
+        return new TextDecoder('UTF-8').decode(buffer)
+      })
+    }
+
+    this.formData = function() {
+      return this.text().then(decode)
     }
 
     this.json = function() {
@@ -254,13 +369,13 @@
 
   function normalizeMethod(method) {
     var upcased = method.toUpperCase()
-    return (methods.indexOf(upcased) > -1) ? upcased : method
+    return ~methods.indexOf(upcased) ? upcased : method
   }
 
   function Request(input, options) {
     options = options || {}
     var body = options.body
-    if (Request.prototype.isPrototypeOf(input)) {
+    if (input instanceof Request) {
       if (input.bodyUsed) {
         throw new TypeError('Already read')
       }
@@ -271,8 +386,12 @@
       }
       this.method = input.method
       this.mode = input.mode
-      if (!body) {
-        body = input._bodyInit
+      if (!body && input.body) {
+        var dummyStream = new ReadableStream()
+        var reader = dummyStream.getReader()
+        reader.read()
+        body = input.body
+        input.body = dummyStream
         input.bodyUsed = true
       }
     } else {
@@ -290,11 +409,20 @@
     if ((this.method === 'GET' || this.method === 'HEAD') && body) {
       throw new TypeError('Body not allowed for GET or HEAD requests')
     }
-    this._initBody(body)
+
+    initBody(this, body)
   }
 
   Request.prototype.clone = function() {
-    return new Request(this)
+    var body = null
+
+    if (this.body) {
+      var tee = this.body.tee()
+      this.body = tee[0]
+      body = tee[1]
+    }
+
+    return new Request(this, {body: body})
   }
 
   function decode(body) {
@@ -331,17 +459,25 @@
 
     this.type = 'default'
     this.status = options.status
-    this.ok = this.status >= 200 && this.status < 300
+    this.ok = options.status >= 200 && options.status < 300
     this.statusText = options.statusText
     this.headers = options.headers instanceof Headers ? options.headers : new Headers(options.headers)
     this.url = options.url || ''
-    this._initBody(bodyInit)
+    initBody(this, bodyInit)
   }
 
   Body.call(Response.prototype)
 
   Response.prototype.clone = function() {
-    return new Response(this._bodyInit, {
+    var body = null
+
+    if (this.body) {
+      var tee = this.body.tee()
+      this.body = tee[0]
+      body = tee[1]
+    }
+
+    return new Response(body, {
       status: this.status,
       statusText: this.statusText,
       headers: new Headers(this.headers),
@@ -371,14 +507,19 @@
 
   self.fetch = function(input, init) {
     return new Promise(function(resolve, reject) {
-      var request
-      if (Request.prototype.isPrototypeOf(input) && !init) {
-        request = input
-      } else {
-        request = new Request(input, init)
-      }
+      var request = input instanceof Request && !init
+        ? input
+        : new Request(input, init)
 
       var xhr = new XMLHttpRequest()
+      var rs = new ReadableStream({
+        start: function(controller) {
+          parseResponse(xhr, controller)
+        },
+        cancel: function() {
+          xhr.abort()
+        }
+      })
 
       function responseURL() {
         if ('responseURL' in xhr) {
@@ -393,15 +534,16 @@
         return
       }
 
-      xhr.onload = function() {
-        var options = {
-          status: xhr.status,
-          statusText: xhr.statusText,
-          headers: headers(xhr),
-          url: responseURL()
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === xhr.HEADERS_RECEIVED) {
+          var options = {
+            status: xhr.status,
+            statusText: xhr.statusText,
+            headers: headers(xhr),
+            url: responseURL()
+          }
+          resolve(new Response(rs, options))
         }
-        var body = 'response' in xhr ? xhr.response : xhr.responseText
-        resolve(new Response(body, options))
       }
 
       xhr.onerror = function() {
@@ -418,15 +560,13 @@
         xhr.withCredentials = true
       }
 
-      if ('responseType' in xhr && support.blob) {
-        xhr.responseType = 'blob'
-      }
-
       request.headers.forEach(function(value, name) {
         xhr.setRequestHeader(name, value)
       })
 
-      xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
+      request.body
+        ? request.blob().then(function (blob){ xhr.send(blob) })
+        : xhr.send()
     })
   }
   self.fetch.polyfill = true
