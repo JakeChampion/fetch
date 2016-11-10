@@ -507,6 +507,14 @@ suite('Response', function() {
     })
   })
 
+  test('always creates a new Headers instance', function() {
+    var headers = new Headers({ 'x-hello': 'world' })
+    var res = new Response('', {headers: headers})
+
+    assert.equal(res.headers.get('x-hello'), 'world')
+    assert.notEqual(res.headers, headers)
+  })
+
   test('clone text response', function() {
     var res = new Response('{"foo":"bar"}', {
       headers: {'content-type': 'application/json'}
