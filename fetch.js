@@ -260,7 +260,10 @@
   function Request(input, options) {
     options = options || {}
     var body = options.body
-    if (Request.prototype.isPrototypeOf(input)) {
+
+    if (typeof input === 'string') {
+      this.url = input
+    } else {
       if (input.bodyUsed) {
         throw new TypeError('Already read')
       }
@@ -275,8 +278,6 @@
         body = input._bodyInit
         input.bodyUsed = true
       }
-    } else {
-      this.url = input
     }
 
     this.credentials = options.credentials || this.credentials || 'omit'

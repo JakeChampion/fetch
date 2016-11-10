@@ -508,14 +508,14 @@ suite('Request', function() {
   suite('BodyInit extract', function() {
     featureDependent(suite, support.blob, 'type Blob', function() {
       test('consume as blob', function() {
-        var request = new Request(null, {method: 'POST', body: new Blob(['hello'])})
+        var request = new Request('', {method: 'POST', body: new Blob(['hello'])})
         return request.blob().then(readBlobAsText).then(function(text) {
           assert.equal(text, 'hello')
         })
       })
 
       test('consume as text', function() {
-        var request = new Request(null, {method: 'POST', body: new Blob(['hello'])})
+        var request = new Request('', {method: 'POST', body: new Blob(['hello'])})
         return request.text().then(function(text) {
           assert.equal(text, 'hello')
         })
@@ -524,14 +524,14 @@ suite('Request', function() {
 
     suite('type USVString', function() {
       test('consume as text', function() {
-        var request = new Request(null, {method: 'POST', body: 'hello'})
+        var request = new Request('', {method: 'POST', body: 'hello'})
         return request.text().then(function(text) {
           assert.equal(text, 'hello')
         })
       })
 
       featureDependent(test, support.blob, 'consume as blob', function() {
-        var request = new Request(null, {method: 'POST', body: 'hello'})
+        var request = new Request('', {method: 'POST', body: 'hello'})
         return request.blob().then(readBlobAsText).then(function(text) {
           assert.equal(text, 'hello')
         })
