@@ -840,6 +840,33 @@ suite('fetch method', function() {
       })
     })
 
+    test('reusing same Request multiple times', function() {
+      var request = new Request('/request', {
+        headers: {
+          'Accept': 'application/json',
+          'X-Test': '42'
+        }
+      })
+
+      var responses = []
+
+      return fetch(request).then(function(response) {
+        responses.push(response)
+        return fetch(request)
+      }).then(function(response) {
+        responses.push(response)
+        return fetch(request)
+      }).then(function(response) {
+        responses.push(response)
+        return Promise.all(responses.map(function(r) { return r.json() }))
+      }).then(function(jsons) {
+        jsons.forEach(function(json) {
+          assert.equal(json.headers['accept'], 'application/json')
+          assert.equal(json.headers['x-test'], '42')
+        })
+      })
+    })
+
     featureDependent(test, support.arrayBuffer, 'sends ArrayBuffer body', function() {
       return fetch('/request', {
         method: 'post',
