@@ -406,9 +406,10 @@ suite('Request', function() {
     assert.equal(clone.method, 'POST')
     assert.equal(clone.headers.get('content-type'), 'text/plain')
     assert.notEqual(clone.headers, req.headers)
+    assert.equal(req.bodyUsed, false)
 
-    return clone.text().then(function(body) {
-      assert.equal(body, 'I work out')
+    return Promise.all([clone.text(), req.clone().text()]).then(function(bodies) {
+      assert.deepEqual(bodies, ['I work out', 'I work out'])
     })
   })
 
