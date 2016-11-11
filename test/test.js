@@ -881,6 +881,18 @@ suite('fetch method', function() {
         })
       })
 
+      test('DataView body', function() {
+        return fetch('/request', {
+          method: 'post',
+          body: new DataView(arrayBufferFromText('name=Hubot'))
+        }).then(function(response) {
+          return response.json()
+        }).then(function(request) {
+          assert.equal(request.method, 'POST')
+          assert.equal(request.data, 'name=Hubot')
+        })
+      })
+
       test('TypedArray body', function() {
         return fetch('/request', {
           method: 'post',

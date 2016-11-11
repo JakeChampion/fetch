@@ -33,6 +33,10 @@
       '[object Float64Array]'
     ]
 
+    var isDataView = function(obj) {
+      return obj && DataView.prototype.isPrototypeOf(obj)
+    }
+
     var isArrayBufferView = ArrayBuffer.isView || function(obj) {
       return obj && viewClasses.indexOf(Object.prototype.toString.call(obj)) > -1
     }
@@ -195,6 +199,9 @@
         this._bodyText = body.toString()
       } else if (!body) {
         this._bodyText = ''
+      } else if (support.arrayBuffer && isDataView(body)) {
+        // IE 10-11 can't handle a DataView body.
+        this._bodyInit = new Blob([body.buffer])
       } else if (support.arrayBuffer && (ArrayBuffer.prototype.isPrototypeOf(body) || isArrayBufferView(body))) {
         // Only support ArrayBuffers for POST method.
         // Receiving ArrayBuffers happens via Blobs, instead.
