@@ -27,4 +27,8 @@ sauce_connect/bin/sc:
 	curl -fsSL http://saucelabs.com/downloads/sc-4.3.16-linux.tar.gz | tar xz -C sauce_connect --strip-components 1
 endif
 
-.PHONY: build clean lint test saucelabs travis
+phantomjs/bin/phantomjs:
+	mkdir -p phantomjs
+	wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 -O- | tar xj -C phantomjs --strip-components 1
+
+.PHONY: build clean lint test
