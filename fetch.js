@@ -199,7 +199,7 @@
         this._bodyText = body.toString()
       } else if (!body) {
         this._bodyText = ''
-      } else if (support.arrayBuffer && isDataView(body)) {
+      } else if (support.arrayBuffer && support.blob && isDataView(body)) {
         // IE 10-11 can't handle a DataView body.
         this._bodyInit = new Blob([body.buffer])
       } else if (support.arrayBuffer && (ArrayBuffer.prototype.isPrototypeOf(body) || isArrayBufferView(body))) {
