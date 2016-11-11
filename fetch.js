@@ -167,6 +167,7 @@
 
     this._initBody = function(body) {
       this._bodyInit = body
+
       if (typeof body === 'string') {
         this._bodyText = body
       } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
