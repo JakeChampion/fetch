@@ -53,6 +53,16 @@ function readBlobAsBytes(blob) {
   }
 }
 
+function arrayBufferFromText(text) {
+  var buf = new ArrayBuffer(text.length)
+  var view = new Uint8Array(buf)
+
+  for (var i = 0; i < text.length; i++) {
+    view[i] = text.charCodeAt(i)
+  }
+  return buf
+}
+
 var native = {}
 var keepGlobals = ['fetch', 'Headers', 'Request', 'Response']
 var exercise = ['polyfill']
@@ -86,32 +96,6 @@ exercise.forEach(function(exerciseMode) {
     var nativeChrome = /Chrome\//.test(navigator.userAgent) && exerciseMode === 'native'
     var nativeFirefox = /Firefox\//.test(navigator.userAgent) && exerciseMode === 'native'
     var polyfillFirefox = /Firefox\//.test(navigator.userAgent) && exerciseMode === 'polyfill'
-
-test('resolves promise on 500 error', function() {
-  return fetch('/boom').then(function(response) {
-    assert.equal(response.status, 500)
-    assert.equal(response.ok, false)
-    return response.text()
-  }).then(function(body) {
-    assert.equal(body, 'boom')
-  })
-})
-
-test.skip('rejects promise for network error', function() {
-  return fetch('/error').then(function(response) {
-    assert(false, 'HTTP status ' + response.status + ' was treated as success')
-  }).catch(function(error) {
-    assert(error instanceof TypeError, 'Rejected with Error')
-  })
-})
-
-test('rejects when Request constructor throws', function() {
-  return fetch('/request', { method: 'GET', body: 'invalid' }).then(function() {
-    assert(false, 'Invalid Request init was accepted')
-  }).catch(function(error) {
-    assert(error instanceof TypeError, 'Rejected with Error')
-  })
-})
 
 // https://fetch.spec.whatwg.org/#headers-class
 suite('Headers', function() {
@@ -261,69 +245,6 @@ suite('Headers', function() {
 
 // https://fetch.spec.whatwg.org/#request-class
 suite('Request', function() {
-  test('sends request headers', function() {
-    return fetch('/request', {
-      headers: {
-        'Accept': 'application/json',
-        'X-Test': '42'
-      }
-    }).then(function(response) {
-      return response.json()
-    }).then(function(json) {
-      assert.equal(json.headers['accept'], 'application/json')
-      assert.equal(json.headers['x-test'], '42')
-    })
-  })
-
-  test('fetch request', function() {
-    var request = new Request('/request', {
-      headers: {
-        'Accept': 'application/json',
-        'X-Test': '42'
-      }
-    })
-
-    return fetch(request).then(function(response) {
-      return response.json()
-    }).then(function(json) {
-      assert.equal(json.headers['accept'], 'application/json')
-      assert.equal(json.headers['x-test'], '42')
-    })
-  })
-
-  featureDependent(test, support.arrayBuffer, 'sends ArrayBuffer body', function() {
-    var text = 'name=Hubot'
-
-    var buf = new ArrayBuffer(text.length)
-    var view = new Uint8Array(buf)
-
-    for(var i = 0; i < text.length; i++) {
-      view[i] = text.charCodeAt(i)
-    }
-
-    return fetch('/request', {
-      method: 'post',
-      body: buf
-    }).then(function(response) {
-      return response.json()
-    }).then(function(request) {
-      assert.equal(request.method, 'POST')
-      assert.equal(request.data, 'name=Hubot')
-    })
-  })
-
-  featureDependent(test, support.searchParams, 'sends URLSearchParams body', function() {
-    return fetch('/request', {
-      method: 'post',
-      body: new URLSearchParams('a=1&b=2')
-    }).then(function(response) {
-      return response.json()
-    }).then(function(request) {
-      assert.equal(request.method, 'POST')
-      assert.equal(request.data, 'a=1&b=2')
-    })
-  })
-
   test('construct with url', function() {
     var request = new Request('https://fetch.spec.whatwg.org/')
     assert.equal(request.url, 'https://fetch.spec.whatwg.org/')
@@ -485,9 +406,10 @@ suite('Request', function() {
     assert.equal(clone.method, 'POST')
     assert.equal(clone.headers.get('content-type'), 'text/plain')
     assert.notEqual(clone.headers, req.headers)
+    assert.equal(req.bodyUsed, false)
 
-    return clone.text().then(function(body) {
-      assert.equal(body, 'I work out')
+    return Promise.all([clone.text(), req.clone().text()]).then(function(bodies) {
+      assert.deepEqual(bodies, ['I work out', 'I work out'])
     })
   })
 
@@ -508,14 +430,14 @@ suite('Request', function() {
   suite('BodyInit extract', function() {
     featureDependent(suite, support.blob, 'type Blob', function() {
       test('consume as blob', function() {
-        var request = new Request(null, {method: 'POST', body: new Blob(['hello'])})
+        var request = new Request('', {method: 'POST', body: new Blob(['hello'])})
         return request.blob().then(readBlobAsText).then(function(text) {
           assert.equal(text, 'hello')
         })
       })
 
       test('consume as text', function() {
-        var request = new Request(null, {method: 'POST', body: new Blob(['hello'])})
+        var request = new Request('', {method: 'POST', body: new Blob(['hello'])})
         return request.text().then(function(text) {
           assert.equal(text, 'hello')
         })
@@ -524,14 +446,14 @@ suite('Request', function() {
 
     suite('type USVString', function() {
       test('consume as text', function() {
-        var request = new Request(null, {method: 'POST', body: 'hello'})
+        var request = new Request('', {method: 'POST', body: 'hello'})
         return request.text().then(function(text) {
           assert.equal(text, 'hello')
         })
       })
 
       featureDependent(test, support.blob, 'consume as blob', function() {
-        var request = new Request(null, {method: 'POST', body: 'hello'})
+        var request = new Request('', {method: 'POST', body: 'hello'})
         return request.blob().then(readBlobAsText).then(function(text) {
           assert.equal(text, 'hello')
         })
@@ -577,23 +499,6 @@ suite('Response', function() {
     })
   })
 
-  test('populates response body', function() {
-    return fetch('/hello').then(function(response) {
-      assert.equal(response.status, 200)
-      assert.equal(response.ok, true)
-      return response.text()
-    }).then(function(body) {
-      assert.equal(body, 'hi')
-    })
-  })
-
-  test('parses response headers', function() {
-    return fetch('/headers?' + new Date().getTime()).then(function(response) {
-      assert.equal(response.headers.get('Date'), 'Mon, 13 Oct 2014 21:02:27 GMT')
-      assert.equal(response.headers.get('Content-Type'), 'text/html; charset=utf-8')
-    })
-  })
-
   test('creates Headers object from raw headers', function() {
     var r = new Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}})
     assert.equal(r.headers instanceof Headers, true)
@@ -601,6 +506,14 @@ suite('Response', function() {
       assert.equal(json.foo, 'bar')
       return json
     })
+  })
+
+  test('always creates a new Headers instance', function() {
+    var headers = new Headers({ 'x-hello': 'world' })
+    var res = new Response('', {headers: headers})
+
+    assert.equal(res.headers.get('x-hello'), 'world')
+    assert.notEqual(res.headers, headers)
   })
 
   test('clone text response', function() {
@@ -618,18 +531,9 @@ suite('Response', function() {
   })
 
   featureDependent(test, support.blob, 'clone blob response', function() {
-    return fetch('/binary').then(function(response) {
-      return Promise.all([response.clone().arrayBuffer(), response.arrayBuffer()]).then(function(bufs){
-        bufs.forEach(function(buf){
-          assert(buf instanceof ArrayBuffer, 'buf is an ArrayBuffer instance')
-          assert.equal(buf.byteLength, 256, 'buf.byteLength is correct')
-          var view = new Uint8Array(buf)
-          for (var i = 0; i < 256; i++) {
-            assert.equal(view[i], i)
-          }
-        })
-      })
-    })
+    var req = new Request(new Blob(['test']))
+    req.clone()
+    assert.equal(req.bodyUsed, false)
   })
 
   test('error creates error Response', function() {
@@ -877,8 +781,152 @@ suite('Body mixin', function() {
   })
 })
 
+suite('fetch method', function() {
+  suite('promise resolution', function() {
+    test('resolves promise on 500 error', function() {
+      return fetch('/boom').then(function(response) {
+        assert.equal(response.status, 500)
+        assert.equal(response.ok, false)
+        return response.text()
+      }).then(function(body) {
+        assert.equal(body, 'boom')
+      })
+    })
+
+    test.skip('rejects promise for network error', function() {
+      return fetch('/error').then(function(response) {
+        assert(false, 'HTTP status ' + response.status + ' was treated as success')
+      }).catch(function(error) {
+        assert(error instanceof TypeError, 'Rejected with Error')
+      })
+    })
+
+    test('rejects when Request constructor throws', function() {
+      return fetch('/request', { method: 'GET', body: 'invalid' }).then(function() {
+        assert(false, 'Invalid Request init was accepted')
+      }).catch(function(error) {
+        assert(error instanceof TypeError, 'Rejected with Error')
+      })
+    })
+  })
+
+  suite('request', function() {
+    test('sends headers', function() {
+      return fetch('/request', {
+        headers: {
+          'Accept': 'application/json',
+          'X-Test': '42'
+        }
+      }).then(function(response) {
+        return response.json()
+      }).then(function(json) {
+        assert.equal(json.headers['accept'], 'application/json')
+        assert.equal(json.headers['x-test'], '42')
+      })
+    })
+
+    test('with Request as argument', function() {
+      var request = new Request('/request', {
+        headers: {
+          'Accept': 'application/json',
+          'X-Test': '42'
+        }
+      })
+
+      return fetch(request).then(function(response) {
+        return response.json()
+      }).then(function(json) {
+        assert.equal(json.headers['accept'], 'application/json')
+        assert.equal(json.headers['x-test'], '42')
+      })
+    })
+
+    test('reusing same Request multiple times', function() {
+      var request = new Request('/request', {
+        headers: {
+          'Accept': 'application/json',
+          'X-Test': '42'
+        }
+      })
+
+      var responses = []
+
+      return fetch(request).then(function(response) {
+        responses.push(response)
+        return fetch(request)
+      }).then(function(response) {
+        responses.push(response)
+        return fetch(request)
+      }).then(function(response) {
+        responses.push(response)
+        return Promise.all(responses.map(function(r) { return r.json() }))
+      }).then(function(jsons) {
+        jsons.forEach(function(json) {
+          assert.equal(json.headers['accept'], 'application/json')
+          assert.equal(json.headers['x-test'], '42')
+        })
+      })
+    })
+
+    featureDependent(test, support.arrayBuffer, 'sends ArrayBuffer body', function() {
+      return fetch('/request', {
+        method: 'post',
+        body: arrayBufferFromText('name=Hubot')
+      }).then(function(response) {
+        return response.json()
+      }).then(function(request) {
+        assert.equal(request.method, 'POST')
+        assert.equal(request.data, 'name=Hubot')
+      })
+    })
+
+    featureDependent(test, support.searchParams, 'sends URLSearchParams body', function() {
+      return fetch('/request', {
+        method: 'post',
+        body: new URLSearchParams('a=1&b=2')
+      }).then(function(response) {
+        return response.json()
+      }).then(function(request) {
+        assert.equal(request.method, 'POST')
+        assert.equal(request.data, 'a=1&b=2')
+      })
+    })
+  })
+
+  suite('response', function() {
+    test('populates body', function() {
+      return fetch('/hello').then(function(response) {
+        assert.equal(response.status, 200)
+        assert.equal(response.ok, true)
+        return response.text()
+      }).then(function(body) {
+        assert.equal(body, 'hi')
+      })
+    })
+
+    test('parses headers', function() {
+      return fetch('/headers?' + new Date().getTime()).then(function(response) {
+        assert.equal(response.headers.get('Date'), 'Mon, 13 Oct 2014 21:02:27 GMT')
+        assert.equal(response.headers.get('Content-Type'), 'text/html; charset=utf-8')
+      })
+    })
+
+    featureDependent(test, support.blob, 'handles binary', function() {
+      return fetch('/binary').then(function(response) {
+        return response.arrayBuffer()
+      }).then(function(buf) {
+        assert(buf instanceof ArrayBuffer, 'buf is an ArrayBuffer instance')
+        assert.equal(buf.byteLength, 256, 'buf.byteLength is correct')
+        var view = new Uint8Array(buf)
+        for (var i = 0; i < 256; i++) {
+          assert.equal(view[i], i)
+        }
+      })
+    })
+  })
+
 // https://fetch.spec.whatwg.org/#methods
-suite('Methods', function() {
+suite('HTTP methods', function() {
   test('supports HTTP GET', function() {
     return fetch('/request', {
       method: 'get',
@@ -1095,6 +1143,7 @@ suite('credentials mode', function() {
       })
     })
   })
+})
 })
 
   })
