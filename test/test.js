@@ -868,15 +868,41 @@ suite('fetch method', function() {
       })
     })
 
-    featureDependent(test, support.arrayBuffer, 'sends ArrayBuffer body', function() {
-      return fetch('/request', {
-        method: 'post',
-        body: arrayBufferFromText('name=Hubot')
-      }).then(function(response) {
-        return response.json()
-      }).then(function(request) {
-        assert.equal(request.method, 'POST')
-        assert.equal(request.data, 'name=Hubot')
+    featureDependent(suite, support.arrayBuffer, 'ArrayBuffer', function() {
+      test('ArrayBuffer body', function() {
+        return fetch('/request', {
+          method: 'post',
+          body: arrayBufferFromText('name=Hubot')
+        }).then(function(response) {
+          return response.json()
+        }).then(function(request) {
+          assert.equal(request.method, 'POST')
+          assert.equal(request.data, 'name=Hubot')
+        })
+      })
+
+      test('DataView body', function() {
+        return fetch('/request', {
+          method: 'post',
+          body: new DataView(arrayBufferFromText('name=Hubot'))
+        }).then(function(response) {
+          return response.json()
+        }).then(function(request) {
+          assert.equal(request.method, 'POST')
+          assert.equal(request.data, 'name=Hubot')
+        })
+      })
+
+      test('TypedArray body', function() {
+        return fetch('/request', {
+          method: 'post',
+          body: new Uint8Array(arrayBufferFromText('name=Hubot'))
+        }).then(function(response) {
+          return response.json()
+        }).then(function(request) {
+          assert.equal(request.method, 'POST')
+          assert.equal(request.data, 'name=Hubot')
+        })
       })
     })
 
