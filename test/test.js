@@ -464,6 +464,13 @@ suite('Request', function() {
 
 // https://fetch.spec.whatwg.org/#response-class
 suite('Response', function() {
+  test('default status is 200 OK', function() {
+    var res = new Response()
+    assert.equal(res.status, 200)
+    assert.equal(res.statusText, 'OK')
+    assert.isTrue(res.ok)
+  })
+
   // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
   suite('BodyInit extract', function() {
     featureDependent(suite, support.blob, 'type Blob', function() {
