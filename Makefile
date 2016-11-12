@@ -1,13 +1,8 @@
-build: node_modules/ bower_components/
-
-test: node_modules/ build lint
+test: node_modules/ lint
 	./script/test
 
 lint: node_modules/
 	./node_modules/.bin/jshint *.js test/*.js
-
-bower_components/: node_modules/
-	./node_modules/.bin/bower install
 
 node_modules/:
 	npm install
@@ -31,4 +26,4 @@ phantomjs/bin/phantomjs:
 	mkdir -p phantomjs
 	wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 -O- | tar xj -C phantomjs --strip-components 1
 
-.PHONY: build clean lint test
+.PHONY: clean lint test
