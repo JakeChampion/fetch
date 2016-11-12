@@ -1,7 +1,5 @@
 sudo: false
 language: node_js
-before_script: make
-script: make test
 deploy:
   provider: npm
   email: mislav.marohnic@gmail.com

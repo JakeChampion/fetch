@@ -16,5 +16,8 @@
   "files": [
     "LICENSE",
     "fetch.js"
-  ]
+  ],
+  "scripts": {
+    "test": "make"
+  }
 }
