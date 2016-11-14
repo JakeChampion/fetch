@@ -63,6 +63,10 @@ function arrayBufferFromText(text) {
   return buf
 }
 
+function readArrayBufferAsText(buf) {
+  return String.fromCharCode.apply(null, new Uint8Array(buf))
+}
+
 var native = {}
 var keepGlobals = ['fetch', 'Headers', 'Request', 'Response']
 var exercise = ['polyfill']
@@ -96,6 +100,51 @@ exercise.forEach(function(exerciseMode) {
     var nativeChrome = /Chrome\//.test(navigator.userAgent) && exerciseMode === 'native'
     var nativeFirefox = /Firefox\//.test(navigator.userAgent) && exerciseMode === 'native'
     var polyfillFirefox = /Firefox\//.test(navigator.userAgent) && exerciseMode === 'polyfill'
+
+    // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
+    function testBodyExtract(factory) {
+      suite('body extract', function() {
+        var expected = 'Hello World!'
+        var inputs = [['type USVString', expected]]
+        if (support.blob) {
+          inputs.push(['type Blob', new Blob([expected])])
+        }
+        if (support.arrayBuffer) {
+          inputs = inputs.concat([
+            ['type ArrayBuffer', arrayBufferFromText(expected)],
+            ['type TypedArray', new Uint8Array(arrayBufferFromText(expected))],
+            ['type DataView', new DataView(arrayBufferFromText(expected))],
+          ])
+        }
+
+        inputs.forEach(function(input) {
+          var typeLabel = input[0], body = input[1]
+
+          suite(typeLabel, function() {
+            featureDependent(test, support.blob, 'consume as blob', function() {
+              var r = factory(body)
+              return r.blob().then(readBlobAsText).then(function(text) {
+                assert.equal(text, expected)
+              })
+            })
+
+            test('consume as text', function() {
+              var r = factory(body)
+              return r.text().then(function(text) {
+                assert.equal(text, expected)
+              })
+            })
+
+            featureDependent(test, support.arrayBuffer, 'consume as array buffer', function() {
+              var r = factory(body)
+              return r.arrayBuffer().then(readArrayBufferAsText).then(function(text) {
+                assert.equal(text, expected)
+              })
+            })
+          })
+        })
+      })
+    }
 
 // https://fetch.spec.whatwg.org/#headers-class
 suite('Headers', function() {
@@ -426,39 +475,8 @@ suite('Request', function() {
     })
   })
 
-  // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
-  suite('BodyInit extract', function() {
-    featureDependent(suite, support.blob, 'type Blob', function() {
-      test('consume as blob', function() {
-        var request = new Request('', {method: 'POST', body: new Blob(['hello'])})
-        return request.blob().then(readBlobAsText).then(function(text) {
-          assert.equal(text, 'hello')
-        })
-      })
-
-      test('consume as text', function() {
-        var request = new Request('', {method: 'POST', body: new Blob(['hello'])})
-        return request.text().then(function(text) {
-          assert.equal(text, 'hello')
-        })
-      })
-    })
-
-    suite('type USVString', function() {
-      test('consume as text', function() {
-        var request = new Request('', {method: 'POST', body: 'hello'})
-        return request.text().then(function(text) {
-          assert.equal(text, 'hello')
-        })
-      })
-
-      featureDependent(test, support.blob, 'consume as blob', function() {
-        var request = new Request('', {method: 'POST', body: 'hello'})
-        return request.blob().then(readBlobAsText).then(function(text) {
-          assert.equal(text, 'hello')
-        })
-      })
-    })
+  testBodyExtract(function(body) {
+    return new Request('', { method: 'POST', body: body })
   })
 })
 
@@ -471,39 +489,8 @@ suite('Response', function() {
     assert.isTrue(res.ok)
   })
 
-  // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
-  suite('BodyInit extract', function() {
-    featureDependent(suite, support.blob, 'type Blob', function() {
-      test('consume as blob', function() {
-        var response = new Response(new Blob(['hello']))
-        return response.blob().then(readBlobAsText).then(function(text) {
-          assert.equal(text, 'hello')
-        })
-      })
-
-      test('consume as text', function() {
-        var response = new Response(new Blob(['hello']))
-        return response.text().then(function(text) {
-          assert.equal(text, 'hello')
-        })
-      })
-    })
-
-    suite('type USVString', function() {
-      test('consume as text', function() {
-        var response = new Response('hello')
-        return response.text().then(function(text) {
-          assert.equal(text, 'hello')
-        })
-      })
-
-      featureDependent(test, support.blob, 'consume as blob', function() {
-        var response = new Response('hello')
-        return response.blob().then(readBlobAsText).then(function(text) {
-          assert.equal(text, 'hello')
-        })
-      })
-    })
+  testBodyExtract(function(body) {
+    return new Response(body)
   })
 
   test('creates Headers object from raw headers', function() {
@@ -941,19 +928,6 @@ suite('fetch method', function() {
       return fetch('/headers?' + new Date().getTime()).then(function(response) {
         assert.equal(response.headers.get('Date'), 'Mon, 13 Oct 2014 21:02:27 GMT')
         assert.equal(response.headers.get('Content-Type'), 'text/html; charset=utf-8')
-      })
-    })
-
-    featureDependent(test, support.blob, 'handles binary', function() {
-      return fetch('/binary').then(function(response) {
-        return response.arrayBuffer()
-      }).then(function(buf) {
-        assert(buf instanceof ArrayBuffer, 'buf is an ArrayBuffer instance')
-        assert.equal(buf.byteLength, 256, 'buf.byteLength is correct')
-        var view = new Uint8Array(buf)
-        for (var i = 0; i < 256; i++) {
-          assert.equal(view[i], i)
-        }
       })
     })
   })
