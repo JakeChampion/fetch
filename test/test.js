@@ -973,19 +973,6 @@ suite('fetch method', function() {
         assert.equal(response.headers.get('Content-Type'), 'text/html; charset=utf-8')
       })
     })
-
-    featureDependent(test, support.blob, 'handles binary', function() {
-      return fetch('/binary').then(function(response) {
-        return response.arrayBuffer()
-      }).then(function(buf) {
-        assert(buf instanceof ArrayBuffer, 'buf is an ArrayBuffer instance')
-        assert.equal(buf.byteLength, 256, 'buf.byteLength is correct')
-        var view = new Uint8Array(buf)
-        for (var i = 0; i < 256; i++) {
-          assert.equal(view[i], i)
-        }
-      })
-    })
   })
 
 // https://fetch.spec.whatwg.org/#methods
