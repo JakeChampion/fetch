@@ -63,6 +63,10 @@ function arrayBufferFromText(text) {
   return buf
 }
 
+function readArrayBufferAsText(buf) {
+  return String.fromCharCode.apply(null, new Uint8Array(buf))
+}
+
 var native = {}
 var keepGlobals = ['fetch', 'Headers', 'Request', 'Response']
 var exercise = ['polyfill']
@@ -446,22 +450,13 @@ suite('Request', function() {
 
     featureDependent(suite, support.arrayBuffer, 'type ArrayBuffer', function() {
       test('consume as array buffer', function() {
-        var text = 'name=Hubot'
-
-        var buf = new ArrayBuffer(text.length)
-        var view = new Uint8Array(buf)
-
-        for(var i = 0; i < text.length; i++) {
-          view[i] = text.charCodeAt(i)
-        }
-
-        var request = new Request('', {method: 'POST', body: buf})
-        return request.arrayBuffer().then(function(buffer) {
-          var bufView = new Uint8Array(buffer)
-          assert.equal(bufView.byteLength, view.length)
-          for(var i = 0; i < bufView.length; i++) {
-            assert.equal(bufView[i], view[i])
-          }
+        var original = arrayBufferFromText('name=hubot')
+        var request = new Request('', {method: 'POST', body: original})
+        return request.arrayBuffer().then(function(buf) {
+          assert.equal(
+            readArrayBufferAsText(buf),
+            readArrayBufferAsText(original)
+          )
         })
       })
     })
@@ -513,22 +508,13 @@ suite('Response', function() {
 
     featureDependent(suite, support.arrayBuffer, 'type ArrayBuffer', function() {
       test('consume as array buffer', function() {
-        var text = 'name=Hubot'
-
-        var buf = new ArrayBuffer(text.length)
-        var view = new Uint8Array(buf)
-
-        for(var i = 0; i < text.length; i++) {
-          view[i] = text.charCodeAt(i)
-        }
-
-        var response = new Response(buf)
-        return response.arrayBuffer().then(function(buffer) {
-          var bufView = new Uint8Array(buffer)
-          assert.equal(bufView.byteLength, view.byteLength)
-          for(var i = 0; i < bufView.byteLength; i++) {
-            assert.equal(bufView[i], view[i])
-          }
+        var original = arrayBufferFromText('name=Hubot')
+        var response = new Response(original)
+        return response.arrayBuffer().then(function(buf) {
+          assert.equal(
+            readArrayBufferAsText(buf),
+            readArrayBufferAsText(original)
+          )
         })
       })
     })
