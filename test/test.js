@@ -101,6 +101,53 @@ exercise.forEach(function(exerciseMode) {
     var nativeFirefox = /Firefox\//.test(navigator.userAgent) && exerciseMode === 'native'
     var polyfillFirefox = /Firefox\//.test(navigator.userAgent) && exerciseMode === 'polyfill'
 
+    // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
+    function testBodyExtract(factory) {
+      suite('body extract', function() {
+        featureDependent(suite, support.blob, 'type Blob', function() {
+          test('consume as blob', function() {
+            var obj = factory(new Blob(['hello']))
+            return obj.blob().then(readBlobAsText).then(function(text) {
+              assert.equal(text, 'hello')
+            })
+          })
+
+          test('consume as text', function() {
+            var obj = factory(new Blob(['hello']))
+            return obj.text().then(function(text) {
+              assert.equal(text, 'hello')
+            })
+          })
+        })
+
+        featureDependent(suite, support.arrayBuffer, 'type ArrayBuffer', function() {
+          test('consume as array buffer', function() {
+            var original = arrayBufferFromText('name=hubot')
+            return factory(original).arrayBuffer().then(function(buf) {
+              assert.equal(
+                readArrayBufferAsText(buf),
+                readArrayBufferAsText(original)
+              )
+            })
+          })
+        })
+
+        suite('type USVString', function() {
+          test('consume as text', function() {
+            return factory('hello').text().then(function(text) {
+              assert.equal(text, 'hello')
+            })
+          })
+
+          featureDependent(test, support.blob, 'consume as blob', function() {
+            return factory('hello').blob().then(readBlobAsText).then(function(text) {
+              assert.equal(text, 'hello')
+            })
+          })
+        })
+      })
+    }
+
 // https://fetch.spec.whatwg.org/#headers-class
 suite('Headers', function() {
   test('constructor copies headers', function() {
@@ -430,52 +477,8 @@ suite('Request', function() {
     })
   })
 
-  // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
-  suite('BodyInit extract', function() {
-    featureDependent(suite, support.blob, 'type Blob', function() {
-      test('consume as blob', function() {
-        var request = new Request('', {method: 'POST', body: new Blob(['hello'])})
-        return request.blob().then(readBlobAsText).then(function(text) {
-          assert.equal(text, 'hello')
-        })
-      })
-
-      test('consume as text', function() {
-        var request = new Request('', {method: 'POST', body: new Blob(['hello'])})
-        return request.text().then(function(text) {
-          assert.equal(text, 'hello')
-        })
-      })
-    })
-
-    featureDependent(suite, support.arrayBuffer, 'type ArrayBuffer', function() {
-      test('consume as array buffer', function() {
-        var original = arrayBufferFromText('name=hubot')
-        var request = new Request('', {method: 'POST', body: original})
-        return request.arrayBuffer().then(function(buf) {
-          assert.equal(
-            readArrayBufferAsText(buf),
-            readArrayBufferAsText(original)
-          )
-        })
-      })
-    })
-
-    suite('type USVString', function() {
-      test('consume as text', function() {
-        var request = new Request('', {method: 'POST', body: 'hello'})
-        return request.text().then(function(text) {
-          assert.equal(text, 'hello')
-        })
-      })
-
-      featureDependent(test, support.blob, 'consume as blob', function() {
-        var request = new Request('', {method: 'POST', body: 'hello'})
-        return request.blob().then(readBlobAsText).then(function(text) {
-          assert.equal(text, 'hello')
-        })
-      })
-    })
+  testBodyExtract(function(body) {
+    return new Request('', { method: 'POST', body: body })
   })
 })
 
@@ -488,52 +491,8 @@ suite('Response', function() {
     assert.isTrue(res.ok)
   })
 
-  // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
-  suite('BodyInit extract', function() {
-    featureDependent(suite, support.blob, 'type Blob', function() {
-      test('consume as blob', function() {
-        var response = new Response(new Blob(['hello']))
-        return response.blob().then(readBlobAsText).then(function(text) {
-          assert.equal(text, 'hello')
-        })
-      })
-
-      test('consume as text', function() {
-        var response = new Response(new Blob(['hello']))
-        return response.text().then(function(text) {
-          assert.equal(text, 'hello')
-        })
-      })
-    })
-
-    featureDependent(suite, support.arrayBuffer, 'type ArrayBuffer', function() {
-      test('consume as array buffer', function() {
-        var original = arrayBufferFromText('name=Hubot')
-        var response = new Response(original)
-        return response.arrayBuffer().then(function(buf) {
-          assert.equal(
-            readArrayBufferAsText(buf),
-            readArrayBufferAsText(original)
-          )
-        })
-      })
-    })
-
-    suite('type USVString', function() {
-      test('consume as text', function() {
-        var response = new Response('hello')
-        return response.text().then(function(text) {
-          assert.equal(text, 'hello')
-        })
-      })
-
-      featureDependent(test, support.blob, 'consume as blob', function() {
-        var response = new Response('hello')
-        return response.blob().then(readBlobAsText).then(function(text) {
-          assert.equal(text, 'hello')
-        })
-      })
-    })
+  testBodyExtract(function(body) {
+    return new Response(body)
   })
 
   test('creates Headers object from raw headers', function() {
