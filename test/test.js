@@ -98,7 +98,6 @@ exercise.forEach(function(exerciseMode) {
     }
 
     var nativeChrome = /Chrome\//.test(navigator.userAgent) && exerciseMode === 'native'
-    var nativeFirefox = /Firefox\//.test(navigator.userAgent) && exerciseMode === 'native'
     var polyfillFirefox = /Firefox\//.test(navigator.userAgent) && exerciseMode === 'polyfill'
 
     // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
@@ -155,8 +154,8 @@ suite('Headers', function() {
     original.append('Content-Type', 'text/html')
 
     var headers = new Headers(original)
-    assert.deepEqual(['application/json', 'text/plain'], headers.getAll('Accept'))
-    assert.deepEqual(['text/html'], headers.getAll('Content-Type'))
+    assert.equal(headers.get('Accept'), 'application/json,text/plain')
+    assert.equal(headers.get('Content-type'), 'text/html')
   })
   test('headers are case insensitive', function() {
     var headers = new Headers({'Accept': 'application/json'})
@@ -174,9 +173,7 @@ suite('Headers', function() {
   test('appends values to existing header name', function() {
     var headers = new Headers({'Accept': 'application/json'})
     headers.append('Accept', 'text/plain')
-    assert.equal(headers.getAll('Accept').length, 2)
-    assert.equal(headers.getAll('Accept')[0], 'application/json')
-    assert.equal(headers.getAll('Accept')[1], 'text/plain')
+    assert.equal(headers.get('Accept'), 'application/json,text/plain')
   })
   test('sets header name and value', function() {
     var headers = new Headers()
@@ -200,20 +197,10 @@ suite('Headers', function() {
     assert.isFalse(headers.has('Content-Type'))
     assert.isNull(headers.get('Content-Type'))
   })
-  test('returns list on getAll when header found', function() {
-    var headers = new Headers({'Content-Type': 'application/json'})
-    assert.isArray(headers.getAll('Content-Type'))
-    assert.equal(headers.getAll('Content-Type').length, 1)
-    assert.equal(headers.getAll('Content-Type')[0], 'application/json')
-  })
-  test('returns empty list on getAll when no header found', function() {
-    var headers = new Headers()
-    assert.isArray(headers.getAll('Content-Type'))
-    assert.equal(headers.getAll('Content-Type').length, 0)
-  })
   test('converts field name to string on set and get', function() {
     var headers = new Headers()
     headers.set(1, 'application/json')
+    assert.isTrue(headers.has('1'))
     assert.equal(headers.get(1), 'application/json')
   })
   test('converts field value to string on set and get', function() {
@@ -224,14 +211,14 @@ suite('Headers', function() {
     assert.equal(headers.get('X-CSRF-Token'), 'undefined')
   })
   test('throws TypeError on invalid character in field name', function() {
-    assert.throws(function() { new Headers({'<Accept>': ['application/json']}) }, TypeError)
-    assert.throws(function() { new Headers({'Accept:': ['application/json']}) }, TypeError)
+    assert.throws(function() { new Headers({'<Accept>': 'application/json'}) }, TypeError)
+    assert.throws(function() { new Headers({'Accept:': 'application/json'}) }, TypeError)
     assert.throws(function() {
       var headers = new Headers()
       headers.set({field: 'value'}, 'application/json')
     }, TypeError)
   })
-  featureDependent(test, !nativeFirefox, 'is iterable with forEach', function() {
+  test('is iterable with forEach', function() {
     var headers = new Headers()
     headers.append('Accept', 'application/json')
     headers.append('Accept', 'text/plain')
@@ -242,12 +229,11 @@ suite('Headers', function() {
       results.push({value: value, key: key, object: object})
     })
 
-    assert.equal(results.length, 3)
-    assert.deepEqual({key: 'accept', value: 'application/json', object: headers}, results[0])
-    assert.deepEqual({key: 'accept', value: 'text/plain', object: headers}, results[1])
-    assert.deepEqual({key: 'content-type', value: 'text/html', object: headers}, results[2])
+    assert.equal(results.length, 2)
+    assert.deepEqual({key: 'accept', value: 'application/json,text/plain', object: headers}, results[0])
+    assert.deepEqual({key: 'content-type', value: 'text/html', object: headers}, results[1])
   })
-  featureDependent(test, !nativeFirefox, 'forEach accepts second thisArg argument', function() {
+  test('forEach accepts second thisArg argument', function() {
     var headers = new Headers({'Accept': 'application/json'})
     var thisArg = 42
     headers.forEach(function() {
@@ -262,7 +248,6 @@ suite('Headers', function() {
 
     var iterator = headers.keys()
     assert.deepEqual({done: false, value: 'accept'}, iterator.next())
-    assert.deepEqual({done: false, value: 'accept'}, iterator.next())
     assert.deepEqual({done: false, value: 'content-type'}, iterator.next())
     assert.deepEqual({done: true, value: undefined}, iterator.next())
   })
@@ -273,8 +258,7 @@ suite('Headers', function() {
     headers.append('Content-Type', 'text/html')
 
     var iterator = headers.values()
-    assert.deepEqual({done: false, value: 'application/json'}, iterator.next())
-    assert.deepEqual({done: false, value: 'text/plain'}, iterator.next())
+    assert.deepEqual({done: false, value: 'application/json,text/plain'}, iterator.next())
     assert.deepEqual({done: false, value: 'text/html'}, iterator.next())
     assert.deepEqual({done: true, value: undefined}, iterator.next())
   })
@@ -285,8 +269,7 @@ suite('Headers', function() {
     headers.append('Content-Type', 'text/html')
 
     var iterator = headers.entries()
-    assert.deepEqual({done: false, value: ['accept', 'application/json']}, iterator.next())
-    assert.deepEqual({done: false, value: ['accept', 'text/plain']}, iterator.next())
+    assert.deepEqual({done: false, value: ['accept', 'application/json,text/plain']}, iterator.next())
     assert.deepEqual({done: false, value: ['content-type', 'text/html']}, iterator.next())
     assert.deepEqual({done: true, value: undefined}, iterator.next())
   })
