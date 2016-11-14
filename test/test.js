@@ -486,6 +486,13 @@ suite('Request', function() {
 
 // https://fetch.spec.whatwg.org/#response-class
 suite('Response', function() {
+  test('default status is 200 OK', function() {
+    var res = new Response()
+    assert.equal(res.status, 200)
+    assert.equal(res.statusText, 'OK')
+    assert.isTrue(res.ok)
+  })
+
   // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
   suite('BodyInit extract', function() {
     featureDependent(suite, support.blob, 'type Blob', function() {
@@ -912,15 +919,41 @@ suite('fetch method', function() {
       })
     })
 
-    featureDependent(test, support.arrayBuffer, 'sends ArrayBuffer body', function() {
-      return fetch('/request', {
-        method: 'post',
-        body: arrayBufferFromText('name=Hubot')
-      }).then(function(response) {
-        return response.json()
-      }).then(function(request) {
-        assert.equal(request.method, 'POST')
-        assert.equal(request.data, 'name=Hubot')
+    featureDependent(suite, support.arrayBuffer, 'ArrayBuffer', function() {
+      test('ArrayBuffer body', function() {
+        return fetch('/request', {
+          method: 'post',
+          body: arrayBufferFromText('name=Hubot')
+        }).then(function(response) {
+          return response.json()
+        }).then(function(request) {
+          assert.equal(request.method, 'POST')
+          assert.equal(request.data, 'name=Hubot')
+        })
+      })
+
+      test('DataView body', function() {
+        return fetch('/request', {
+          method: 'post',
+          body: new DataView(arrayBufferFromText('name=Hubot'))
+        }).then(function(response) {
+          return response.json()
+        }).then(function(request) {
+          assert.equal(request.method, 'POST')
+          assert.equal(request.data, 'name=Hubot')
+        })
+      })
+
+      test('TypedArray body', function() {
+        return fetch('/request', {
+          method: 'post',
+          body: new Uint8Array(arrayBufferFromText('name=Hubot'))
+        }).then(function(response) {
+          return response.json()
+        }).then(function(request) {
+          assert.equal(request.method, 'POST')
+          assert.equal(request.data, 'name=Hubot')
+        })
       })
     })
 
