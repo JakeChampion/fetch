@@ -104,114 +104,42 @@ exercise.forEach(function(exerciseMode) {
     // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
     function testBodyExtract(factory) {
       suite('body extract', function() {
-        featureDependent(suite, support.blob, 'type Blob', function() {
-          test('consume as blob', function() {
-            var obj = factory(new Blob(['hello']))
-            return obj.blob().then(readBlobAsText).then(function(text) {
-              assert.equal(text, 'hello')
-            })
-          })
+        var expected = 'Hello World!'
+        var inputs = [['type USVString', expected]]
+        if (support.blob) {
+          inputs.push(['type Blob', new Blob([expected])])
+        }
+        if (support.arrayBuffer) {
+          inputs = inputs.concat([
+            ['type ArrayBuffer', arrayBufferFromText(expected)],
+            ['type TypedArray', new Uint8Array(arrayBufferFromText(expected))],
+            ['type DataView', new DataView(arrayBufferFromText(expected))],
+          ])
+        }
 
-          test('consume as text', function() {
-            var obj = factory(new Blob(['hello']))
-            return obj.text().then(function(text) {
-              assert.equal(text, 'hello')
-            })
-          })
+        inputs.forEach(function(input) {
+          var typeLabel = input[0], body = input[1]
 
-          test('consume as array buffer', function() {
-            var obj = factory(new Blob(['hello']))
-            return obj.arrayBuffer().then(readArrayBufferAsText).then(function(text) {
-              assert.equal(text, 'hello')
+          suite(typeLabel, function() {
+            featureDependent(test, support.blob, 'consume as blob', function() {
+              var r = factory(body)
+              return r.blob().then(readBlobAsText).then(function(text) {
+                assert.equal(text, expected)
+              })
             })
-          })
-        })
 
-        featureDependent(suite, support.arrayBuffer, 'type ArrayBuffer', function() {
-          test('consume as array buffer', function() {
-            var original = arrayBufferFromText('name=hubot')
-            return factory(original).arrayBuffer().then(readArrayBufferAsText).then(function(text) {
-              assert.equal(text, 'name=hubot')
+            test('consume as text', function() {
+              var r = factory(body)
+              return r.text().then(function(text) {
+                assert.equal(text, expected)
+              })
             })
-          })
 
-          featureDependent(test, support.blob, 'consume as blob', function() {
-            var original = arrayBufferFromText('name=hubot')
-            return factory(original).blob().then(readBlobAsText).then(function(text) {
-              assert.equal(text, 'name=hubot')
-            })
-          })
-
-          test('consume as text', function() {
-            var original = arrayBufferFromText('name=hubot')
-            return factory(original).text().then(function(text) {
-              assert.equal(text, 'name=hubot')
-            })
-          })
-        })
-
-        featureDependent(suite, support.arrayBuffer, 'type Uint8Array', function() {
-          test('consume as array buffer', function() {
-            var original = new Uint8Array(arrayBufferFromText('name=hubot'))
-            return factory(original).arrayBuffer().then(readArrayBufferAsText).then(function(text) {
-              assert.equal(text, 'name=hubot')
-            })
-          })
-
-          featureDependent(test, support.blob, 'consume as blob', function() {
-            var original = new Uint8Array(arrayBufferFromText('name=hubot'))
-            return factory(original).blob().then(readBlobAsText).then(function(text) {
-              assert.equal(text, 'name=hubot')
-            })
-          })
-
-          test('consume as text', function() {
-            var original = new Uint8Array(arrayBufferFromText('name=hubot'))
-            return factory(original).text().then(function(text) {
-              assert.equal(text, 'name=hubot')
-            })
-          })
-        })
-
-        featureDependent(suite, support.arrayBuffer, 'type DataView', function() {
-          test('consume as array buffer', function() {
-            var original = new DataView(arrayBufferFromText('name=hubot'))
-            return factory(original).arrayBuffer().then(readArrayBufferAsText).then(function(text) {
-              assert.equal(text, 'name=hubot')
-            })
-          })
-
-          featureDependent(test, support.blob, 'consume as blob', function() {
-            var original = new DataView(arrayBufferFromText('name=hubot'))
-            return factory(original).blob().then(readBlobAsText).then(function(text) {
-              assert.equal(text, 'name=hubot')
-            })
-          })
-
-          test('consume as text', function() {
-            var original = new DataView(arrayBufferFromText('name=hubot'))
-            return factory(original).text().then(function(text) {
-              assert.equal(text, 'name=hubot')
-            })
-          })
-        })
-
-        suite('type USVString', function() {
-          test('consume as text', function() {
-            return factory('hello').text().then(function(text) {
-              assert.equal(text, 'hello')
-            })
-          })
-
-          featureDependent(test, support.blob, 'consume as blob', function() {
-            return factory('hello').blob().then(readBlobAsText).then(function(text) {
-              assert.equal(text, 'hello')
-            })
-          })
-
-          featureDependent(test, support.arrayBuffer, 'consume as array buffer', function() {
-            return factory('hello').arrayBuffer().then(readArrayBufferAsText).then(function(text) {
-              assert.equal(text, 'hello')
+            featureDependent(test, support.arrayBuffer, 'consume as array buffer', function() {
+              var r = factory(body)
+              return r.arrayBuffer().then(readArrayBufferAsText).then(function(text) {
+                assert.equal(text, expected)
+              })
             })
           })
         })
