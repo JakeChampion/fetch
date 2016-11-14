@@ -118,16 +118,80 @@ exercise.forEach(function(exerciseMode) {
               assert.equal(text, 'hello')
             })
           })
+
+          test('consume as array buffer', function() {
+            var obj = factory(new Blob(['hello']))
+            return obj.arrayBuffer().then(readArrayBufferAsText).then(function(text) {
+              assert.equal(text, 'hello')
+            })
+          })
         })
 
         featureDependent(suite, support.arrayBuffer, 'type ArrayBuffer', function() {
           test('consume as array buffer', function() {
             var original = arrayBufferFromText('name=hubot')
-            return factory(original).arrayBuffer().then(function(buf) {
-              assert.equal(
-                readArrayBufferAsText(buf),
-                readArrayBufferAsText(original)
-              )
+            return factory(original).arrayBuffer().then(readArrayBufferAsText).then(function(text) {
+              assert.equal(text, 'name=hubot')
+            })
+          })
+
+          featureDependent(test, support.blob, 'consume as blob', function() {
+            var original = arrayBufferFromText('name=hubot')
+            return factory(original).blob().then(readBlobAsText).then(function(text) {
+              assert.equal(text, 'name=hubot')
+            })
+          })
+
+          test('consume as text', function() {
+            var original = arrayBufferFromText('name=hubot')
+            return factory(original).text().then(function(text) {
+              assert.equal(text, 'name=hubot')
+            })
+          })
+        })
+
+        featureDependent(suite, support.arrayBuffer, 'type Uint8Array', function() {
+          test('consume as array buffer', function() {
+            var original = new Uint8Array(arrayBufferFromText('name=hubot'))
+            return factory(original).arrayBuffer().then(readArrayBufferAsText).then(function(text) {
+              assert.equal(text, 'name=hubot')
+            })
+          })
+
+          featureDependent(test, support.blob, 'consume as blob', function() {
+            var original = new Uint8Array(arrayBufferFromText('name=hubot'))
+            return factory(original).blob().then(readBlobAsText).then(function(text) {
+              assert.equal(text, 'name=hubot')
+            })
+          })
+
+          test('consume as text', function() {
+            var original = new Uint8Array(arrayBufferFromText('name=hubot'))
+            return factory(original).text().then(function(text) {
+              assert.equal(text, 'name=hubot')
+            })
+          })
+        })
+
+        featureDependent(suite, support.arrayBuffer, 'type DataView', function() {
+          test('consume as array buffer', function() {
+            var original = new DataView(arrayBufferFromText('name=hubot'))
+            return factory(original).arrayBuffer().then(readArrayBufferAsText).then(function(text) {
+              assert.equal(text, 'name=hubot')
+            })
+          })
+
+          featureDependent(test, support.blob, 'consume as blob', function() {
+            var original = new DataView(arrayBufferFromText('name=hubot'))
+            return factory(original).blob().then(readBlobAsText).then(function(text) {
+              assert.equal(text, 'name=hubot')
+            })
+          })
+
+          test('consume as text', function() {
+            var original = new DataView(arrayBufferFromText('name=hubot'))
+            return factory(original).text().then(function(text) {
+              assert.equal(text, 'name=hubot')
             })
           })
         })
@@ -141,6 +205,12 @@ exercise.forEach(function(exerciseMode) {
 
           featureDependent(test, support.blob, 'consume as blob', function() {
             return factory('hello').blob().then(readBlobAsText).then(function(text) {
+              assert.equal(text, 'hello')
+            })
+          })
+
+          featureDependent(test, support.arrayBuffer, 'consume as array buffer', function() {
+            return factory('hello').arrayBuffer().then(readArrayBufferAsText).then(function(text) {
               assert.equal(text, 'hello')
             })
           })
