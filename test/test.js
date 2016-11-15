@@ -73,7 +73,7 @@ function readArrayBufferAsText(buf) {
   return chars.join('')
 }
 
-var native = {}
+var preservedGlobals = {}
 var keepGlobals = ['fetch', 'Headers', 'Request', 'Response']
 var exercise = ['polyfill']
 
@@ -81,7 +81,7 @@ var exercise = ['polyfill']
 // by the polyfill. Native implementation will be exercised additionally.
 if (self.fetch) {
   keepGlobals.forEach(function(name) {
-    native[name] = self[name]
+    preservedGlobals[name] = self[name]
   })
   self.fetch = undefined
   exercise.push('native')
@@ -98,7 +98,7 @@ exercise.forEach(function(exerciseMode) {
     if (exerciseMode === 'native') {
       suiteSetup(function() {
         keepGlobals.forEach(function(name) {
-          self[name] = native[name]
+          self[name] = preservedGlobals[name]
         })
       })
     }
