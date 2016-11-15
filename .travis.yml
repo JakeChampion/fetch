@@ -1,5 +1,8 @@
 sudo: false
 language: node_js
+cache:
+  directories:
+  - phantomjs
 deploy:
   provider: npm
   email: mislav.marohnic@gmail.com
