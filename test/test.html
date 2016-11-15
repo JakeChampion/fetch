@@ -7,6 +7,15 @@
 </head>
 <body>
   <div id="mocha"></div>
+  <script>
+    window.onerror = function(err) {
+      var container = document.getElementById('mocha')
+      var el = document.createElement('p')
+      el.textContent = err.toString()
+      el.style = 'color:#c00'
+      container.insertBefore(el, container.firstChild)
+    }
+  </script>
   <script src="/node_modules/url-search-params/build/url-search-params.js"></script>
   <script src="/node_modules/chai/chai.js"></script>
   <script src="/node_modules/mocha/mocha.js"></script>
