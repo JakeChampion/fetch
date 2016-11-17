@@ -259,6 +259,14 @@
           return Promise.resolve(new Blob([this._bodyText]))
         }
       }
+
+      this.arrayBuffer = function() {
+        if (this._bodyArrayBuffer) {
+          return consumed(this) || Promise.resolve(this._bodyArrayBuffer)
+        } else {
+          return this.blob().then(readBlobAsArrayBuffer)
+        }
+      }
     }
 
     this.text = function() {
@@ -275,16 +283,6 @@
         throw new Error('could not read FormData body as text')
       } else {
         return Promise.resolve(this._bodyText)
-      }
-    }
-
-    if (support.arrayBuffer) {
-      this.arrayBuffer = function() {
-        if (this._bodyArrayBuffer) {
-          return consumed(this) || Promise.resolve(this._bodyArrayBuffer)
-        } else {
-          return this.blob().then(readBlobAsArrayBuffer)
-        }
       }
     }
 
