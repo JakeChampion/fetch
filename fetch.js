@@ -299,7 +299,7 @@
     return (methods.indexOf(upcased) > -1) ? upcased : method
   }
 
-  function Request(input, options) {
+  function Request(input, options, isCloneOperation) {
     options = options || {}
     var body = options.body
 
@@ -318,7 +318,9 @@
       this.mode = input.mode
       if (!body && input._bodyInit != null) {
         body = input._bodyInit
-        input.bodyUsed = true
+        if (!isCloneOperation) {
+          input.bodyUsed = true
+        }
       }
     }
 
@@ -337,7 +339,7 @@
   }
 
   Request.prototype.clone = function() {
-    return new Request(this, { body: this._bodyInit })
+    return new Request(this, { body: this._bodyInit }, true)
   }
 
   function decode(body) {
