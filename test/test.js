@@ -433,7 +433,20 @@ suite('Request', function() {
     assert.equal(req.headers.get('content-type'), 'image/png')
   })
 
-  test('clone request', function() {
+  test('clone GET request', function() {
+    var req = new Request('https://fetch.spec.whatwg.org/', {
+      headers: {'content-type': 'text/plain'}
+    })
+    var clone = req.clone()
+
+    assert.equal(clone.url, req.url)
+    assert.equal(clone.method, 'GET')
+    assert.equal(clone.headers.get('content-type'), 'text/plain')
+    assert.notEqual(clone.headers, req.headers)
+    assert.isFalse(req.bodyUsed)
+  })
+
+  test('clone POST request', function() {
     var req = new Request('https://fetch.spec.whatwg.org/', {
       method: 'post',
       headers: {'content-type': 'text/plain'},
