@@ -248,7 +248,7 @@ More comprehensive usage example:
   <p>
   Headers represents a set of request/response HTTP headers.
   It allows for case-insensitive lookup of header by name,
-  as well as setting and receiving multiple values per header.
+  as well as merging multiple values of a single header.
   </p>
 
   <h3>Methods</h3>
@@ -256,7 +256,6 @@ More comprehensive usage example:
   <ul>
     <li><code>has(name)</code> (boolean)</li>
     <li><code>get(name)</code> (String)</li>
-    <li><code>getAll(name)</code> (Array)</li>
     <li><code>set(name, value)</code></li>
     <li><code>append(name, value)</code></li>
     <li><code>delete(name)</code></li>
