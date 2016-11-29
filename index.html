@@ -49,6 +49,14 @@
   h2:target, h3:target, li:target {
     background-color: lemonchiffon;
   }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    padding: .3em .5em;
+    border: 1px solid silver;
+  }
 </style>
 
 <h1>Fetch</h1>
@@ -85,7 +93,7 @@ More comprehensive usage example:
   response.headers    <span class="comment">//=&gt; <a href="#Headers">Headers</a></span>
   response.url        <span class="comment">//=&gt; String</span>
 
-  response.<a href="#response-body">text()</a>.then(<span class="keyword">function</span>(responseText) { ... })
+  <span class="keyword">return</span> response.<a href="#response-body">text()</a>
 }, <span class="keyword">function</span>(<a href="#error">error</a>) {
   error.message <span class="comment">//=&gt; String</span>
 })</code></pre>
@@ -122,7 +130,7 @@ More comprehensive usage example:
 
   <ul>
     <li><code>method</code> (String) - HTTP request method. Default: <code>"GET"</code></li>
-    <li><code>body</code> (String, Blob, FormData) - HTTP request body</li>
+    <li><code>body</code> (String, <a href="#request-body">body types</a>) - HTTP request body</li>
     <li><code>headers</code> (Object, <a href="#Headers">Headers</a>) - Default: <code>{}</code></li>
     <li id="credentials"><code>credentials</code> (String) - Authentication credentials mode. Default: <code>"omit"</code>
       <ul>
@@ -135,11 +143,47 @@ More comprehensive usage example:
 
   <h3 id="request-body">Body types</h3>
 
+  <table>
+    <thead>
+      <tr>
+        <th>Class</th>
+        <th>Default Content-Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>String</td>
+        <td><code>text/plain;charset=UTF-8</code></td>
+      </tr>
+      <tr>
+        <td><a href="https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams">URLSearchParams</a></td>
+        <td><code>application/x-www-form-urlencoded;charset=UTF-8</code></td>
+      </tr>
+      <tr>
+        <td><a href="https://developer.mozilla.org/en-US/docs/Web/API/FormData">FormData</a></td>
+        <td><code>multipart/form-data</code></td>
+      </tr>
+      <tr>
+        <td><a href="https://developer.mozilla.org/en-US/docs/Web/API/Blob">Blob</a></td>
+        <td>inherited from the <code>blob.type</code> property</td>
+      </tr>
+      <tr>
+        <td><a href="https://developer.mozilla.org/en-US/docs/Web/API/ArrayBuffer">ArrayBuffer</a></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray">TypedArray</a></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a href="https://developer.mozilla.org/en-US/docs/Web/API/DataView">DataView</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
   <p>
-  The request body can be of the type String,
-  <a href="https://developer.mozilla.org/en-US/docs/Web/API/Blob">Blob</a>,
-  or <a href="https://developer.mozilla.org/en-US/docs/Web/API/FormData">FormData</a>.
-  Other data structures need to be encoded before hand as one of these types.
+  Other data structures need to be encoded beforehand as one of the above types.
   For instance, <code>JSON.stringify(data)</code> can be used to serialize a
   data structure into a JSON string.
   </p>
