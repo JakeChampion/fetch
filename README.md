@@ -104,7 +104,7 @@ fetch('/users.json')
     return response.json()
   }).then(function(json) {
     console.log('parsed json', json)
-  }).catch(function(ex) {
+  }, function(ex) {
     console.log('parsing failed', ex)
   })
 ```
@@ -201,7 +201,7 @@ fetch('/users')
   .then(parseJSON)
   .then(function(data) {
     console.log('request succeeded with JSON response', data)
-  }).catch(function(error) {
+  }, function(error) {
     console.log('request failed', error)
   })
 ```
