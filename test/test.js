@@ -1,6 +1,12 @@
 var support = {
   searchParams: 'URLSearchParams' in self,
-  url: 'URL' in self,
+  url: (function(url) {
+    try {
+      return new URL(url).toString() === url
+    } catch(e) {
+      return false
+    }
+  })('http://example.com/'),
   blob: 'FileReader' in self && 'Blob' in self && (function() {
     try {
       new Blob()
