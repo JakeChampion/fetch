@@ -1,5 +1,6 @@
 var support = {
   searchParams: 'URLSearchParams' in self,
+  url: 'URL' in self,
   blob: 'FileReader' in self && 'Blob' in self && (function() {
     try {
       new Blob()
@@ -283,8 +284,21 @@ suite('Headers', function() {
 
 // https://fetch.spec.whatwg.org/#request-class
 suite('Request', function() {
-  test('construct with url', function() {
+  test('construct with string url', function() {
     var request = new Request('https://fetch.spec.whatwg.org/')
+    assert.equal(request.url, 'https://fetch.spec.whatwg.org/')
+  })
+
+  featureDependent(test, support.url, 'construct with URL instance', function() {
+    var url = new URL('https://fetch.spec.whatwg.org/')
+    url.pathname = 'cors'
+    var request = new Request(url)
+    assert.equal(request.url, 'https://fetch.spec.whatwg.org/cors')
+  })
+
+  test('construct with non-Request object', function() {
+    var url = { toString: function() { return 'https://fetch.spec.whatwg.org/' } }
+    var request = new Request(url)
     assert.equal(request.url, 'https://fetch.spec.whatwg.org/')
   })
 

@@ -303,9 +303,7 @@
     options = options || {}
     var body = options.body
 
-    if (typeof input === 'string') {
-      this.url = input
-    } else {
+    if (input instanceof Request) {
       if (input.bodyUsed) {
         throw new TypeError('Already read')
       }
@@ -320,6 +318,8 @@
         body = input._bodyInit
         input.bodyUsed = true
       }
+    } else {
+      this.url = String(input)
     }
 
     this.credentials = options.credentials || this.credentials || 'omit'
