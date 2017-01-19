@@ -112,7 +112,7 @@ More comprehensive usage example:
   as it's instantiated internally when <code>fetch()</code> is called.
   </p>
 
-  <h3 id="url">URL (String or <a href="#Request">Request</a>)</h3>
+  <h3 id="url">URL (<a href="#Request">Request</a> or string)</h3>
 
   <p>
   The URL of the resource which is being fetched.
@@ -122,7 +122,13 @@ More comprehensive usage example:
   </p>
 
   <p>
-  Alternatively, a request can be initialized using another instance of Request in place of the URL.
+  Any non-Request object will be converted to a String, making it possible to
+  pass an instance of <a href="https://developer.mozilla.org/en-US/docs/Web/API/URL">URL</a>,
+  for example.
+  </p>
+
+  <p>
+  A request can be initialized using another instance of Request in place of the URL.
   In that case, the URL and other options are inherited from the provided Request object.
   </p>
 
