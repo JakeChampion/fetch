@@ -270,7 +270,7 @@ Note: modern browsers such as Chrome, Firefox, and Microsoft Edge contain native
 implementations of `window.fetch`, therefore the code from this polyfill doesn't
 have any effect on those browsers. If you believe you've encountered an error
 with how `window.fetch` is implemented in any of these browsers, you should file
-an issue with that browser vendor instead on this project.
+an issue with that browser vendor instead of this project.
 
 
   [fetch specification]: https://fetch.spec.whatwg.org
