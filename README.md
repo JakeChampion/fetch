@@ -163,7 +163,7 @@ fetch('/avatars', {
 
 ### Caveats
 
-The `fetch` specification differs from `jQuery.ajax()` in mainly two ways that
+The `fetch` specification differs from `jQuery.ajax()` in mainly three ways that
 bear keeping in mind:
 
 * The Promise returned from `fetch()` **won't reject on HTTP error status**
@@ -175,6 +175,8 @@ bear keeping in mind:
   resulting in unauthenticated requests if the site relies on maintaining a user
   session. See [Sending cookies](#sending-cookies) for how to opt into cookie
   handling.
+
+* By default, the **browser will not store any cookies** set in `fetch()` responses.
 
 #### Handling HTTP error statuses
 
@@ -231,6 +233,9 @@ fetch('https://example.com:1234/users', {
 ```
 
 #### Receiving cookies
+
+By default, the browser will ignore the `Set-Cookie` response header unless the
+`credentials` option is provided.
 
 Like with XMLHttpRequest, the `Set-Cookie` response header returned from the
 server is a [forbidden header name][] and therefore can't be programatically
