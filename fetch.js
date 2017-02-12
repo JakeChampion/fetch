@@ -251,7 +251,9 @@
           return Promise.resolve(new Blob([this._bodyText]))
         }
       }
+    }
 
+    if (support.arrayBuffer) {
       this.arrayBuffer = function() {
         if (this._bodyArrayBuffer) {
           return consumed(this) || Promise.resolve(this._bodyArrayBuffer)
@@ -456,8 +458,12 @@
         xhr.withCredentials = true
       }
 
-      if ('responseType' in xhr && support.blob) {
-        xhr.responseType = 'blob'
+      if ('responseType' in xhr) {
+        if (support.blob) {
+          xhr.responseType = 'blob'
+        } else if (support.arrayBuffer) {
+          xhr.responseType = 'arraybuffer'
+        }
       }
 
       request.headers.forEach(function(value, name) {
