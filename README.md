@@ -1,6 +1,6 @@
 # window.fetch polyfill
 
-The `fetch()` function is a Promise-based mechanism for programatically making
+The `fetch()` function is a Promise-based mechanism for programmatically making
 web requests in the browser. This project is a polyfill that implements a subset
 of the standard [Fetch specification][], enough to make `fetch` a viable
 replacement for most uses of XMLHttpRequest in traditional web applications.
@@ -47,7 +47,7 @@ expected to uphold this code.
   through `fetch` requests, please ensure that you've read and understood the
   [Sending cookies](#sending-cookies) section.
 
-* If this polyfill **doesn't work under Node.js environment**, that is expected,
+* If this polyfill **doesn't work under Node.js environments**, that is expected,
   because this project is meant for web browsers only. You should ensure that your
   application doesn't try to package and run this on the server.
 
@@ -167,8 +167,8 @@ The `fetch` specification differs from `jQuery.ajax()` in mainly two ways that
 bear keeping in mind:
 
 * The Promise returned from `fetch()` **won't reject on HTTP error status**
-  even if the response is a HTTP 404 or 500. Instead, it will resolve normally,
-  and it will only reject on network failure, or if anything prevented the
+  even if the response is an HTTP 404 or 500. Instead, it will resolve normally,
+  and it will only reject on network failure or if anything prevented the
   request from completing.
 
 * By default, `fetch` **won't send or receive any cookies** from the server,
@@ -232,8 +232,8 @@ fetch('https://example.com:1234/users', {
 
 #### Receiving cookies
 
-Like with XMLHttpRequest, the `Set-Cookie` response header returned from the
-server is a [forbidden header name][] and therefore can't be programatically
+As with XMLHttpRequest, the `Set-Cookie` response header returned from the
+server is a [forbidden header name][] and therefore can't be programmatically
 read with `response.headers.get()`. Instead, it's the browser's responsibility
 to handle new cookies being set (if applicable to the current URL). Unless they
 are HTTP-only, new cookies will be available through `document.cookie`.
