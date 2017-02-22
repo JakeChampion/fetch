@@ -170,6 +170,16 @@ suite('Headers', function() {
     assert.equal(headers.get('Accept'), 'application/json,text/plain')
     assert.equal(headers.get('Content-type'), 'text/html')
   })
+  test('constructor works with arrays', function() {
+    var array = [
+      ['Content-Type', 'text/xml'],
+      ['Breaking-Bad', '<3']
+    ];
+    var headers = new Headers(array)
+
+    assert.equal(headers.get('Content-Type'), 'text/xml')
+    assert.equal(headers.get('Breaking-Bad'), '<3')
+  })
   test('headers are case insensitive', function() {
     var headers = new Headers({'Accept': 'application/json'})
     assert.equal(headers.get('ACCEPT'), 'application/json')
