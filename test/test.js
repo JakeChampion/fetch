@@ -174,7 +174,7 @@ suite('Headers', function() {
     var array = [
       ['Content-Type', 'text/xml'],
       ['Breaking-Bad', '<3']
-    ];
+    ]
     var headers = new Headers(array)
 
     assert.equal(headers.get('Content-Type'), 'text/xml')
