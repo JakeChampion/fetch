@@ -303,9 +303,9 @@
   }
 
   function Request(input, options) {
-    options = options || {}
+    options || (options = {})
     var body = options.body
-
+    
     if (input instanceof Request) {
       if (input.bodyUsed) {
         throw new TypeError('Already read')
@@ -375,10 +375,7 @@
   Body.call(Request.prototype)
 
   function Response(bodyInit, options) {
-    if (!options) {
-      options = {}
-    }
-
+    options || (options = {})
     this.type = 'default'
     this.status = 'status' in options ? options.status : 200
     this.ok = this.status >= 200 && this.status < 300
