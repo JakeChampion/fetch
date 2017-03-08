@@ -3,16 +3,22 @@
 <head>
   <meta charset="utf-8">
   <title>Fetch Worker Tests</title>
-  <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+  <link rel="stylesheet" href="/node_modules/mocha/mocha.css" />
 </head>
 <body>
   <div id="mocha"></div>
-  <script src="../node_modules/mocha/mocha.js"></script>
+  <script src="/node_modules/url-search-params/build/url-search-params.js"></script>
+  <script src="/node_modules/mocha/mocha.js"></script>
 
   <script>
-    mocha.setup('tdd')
+    if (self.initMochaPhantomJS) {
+      self.initMochaPhantomJS()
+    }
 
-    var worker = new Worker('worker.js')
+    mocha.setup('tdd')
+    mocha.suite.suites.unshift(Mocha.Suite.create(mocha.suite, "worker"))
+
+    var worker = new Worker('/test/worker.js')
 
     worker.addEventListener('message', function(e) {
       switch (e.data.name) {
@@ -30,11 +36,7 @@
           })
           break
         case 'end':
-          if (self.mochaPhantomJS) {
-            mochaPhantomJS.run()
-          } else {
-            mocha.run()
-          }
+          mocha.run()
           break
       }
     })

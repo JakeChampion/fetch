@@ -1,0 +1,31 @@
+#!/bin/bash
+set -e
+set -o pipefail
+
+raw=""
+if [ "$1" = "--raw" ]; then
+  raw="1"
+  shift 1
+fi
+
+endpoint="$1"
+
+curl -fsS -X POST "https://saucelabs.com/rest/v1/$SAUCE_USERNAME/${endpoint}" \
+  -u "$SAUCE_USERNAME:$SAUCE_ACCESS_KEY" \
+  -H "Content-Type: application/json" -d "@-" | \
+{
+  if [ -n "$raw" ]; then
+    cat
+  else
+    ruby -rjson -e '
+      dump = lambda do |obj, ns|
+        case obj
+        when Array then obj.each_with_index { |v, i| dump.call(v, [ns, i]) }
+        when Hash then obj.each { |k, v| dump.call(v, [ns, k]) }
+        else puts "%s: %s" % [ ns.flatten.compact.join("."), obj.to_s ]
+        end
+      end
+      dump.call JSON.parse(STDIN.read), nil
+    '
+  fi
+}

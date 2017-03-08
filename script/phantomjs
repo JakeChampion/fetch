@@ -12,5 +12,25 @@ node ./script/server $port &>/dev/null &
 server_pid=$!
 trap "kill $server_pid" INT EXIT
 
-node ./node_modules/.bin/mocha-phantomjs -s localToRemoteUrlAccessEnabled=true -s webSecurityEnabled=false "http://localhost:$port/test/test.html"
-node ./node_modules/.bin/mocha-phantomjs -s localToRemoteUrlAccessEnabled=true -s webSecurityEnabled=false "http://localhost:$port/test/test-worker.html"
+STATUS=0
+
+reporter=dot
+[ -z "$CI" ] || reporter=spec
+
+if [ -n "$TRAVIS" ]; then
+  make phantomjs/bin/phantomjs
+  export PATH="$PWD/phantomjs/bin:$PATH"
+fi
+
+run() {
+  phantomjs ./node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js \
+    "$1" $reporter "{\"useColors\":true, \"hooks\":\"$PWD/test/mocha-phantomjs-hooks.js\"}" \
+    || STATUS=$?
+}
+
+[ -z "$CI" ] || echo "phantomjs $(phantomjs -v)"
+
+run "http://localhost:$port/"
+run "http://localhost:$port/test/test-worker.html"
+
+exit $STATUS

@@ -1,13 +1,12 @@
-importScripts('../node_modules/chai/chai.js')
-importScripts('../node_modules/mocha/mocha.js')
+importScripts('/node_modules/chai/chai.js')
+importScripts('/node_modules/mocha/mocha.js')
 
 mocha.setup('tdd')
 self.assert = chai.assert
 
-importScripts('../bower_components/es6-promise/promise.js')
-importScripts('../fetch.js')
-
-importScripts('test.js')
+importScripts('/node_modules/promise-polyfill/promise.js')
+importScripts('/test/test.js')
+importScripts('/fetch.js')
 
 function title(test) {
   return test.fullTitle().replace(/#/g, '');
