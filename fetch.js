@@ -201,7 +201,7 @@
   }
 
   function Request(input, options) {
-    options = options || {}
+    options || (options = {})
     var body = options.body
     if (Request.prototype.isPrototypeOf(input)) {
       if (input.bodyUsed) {
@@ -268,10 +268,8 @@
   Body.call(Request.prototype)
 
   function Response(bodyInit, options) {
-    if (!options) {
-      options = {}
-    }
-
+    options || (options = {})
+    
     this._initBody(bodyInit)
     this.type = 'default'
     this.status = options.status
