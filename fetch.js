@@ -331,6 +331,7 @@
     }
     this.method = normalizeMethod(options.method || this.method || 'GET')
     this.mode = options.mode || this.mode || null
+    this.timeout = options.timeout || input.timeout || 0
     this.referrer = null
 
     if ((this.method === 'GET' || this.method === 'HEAD') && body) {
@@ -424,6 +425,10 @@
       var request = new Request(input, init)
       var xhr = new XMLHttpRequest()
 
+      if (request.timeout) {
+        xhr.timeout = request.timeout
+      }
+
       xhr.onload = function() {
         var options = {
           status: xhr.status,
@@ -440,6 +445,7 @@
       }
 
       xhr.ontimeout = function() {
+        xhr.abort();
         reject(new TypeError('Network request failed'))
       }
 
