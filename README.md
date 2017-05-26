@@ -143,7 +143,7 @@ fetch('/users', {
   },
   body: JSON.stringify({
     name: 'Hubot',
-    login: 'hubot',
+    login: 'hubot'
   })
 })
 ```
