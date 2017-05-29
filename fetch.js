@@ -254,7 +254,9 @@
           return Promise.resolve(new Blob([this._bodyText]))
         }
       }
+    }
 
+    if (support.arrayBuffer) {
       this.arrayBuffer = function() {
         if (this._bodyArrayBuffer) {
           return consumed(this) || Promise.resolve(this._bodyArrayBuffer)
@@ -424,7 +426,7 @@
       var request = new Request(input, init)
       var xhr = new XMLHttpRequest()
 
-      xhr.onload = function() {
+      var onload = function() {
         var options = {
           status: xhr.status,
           statusText: xhr.statusText,
@@ -435,12 +437,25 @@
         resolve(new Response(body, options))
       }
 
-      xhr.onerror = function() {
+      var onerror = function() {
         reject(new TypeError('Network request failed'))
       }
 
-      xhr.ontimeout = function() {
-        reject(new TypeError('Network request failed'))
+      xhr.onload = onload
+
+      xhr.onerror = onerror
+
+      xhr.ontimeout = onerror
+
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState !== 4) {
+          return
+        }
+        var status = (xhr.status === 1223) ? 204 : xhr.status
+        if (status < 100 || status > 599) {
+          return onerror()
+        }
+        onload()
       }
 
       xhr.open(request.method, request.url, true)
@@ -451,8 +466,12 @@
         xhr.withCredentials = false
       }
 
-      if ('responseType' in xhr && support.blob) {
-        xhr.responseType = 'blob'
+      if ('responseType' in xhr) {
+        if (support.blob) {
+          xhr.responseType = 'blob'
+        } else if (support.arrayBuffer) {
+          xhr.responseType = 'arraybuffer'
+        }
       }
 
       request.headers.forEach(function(value, name) {
