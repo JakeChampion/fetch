@@ -107,7 +107,7 @@ fetch('/users.json')
   }).then(function(json) {
     console.log('parsed json', json)
   }).catch(function(ex) {
-    console.log('parsing failed', ex)
+    console.log('error fetching file or parsing json', ex)
   })
 ```
 
