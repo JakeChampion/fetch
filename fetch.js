@@ -303,7 +303,7 @@
   }
 
   function Request(input, options) {
-    options = options || {}
+    options || (options = {})
     var body = options.body
 
     if (input instanceof Request) {
@@ -375,10 +375,9 @@
   Body.call(Request.prototype)
 
   function Response(bodyInit, options) {
-    if (!options) {
-      options = {}
-    }
-
+    options || (options = {})
+    
+    this._initBody(bodyInit)
     this.type = 'default'
     this.status = 'status' in options ? options.status : 200
     this.ok = this.status >= 200 && this.status < 300
