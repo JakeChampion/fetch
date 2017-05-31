@@ -261,6 +261,14 @@ response.headers['X-Request-URL'] = request.url
 This server workaround is necessary if you need reliable `response.url` in
 Firefox < 32, Chrome < 37, Safari, or IE.
 
+### Webpack usage
+
+To use fetch with webpack, you will need `import-loader`, `export-loader`, `es6-promise` and require it this way:
+
+```javascript
+var fetch = require('imports?self=>{},es6p=es6-promise,Promise=>es6p.Promise!exports?self.fetch!whatwg-fetch');
+```
+
 ## Browser Support
 
 - Chrome
