@@ -178,6 +178,10 @@ bear keeping in mind:
   session. See [Sending cookies](#sending-cookies) for how to opt into cookie
   handling.
 
+Additionally some things cannot be polyfilled:
+
+* Due to the limitations of XHR `fetch` [cannot control the redirect mode](https://github.com/github/fetch/issues/137)
+
 #### Handling HTTP error statuses
 
 To have `fetch` Promise reject on HTTP error statuses, i.e. on any non-2xx
