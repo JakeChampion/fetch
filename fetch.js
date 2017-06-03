@@ -288,6 +288,12 @@
     }
 
     this.json = function() {
+      if ((arguments.length > 0) && (typeof arguments[0] === 'function')) {
+        var reviver = arguments[0];
+        return this.text().then(function(text) {
+          return JSON.parse(text, reviver);
+        });
+      }
       return this.text().then(JSON.parse)
     }
 
