@@ -1,14 +1,27 @@
-(function(self) {
+(function (root, factory) {
   'use strict';
 
-  if (self.fetch) {
-    return
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module.
+    define([], function() {
+      return factory(root)
+    })
+  } else if (typeof module === 'object' && module.exports) {
+    // Node. Does not work with strict CommonJS, but
+    // only CommonJS-like environments that support module.exports,
+    // like Node.
+    module.exports = factory(root)
+  } else {
+    // Browser globals (root is window)
+    root.fetchPolyfill = factory(root)
   }
+}(typeof self !== 'undefined' ? self : this, function (root) {
+  'use strict';
 
   var support = {
-    searchParams: 'URLSearchParams' in self,
-    iterable: 'Symbol' in self && 'iterator' in Symbol,
-    blob: 'FileReader' in self && 'Blob' in self && (function() {
+    searchParams: 'URLSearchParams' in root,
+    iterable: 'Symbol' in root && 'iterator' in Symbol,
+    blob: 'FileReader' in root && 'Blob' in root && (function() {
       try {
         new Blob()
         return true
@@ -16,8 +29,8 @@
         return false
       }
     })(),
-    formData: 'FormData' in self,
-    arrayBuffer: 'ArrayBuffer' in self
+    formData: 'FormData' in root,
+    arrayBuffer: 'ArrayBuffer' in root
   }
 
   if (support.arrayBuffer) {
@@ -415,6 +428,8 @@
     return new Response(null, {status: status, headers: {location: url}})
   }
 
+  var self = {}
+
   self.Headers = Headers
   self.Request = Request
   self.Response = Response
@@ -463,4 +478,12 @@
     })
   }
   self.fetch.polyfill = true
-})(typeof self !== 'undefined' ? self : this);
+
+  if (!root.fetch) {
+    for (var attr in self) {
+      root[attr] = self[attr]
+    }
+  }
+
+  return self
+}));

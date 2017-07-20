@@ -20,6 +20,9 @@
   "worker": true,
   "globals": {
     "JSON": false,
-    "URLSearchParams": false
+    "URLSearchParams": false,
+    "define": true,
+    "module": true,
+    "global": true
   }
 }
