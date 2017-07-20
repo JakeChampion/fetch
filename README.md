@@ -63,7 +63,9 @@ expected to uphold this code.
 
 * `bower install fetch`; or
 
-* `yarn add whatwg-fetch`.
+* `yarn add whatwg-fetch`; or
+
+* CDN: https://cdnjs.com/libraries/fetch
 
 You will also need a Promise polyfill for [older browsers](http://caniuse.com/#feat=promises).
 We recommend [taylorhakes/promise-polyfill](https://github.com/taylorhakes/promise-polyfill)
