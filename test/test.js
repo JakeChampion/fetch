@@ -1026,6 +1026,18 @@ suite('HTTP methods', function() {
     })
   })
 
+  test('supports HTTP PATCH', function() {
+    return fetch('/request', {
+      method: 'patch',
+      body: 'name=Hubot'
+    }).then(function(response) {
+      return response.json()
+    }).then(function(request) {
+      assert.equal(request.method, 'PATCH')
+      assert.equal(request.data, 'name=Hubot')
+    })
+  })
+
   featureDependent(test, support.patch, 'supports HTTP PATCH', function() {
     return fetch('/request', {
       method: 'PATCH',
