@@ -4,7 +4,7 @@
   if (self.fetch) {
     return
   }
-
+  var hasWebWorker = typeof window.Worker !== 'function';
   var support = {
     searchParams: 'URLSearchParams' in self,
     iterable: 'Symbol' in self && 'iterator' in Symbol,
@@ -287,8 +287,29 @@
       }
     }
 
+    var webWorkerText = [
+        '(function () {',
+            'self.onmessage = function(e){',
+                'self.postMessage(JSON.parse(e.data));',
+                'self.close();',
+            '};',
+        '})()'
+    ].join('');
+
     this.json = function() {
-      return this.text().then(JSON.parse)
+      return this.text().then(function(text){
+        if (!hasWebWorker) {
+          return JSON.parse(text); 
+        } else {
+          var worker =  new Worker(URL.createObjectURL(new Blob([webWorkerText], {type: 'text/javascript'})));
+          return new Promise(function(resolve){
+            worker.onmessage = (e) => {
+                resolve(e.data);
+            };
+            worker.postMessage(text);
+          });
+        }
+      })
     }
 
     return this
