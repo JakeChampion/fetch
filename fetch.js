@@ -4,7 +4,7 @@
   if (self.fetch) {
     return
   }
-  var hasWebWorker = typeof window.Worker !== 'function';
+  var hasWebWorker = typeof window.Worker === 'function';
   var support = {
     searchParams: 'URLSearchParams' in self,
     iterable: 'Symbol' in self && 'iterator' in Symbol,
