@@ -4,10 +4,12 @@
   if (self.fetch) {
     return
   }
-
+  
   var support = {
     searchParams: 'URLSearchParams' in self,
     iterable: 'Symbol' in self && 'iterator' in Symbol,
+    webWorker: 'Worker' in self,
+    createObjectURL: `URL` in self && `createObjectURL` in self.URL,
     blob: 'FileReader' in self && 'Blob' in self && (function() {
       try {
         new Blob()
@@ -287,8 +289,29 @@
       }
     }
 
+    var webWorkerText = [
+        '(function () {',
+            'self.onmessage = function(e){',
+                'self.postMessage(JSON.parse(e.data))',
+                'self.close()',
+            '}',
+        '})()'
+    ].join('')
+
     this.json = function() {
-      return this.text().then(JSON.parse)
+      return this.text().then(function(text){
+        if (support.webWorker && support.blob && support.createObjectURL) {
+          var worker = new Worker(URL.createObjectURL(new Blob([webWorkerText], {type: 'text/javascript'})))
+          return new Promise(function(resolve){
+            worker.onmessage = function(e){
+                resolve(e.data)
+            }
+            worker.postMessage(text)
+          })
+        } else {
+          return JSON.parse(text)
+        }
+      })
     }
 
     return this
