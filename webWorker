@@ -8,8 +8,8 @@
   var support = {
     searchParams: 'URLSearchParams' in self,
     iterable: 'Symbol' in self && 'iterator' in Symbol,
-    webWorker: typeof window.Worker === 'function',
-    createObjectURL: window.URL && typeof window.URL.createObjectURL === 'function',
+    webWorker: 'Worker' in self,
+    createObjectURL: `URL` in self && `createObjectURL` in self.URL,
     blob: 'FileReader' in self && 'Blob' in self && (function() {
       try {
         new Blob()
@@ -292,24 +292,24 @@
     var webWorkerText = [
         '(function () {',
             'self.onmessage = function(e){',
-                'self.postMessage(JSON.parse(e.data));',
-                'self.close();',
-            '};',
+                'self.postMessage(JSON.parse(e.data))',
+                'self.close()',
+            '}',
         '})()'
-    ].join('');
+    ].join('')
 
     this.json = function() {
       return this.text().then(function(text){
         if (support.webWorker && support.blob && support.createObjectURL) {
-          var worker =  new Worker(URL.createObjectURL(new Blob([webWorkerText], {type: 'text/javascript'})));
+          var worker = new Worker(URL.createObjectURL(new Blob([webWorkerText], {type: 'text/javascript'})))
           return new Promise(function(resolve){
-            worker.onmessage = (e) => {
-                resolve(e.data);
-            };
-            worker.postMessage(text);
-          });
+            worker.onmessage = function(e){
+                resolve(e.data)
+            }
+            worker.postMessage(text)
+          })
         } else {
-          return JSON.parse(text); 
+          return JSON.parse(text)
         }
       })
     }
