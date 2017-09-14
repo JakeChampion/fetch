@@ -440,7 +440,7 @@
       }
 
       xhr.ontimeout = function() {
-        reject(new TypeError('Network request failed'))
+        reject(new TypeError('Network request timed out'))
       }
 
       xhr.open(request.method, request.url, true)
