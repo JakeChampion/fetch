@@ -1192,5 +1192,103 @@ suite('credentials mode', function() {
 })
 })
 
+suite('abort tests', function() {
+
+  test('abort during fetch', function() {
+    var controller = new AbortController()
+
+    setTimeout(function () {
+      controller.abort()
+    })
+
+    return fetch('/testAbort', {
+      signal: controller.signal
+    }).then(function () {
+      assert(false, 'Fetch should have been aborted')
+    }).catch(function (err) {
+      assert.equal(err.name, 'AbortError')
+    })
+  })
+
+  test('abort before fetch started', function() {
+    var controller = new AbortController()
+    controller.abort()
+
+    return fetch('/testAbort', {
+      signal: controller.signal
+    }).then(function () {
+      assert(false, 'Fetch should have been aborted')
+    }).catch(function (err) {
+      assert.equal(err.name, 'AbortError')
+    })
+  })
+
+  test('fetch without aborting', function() {
+    var controller = new AbortController()
+
+    return fetch('/testAbort', {
+      signal: controller.signal
+    }).catch(function () {
+      assert(false, 'Fetch should not have been aborted')
+    })
+  })
+
+  test('fetch without signal set', function() {
+    return fetch('/testAbort').catch(function () {
+      assert(false, 'Fetch should not have been aborted')
+    })
+  })
+
+  test('event listener fires "abort" event', function() {
+    return new Promise(function (resolve) {
+      var controller = new AbortController()
+      controller.signal.addEventListener('abort', function () {
+        resolve()
+      })
+      controller.abort()
+    })
+  })
+
+  test('signal.aborted is true after abort', function() {
+    return new Promise(function (resolve, reject) {
+      var controller = new AbortController()
+      controller.signal.addEventListener('abort', function () {
+        if (controller.signal.aborted === true) {
+          resolve()
+        } else {
+          reject()
+        }
+      })
+      controller.abort()
+      if (controller.signal.aborted !== true) {
+        reject()
+      }
+    })
+  })
+
+  test('event listener doesn\'t fire "abort" event after removeEventListener', function() {
+    return new Promise(function(resolve, reject) {
+      var controller = new AbortController()
+      controller.signal.addEventListener('abort', reject)
+      controller.signal.removeEventListener('abort', reject)
+      controller.abort()
+      resolve()
+    })
+  })
+
+
+  test('toString() output', function() {
+    assert.equal(new AbortController().toString(), '[object AbortController]')
+    assert.equal(new AbortController().signal.toString(), '[object AbortSignal]')
+    assert.equal(new AbortSignal().toString(), '[object AbortSignal]')
+
+    if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+      assert.equal(Object.prototype.toString.call(new AbortController()), '[object AbortController]')
+      assert.equal(Object.prototype.toString.call(new AbortSignal()), '[object AbortSignal]')
+    }
+
+  })
+})
+
   })
 })
