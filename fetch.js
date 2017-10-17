@@ -472,15 +472,41 @@
   }
 
   function Emitter() {
-    var delegate = document.createDocumentFragment()
-    var methods = ['addEventListener', 'dispatchEvent', 'removeEventListener']
-    methods.forEach(function(method) {
-      this[method] = function () {
-        delegate[method].apply(delegate, arguments);
-      };
-    }.bind(this))
+    this.listeners = {}
   }
 
+  Emitter.prototype.listeners = null
+  Emitter.prototype.addEventListener = function(type, callback) {
+    if (!(type in this.listeners)) {
+      this.listeners[type] = []
+    }
+    this.listeners[type].push(callback)
+  }
+
+  Emitter.prototype.removeEventListener = function(type, callback) {
+    if (!(type in this.listeners)) {
+      return
+    }
+    var stack = this.listeners[type]
+    for (var i = 0, l = stack.length; i < l; i++) {
+      if (stack[i] === callback){
+        stack.splice(i, 1)
+        return
+      }
+    }
+  }
+
+  Emitter.prototype.dispatchEvent = function(event) {
+    if (!(event.type in this.listeners)) {
+      return true
+    }
+    var stack = this.listeners[event.type]
+
+    for (var i = 0, l = stack.length; i < l; i++) {
+      stack[i].call(this, event)
+    }
+    return !event.defaultPrevented
+  }
 
   function AbortSignal() {
     Emitter.call(this)

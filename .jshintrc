@@ -23,6 +23,7 @@
     "URLSearchParams": false,
     "AbortController": false,
     "AbortSignal": false,
-    "DOMException": false
+    "DOMException": false,
+    "Event": false
   }
 }
