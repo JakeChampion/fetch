@@ -41,6 +41,12 @@
       return obj && viewClasses.indexOf(Object.prototype.toString.call(obj)) > -1
     }
   }
+  
+   var getClassOf = Function.prototype.call.bind(Object.prototype.toString);
+  
+   var isClassOf = function (instance, className) {
+     return getClassOf(instance).split(' ')[1] === className + ']';
+   }
 
   function normalizeName(name) {
     if (typeof name !== 'string') {
@@ -374,9 +380,25 @@
 
   Body.call(Request.prototype)
 
-  function Response(bodyInit, options) {
-    if (!options) {
-      options = {}
+  function Response() {
+    var bodyInit; 
+    var options;
+     
+    //get array of parameters
+    var args = Array.from(arguments);
+      
+    // Means the first argument is options and not body
+    if (isClassOf(args[0], 'Object') {
+        options = args[0];
+        bodyInit = null;
+    } else {
+        bodyInit = args[0];
+        
+        if (args.length > 1) {
+          options = args[1];
+        } else {
+          options = {};
+        }
     }
 
     this.type = 'default'
