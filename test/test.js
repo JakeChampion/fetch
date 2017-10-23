@@ -603,6 +603,12 @@ suite('Response', function() {
 
     assert.equal(r.headers.get('content-type'), 'text/plain')
   })
+
+  test('accepts options as first parameter', function () {
+    var r = new Response({ status: 200 })
+
+    assert.equal(r.status, 200)
+  })
 })
 
 // https://fetch.spec.whatwg.org/#body-mixin
