@@ -42,6 +42,13 @@
     }
   }
 
+    var getClassOf = Function.prototype.call.bind(Object.prototype.toString)
+
+    var isClassOf = function (instance, className) {
+      return getClassOf(instance).split(' ')[1] === className + ']'
+    }
+
+
   function normalizeName(name) {
     if (typeof name !== 'string') {
       name = String(name)
@@ -374,10 +381,23 @@
 
   Body.call(Request.prototype)
 
-  function Response(bodyInit, options) {
+  function Response() {
+    var bodyInit
+    var options
+
+    // if the first argument is options and not body
+    if (isClassOf(arguments[0], 'Object')) {
+      options = arguments[0]
+      bodyInit = null
+    } else {
+      bodyInit = arguments[0]
+      options = arguments[1]
+    }
+
     if (!options) {
       options = {}
     }
+
 
     this.type = 'default'
     this.status = options.status === undefined ? 200 : options.status
