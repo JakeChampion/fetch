@@ -42,12 +42,11 @@
     }
   }
 
-    var getClassOf = Function.prototype.call.bind(Object.prototype.toString)
+  var getClassOf = Function.prototype.call.bind(Object.prototype.toString)
 
-    var isClassOf = function (instance, className) {
-      return getClassOf(instance).split(' ')[1] === className + ']'
-    }
-
+  var isClassOf = function (instance, className) {
+    return getClassOf(instance).split(' ')[1] === className + ']'
+  }
 
   function normalizeName(name) {
     if (typeof name !== 'string') {
@@ -397,7 +396,6 @@
     if (!options) {
       options = {}
     }
-
 
     this.type = 'default'
     this.status = options.status === undefined ? 200 : options.status
