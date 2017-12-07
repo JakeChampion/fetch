@@ -1,7 +1,21 @@
 (function(self) {
   'use strict';
 
-  if (self.fetch) {
+  function canAbortFetch() {
+    if (!self.AbortController || !self.AbortSignal) {
+      return false
+    }
+  
+    var abortController = new self.AbortController()
+  
+    var request = new self.Request('http://a', {
+      signal: abortController.signal
+    })
+  
+    return Boolean(request.signal)
+  }
+
+  if (self.fetch && canAbortFetch()) {
     return
   }
 
@@ -443,6 +457,10 @@
         reject(new TypeError('Network request failed'))
       }
 
+      xhr.onabort = function() {
+        reject(new DOMException('Aborted', 'AbortError'))
+      }
+
       xhr.open(request.method, request.url, true)
 
       if (request.credentials === 'include') {
@@ -458,6 +476,10 @@
       request.headers.forEach(function(value, name) {
         xhr.setRequestHeader(name, value)
       })
+
+      if (init.signal && init.signal.addEventListener) {
+        init.signal.addEventListener('abort', xhr.abort)
+      }
 
       xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
     })
