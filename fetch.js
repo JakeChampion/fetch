@@ -425,6 +425,10 @@
       var request = new Request(input, init)
       var xhr = new XMLHttpRequest()
 
+      if (request.signal && request.signal.aborted) {
+        return reject(new DOMException('Aborted', 'AbortError'));
+      }
+
       xhr.onload = function() {
         var options = {
           status: xhr.status,
