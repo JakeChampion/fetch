@@ -1,21 +1,7 @@
 (function(self) {
   'use strict';
 
-  function canAbortFetch() {
-    if (!self.AbortController || !self.AbortSignal) {
-      return false
-    }
-  
-    var abortController = new self.AbortController()
-  
-    var request = new self.Request('http://a', {
-      signal: abortController.signal
-    })
-  
-    return Boolean(request.signal)
-  }
-
-  if (self.fetch && canAbortFetch()) {
+  if (self.fetch) {
     return
   }
 
