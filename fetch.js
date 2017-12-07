@@ -385,6 +385,7 @@
     this.statusText = 'statusText' in options ? options.statusText : 'OK'
     this.headers = new Headers(options.headers)
     this.url = options.url || ''
+    this.signal = options.signal
     this._initBody(bodyInit)
   }
 
@@ -445,6 +446,7 @@
 
       xhr.onabort = function() {
         reject(new DOMException('Aborted', 'AbortError'))
+        request.signal.removeEventListener('abort', xhr.abort)
       }
 
       xhr.open(request.method, request.url, true)
@@ -463,8 +465,8 @@
         xhr.setRequestHeader(name, value)
       })
 
-      if (init.signal && init.signal.addEventListener) {
-        init.signal.addEventListener('abort', xhr.abort)
+      if (request.signal && request.signal.addEventListener) {
+        request.signal.addEventListener('abort', xhr.abort)
       }
 
       xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
