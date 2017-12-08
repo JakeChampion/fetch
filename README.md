@@ -270,9 +270,8 @@ However, aborting a fetch requires use of two additional DOM APIs:
 and
 [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal).
 Typically, browsers that do not support fetch will also not support
-AbortController or AbortSignal.
-
-Consequently, you will need to find a polyfill for these APIs to abort fetches.
+AbortController or AbortSignal. Consequently, you will need to include an
+additional polyfill for these APIs to abort fetches.
 
 Once you have an AbortController and AbortSignal polyfill in place, you can
 abort a fetch like so:
@@ -281,22 +280,12 @@ abort a fetch like so:
 const controller = new AbortController()
 
 fetch('/avatars', {
-  method: 'POST',
-  body: data,
   signal: controller.signal
+}).catch(function(ex) {
+  if (ex.name === 'AbortError') {
+    console.log('request aborted')
+  }
 })
-  .then(
-    function(response) {
-      console.log('request succeeded', response)
-    },
-    function(ex) {
-      if (ex.name === 'AbortError') {
-        console.log('request aborted')
-      } else {
-        console.log('request failed, but it was not aborted')
-      }
-    }
-  )
 
 // some time later...
 controller.abort();

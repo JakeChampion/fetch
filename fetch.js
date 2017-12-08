@@ -429,6 +429,10 @@
         return reject(new DOMException('Aborted', 'AbortError'));
       }
 
+      function abortXhr() {
+        xhr.abort();
+      }
+
       xhr.onload = function() {
         var options = {
           status: xhr.status,
@@ -450,7 +454,7 @@
 
       xhr.onabort = function() {
         reject(new DOMException('Aborted', 'AbortError'))
-        request.signal.removeEventListener('abort', xhr.abort)
+        request.signal.removeEventListener('abort', abortXhr)
       }
 
       xhr.open(request.method, request.url, true)
@@ -469,8 +473,8 @@
         xhr.setRequestHeader(name, value)
       })
 
-      if (request.signal && request.signal.addEventListener) {
-        request.signal.addEventListener('abort', xhr.abort)
+      if (request.signal) {
+        request.signal.addEventListener('abort', abortXhr)
       }
 
       xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
