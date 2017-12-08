@@ -426,11 +426,11 @@
       var xhr = new XMLHttpRequest()
 
       if (request.signal && request.signal.aborted) {
-        return reject(new DOMException('Aborted', 'AbortError'));
+        return reject(new DOMException('Aborted', 'AbortError'))
       }
 
       function abortXhr() {
-        xhr.abort();
+        xhr.abort()
       }
 
       xhr.onload = function() {
