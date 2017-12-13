@@ -417,6 +417,12 @@
     return new Response(null, {status: status, headers: {location: url}})
   }
 
+  var DOMException = self.DOMException || function(message, name) {
+    var error = new Error(message)
+    error.name = name
+    return error
+  }
+
   self.Headers = Headers
   self.Request = Request
   self.Response = Response
