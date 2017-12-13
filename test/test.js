@@ -952,6 +952,49 @@ suite('fetch method', function() {
     })
   })
 
+  suite('aborting', function() {
+    test('initially aborted signal', function() {
+      return fetch('/request', {
+        signal: {aborted: true}
+      }).then(function() {
+        assert.ok(false)
+      }, function(error) {
+        assert.equal(error.name, 'AbortError')
+      })
+    })
+
+    test('mid-request', function() {
+      var signal = {
+        aborted: false,
+        addEventListener: function(name, fn) {
+          assert.equal(name, 'abort')
+          this._handler = fn
+        },
+        removeEventListener: function(name, fn) {
+          assert.equal(name, 'abort')
+          if (this._handler === fn) {
+            delete this._handler
+          }
+        }
+      }
+
+      setTimeout(function() {
+        if (signal._handler) {
+          signal._handler()
+        }
+      }, 30)
+
+      return fetch('/slow', {
+        signal: signal
+      }).then(function() {
+        assert.ok(false)
+      }, function(error) {
+        assert.equal(error.name, 'AbortError')
+        assert.isUndefined(signal._handler)
+      })
+    })
+  })
+
   suite('response', function() {
     test('populates body', function() {
       return fetch('/hello').then(function(response) {
