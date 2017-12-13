@@ -438,11 +438,12 @@
   self.fetch = function(input, init) {
     return new Promise(function(resolve, reject) {
       var request = new Request(input, init)
-      var xhr = new XMLHttpRequest()
 
       if (request.signal && request.signal.aborted) {
         return reject(new DOMException('Aborted', 'AbortError'))
       }
+
+      var xhr = new XMLHttpRequest()
 
       function abortXhr() {
         xhr.abort()
