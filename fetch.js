@@ -317,6 +317,7 @@
       }
       this.method = input.method
       this.mode = input.mode
+      this.signal = input.signal
       if (!body && input._bodyInit != null) {
         body = input._bodyInit
         input.bodyUsed = true
@@ -331,6 +332,7 @@
     }
     this.method = normalizeMethod(options.method || this.method || 'GET')
     this.mode = options.mode || this.mode || null
+    this.signal = options.signal || this.signal
     this.referrer = null
 
     if ((this.method === 'GET' || this.method === 'HEAD') && body) {
@@ -385,7 +387,6 @@
     this.statusText = 'statusText' in options ? options.statusText : 'OK'
     this.headers = new Headers(options.headers)
     this.url = options.url || ''
-    this.signal = options.signal
     this._initBody(bodyInit)
   }
 
