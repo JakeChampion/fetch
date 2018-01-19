@@ -6,7 +6,6 @@
   "repository": "github/fetch",
   "license": "MIT",
   "devDependencies": {
-    "chai": "1.10.0",
     "jshint": "2.8.0",
     "mocha": "2.1.0",
     "mocha-phantomjs-core": "2.0.1",
@@ -19,5 +18,8 @@
   ],
   "scripts": {
     "test": "make"
+  },
+  "dependencies": {
+    "chai": "^4.1.2"
   }
 }
