@@ -9,28 +9,29 @@
   // Polyfill EventTarget if not available.
   self.EventTarget = self.EventTarget || (function () {
     function EventTarget () {
-      this._listeners = {}
+      this.listeners = {}
     }
-    EventTarget.prototype.addEventListener = function(name, fn) {
-      if (!(name in this._listeners)) {
-        this._listeners[name] = []
+    EventTarget.prototype.listeners = null;
+    EventTarget.prototype.addEventListener = function(type, callback) {
+      if (!(type in this.listeners)) {
+        this.listeners[type] = []
       }
-      this._listeners[name].push(fn)
+      this.listeners[type].push(callback)
     }
-    EventTarget.prototype.removeEventListener = function(name, fn) {
-      if (!(name in this._listeners)) {
+    EventTarget.prototype.removeEventListener = function(type, callback) {
+      if (!(type in this.listeners)) {
         return
       }
-      var stack = this._listeners[name]
-      for (var i = 0; i < stack.length; i++) {
-        if (stack[i] === fn){
+      var stack = this.listeners[type]
+      for (var i = 0, l = stack.length; i < l; i++) {
+        if (stack[i] === callback){
           stack.splice(i, 1)
           return
         }
       }
     }
     EventTarget.prototype.dispatchEvent = function(event) {
-      if (!(event.type in this._listeners)) {
+      if (!(event.type in this.listeners)) {
         return
       }
       function debounce (fn) {
@@ -38,10 +39,11 @@
           fn.call(this, event)
         }, 0)
       }
-      var stack = this._listeners[event.type]
-      for (var i = 0; i < stack.length; i++) {
+      var stack = this.listeners[event.type]
+      for (var i = 0, l = stack.length; i < l; i++) {
         debounce(stack[i])
       }
+      return !event.defaultPrevented
     }
 
     return EventTarget

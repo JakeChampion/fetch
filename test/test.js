@@ -1014,13 +1014,13 @@ suite('fetch method', function() {
       return fetch('/request', {
         signal: signal
       }).then(function() {
-        assert.deepEqual(signal._listeners['abort'], [])
+        assert.deepEqual(signal.listeners['abort'], [])
       }).then(function () {
         // failure
         return fetch('/boom', {
           signal: signal
         }).catch(function() {
-          assert.deepEqual(signal._listeners['abort'], [])
+          assert.deepEqual(signal.listeners['abort'], [])
         })
       }).then(function () {
         // aborted
@@ -1031,7 +1031,7 @@ suite('fetch method', function() {
         return fetch('/slow', {
           signal: signal
         }).catch(function() {
-          assert.deepEqual(signal._listeners['abort'], [])
+          assert.deepEqual(signal.listeners['abort'], [])
         })
       })
     })
