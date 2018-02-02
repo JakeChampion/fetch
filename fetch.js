@@ -470,7 +470,6 @@
 
       xhr.onabort = function() {
         reject(new DOMException('Aborted', 'AbortError'))
-        request.signal.removeEventListener('abort', abortXhr)
       }
 
       xhr.open(request.method, request.url, true)
@@ -491,6 +490,13 @@
 
       if (request.signal) {
         request.signal.addEventListener('abort', abortXhr)
+
+        xhr.onreadystatechange = function() {
+          // DONE (success or failure)
+          if (xhr.readyState === 4) {
+            request.signal.removeEventListener('abort', abortXhr)
+          }
+        }
       }
 
       xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)

@@ -993,6 +993,34 @@ suite('fetch method', function() {
         assert.isUndefined(signal._handler)
       })
     })
+
+    test('does not leak memory', function() {
+      var signal = {
+        aborted: false,
+        addEventListener: function(name, fn) {
+          this._handler = fn
+        },
+        removeEventListener: function(name, fn) {
+          if (this._handler === fn) {
+            delete this._handler
+          }
+        }
+      }
+
+      // success
+      return fetch('/request', {
+        signal: signal
+      }).then(function() {
+        assert.isUndefined(signal._handler)
+      }).then(function () {
+        // failure
+        return fetch('/boom', {
+          signal: signal
+        }).catch(function() {
+          assert.isUndefined(signal._handler)
+        })
+      });
+    })
   })
 
   suite('response', function() {
