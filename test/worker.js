@@ -5,6 +5,7 @@ mocha.setup('tdd')
 self.assert = chai.assert
 
 importScripts('/node_modules/promise-polyfill/promise.js')
+importScripts('/test/abortsignal-polyfill.js')
 importScripts('/test/test.js')
 importScripts('/fetch.js')
 
