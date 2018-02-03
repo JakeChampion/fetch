@@ -954,8 +954,11 @@ suite('fetch method', function() {
 
   suite('aborting', function() {
     test('initially aborted signal', function() {
+      const signal = new AbortSignal()
+      signal.aborted = true
+
       return fetch('/request', {
-        signal: {aborted: true}
+        signal: signal
       }).then(function() {
         assert.ok(false)
       }, function(error) {
@@ -964,24 +967,10 @@ suite('fetch method', function() {
     })
 
     test('mid-request', function() {
-      var signal = {
-        aborted: false,
-        addEventListener: function(name, fn) {
-          assert.equal(name, 'abort')
-          this._handler = fn
-        },
-        removeEventListener: function(name, fn) {
-          assert.equal(name, 'abort')
-          if (this._handler === fn) {
-            delete this._handler
-          }
-        }
-      }
+      const signal = new AbortSignal()
 
       setTimeout(function() {
-        if (signal._handler) {
-          signal._handler()
-        }
+        signal.dispatchEvent({ type: 'abort' })
       }, 30)
 
       return fetch('/slow', {
@@ -990,36 +979,61 @@ suite('fetch method', function() {
         assert.ok(false)
       }, function(error) {
         assert.equal(error.name, 'AbortError')
-        assert.isUndefined(signal._handler)
       })
     })
 
+    test('abort multiple with same signal', function() {
+      const signal = new AbortSignal()
+
+      setTimeout(function() {
+        signal.dispatchEvent({ type: 'abort' })
+      }, 30)
+
+      return Promise.all([
+        fetch('/slow', {
+          signal: signal
+        }).then(function() {
+          assert.ok(false)
+        }, function(error) {
+          assert.equal(error.name, 'AbortError')
+        }),
+        fetch('/slow', {
+          signal: signal
+        }).then(function() {
+          assert.ok(false)
+        }, function(error) {
+          assert.equal(error.name, 'AbortError')
+        })
+      ])
+    })
+
     test('does not leak memory', function() {
-      var signal = {
-        aborted: false,
-        addEventListener: function(name, fn) {
-          this._handler = fn
-        },
-        removeEventListener: function(name, fn) {
-          if (this._handler === fn) {
-            delete this._handler
-          }
-        }
-      }
+      const signal = new AbortSignal()
 
       // success
       return fetch('/request', {
         signal: signal
       }).then(function() {
-        assert.isUndefined(signal._handler)
+        assert.deepEqual(signal.listeners['abort'], [])
       }).then(function () {
         // failure
         return fetch('/boom', {
           signal: signal
         }).catch(function() {
-          assert.isUndefined(signal._handler)
+          assert.deepEqual(signal.listeners['abort'], [])
         })
-      });
+      }).then(function () {
+        // aborted
+        setTimeout(function() {
+          signal.dispatchEvent({ type: 'abort' })
+        }, 30)
+
+        return fetch('/slow', {
+          signal: signal
+        }).catch(function() {
+          assert.deepEqual(signal.listeners['abort'], [])
+        })
+      })
     })
   })
 
