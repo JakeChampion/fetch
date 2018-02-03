@@ -1,22 +1,22 @@
-// EventTarget Polyfill
+// AbortSignal polyfill
 (function(self) {
   'use strict';
 
-  if (self.EventTarget) {
+  if (self.AbortSignal) {
     return
   }
 
-  function EventTarget () {
+  function Emitter () {
     this.listeners = {}
   }
-  EventTarget.prototype.listeners = null;
-  EventTarget.prototype.addEventListener = function(type, callback) {
+  Emitter.prototype.listeners = null;
+  Emitter.prototype.addEventListener = function(type, callback) {
     if (!(type in this.listeners)) {
       this.listeners[type] = []
     }
     this.listeners[type].push(callback)
   }
-  EventTarget.prototype.removeEventListener = function(type, callback) {
+  Emitter.prototype.removeEventListener = function(type, callback) {
     if (!(type in this.listeners)) {
       return
     }
@@ -28,7 +28,7 @@
       }
     }
   }
-  EventTarget.prototype.dispatchEvent = function(event) {
+  Emitter.prototype.dispatchEvent = function(event) {
     if (!(event.type in this.listeners)) {
       return
     }
@@ -45,22 +45,11 @@
     return !event.defaultPrevented
   }
 
-  self.EventTarget = EventTarget
-})(typeof self !== 'undefined' ? self : this);
-  
-// AbortSignal polyfill
-(function(self) {
-  'use strict';
-
-  if (self.AbortSignal) {
-    return
-  }
-
   function AbortSignal () {
-    EventTarget.call(this)
+    Emitter.call(this)
     this.aborted = false
   }
-  AbortSignal.prototype = Object.create(EventTarget.prototype)
+  AbortSignal.prototype = Object.create(Emitter.prototype)
   AbortSignal.prototype.constructor = AbortSignal
 
   AbortSignal.prototype.dispatchEvent = function(event) {
@@ -70,7 +59,7 @@
         this.onabort.call(this, event)
       }
     }
-    EventTarget.prototype.dispatchEvent.call(this, event)
+    Emitter.prototype.dispatchEvent.call(this, event)
   }
 
   self.AbortSignal = AbortSignal

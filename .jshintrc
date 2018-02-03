@@ -21,7 +21,6 @@
   "globals": {
     "JSON": false,
     "URLSearchParams": false,
-    "EventTarget": false,
     "AbortSignal": false
   }
 }
