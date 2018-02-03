@@ -32,9 +32,10 @@
     if (!(event.type in this.listeners)) {
       return
     }
+    var self = this
     function debounce (fn) {
       setTimeout(function () {
-        fn.call(this, event)
+        fn.call(self, event)
       }, 0)
     }
     var stack = this.listeners[event.type]
