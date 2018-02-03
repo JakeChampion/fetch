@@ -954,7 +954,7 @@ suite('fetch method', function() {
 
   suite('aborting', function() {
     test('initially aborted signal', function() {
-      const signal = new AbortSignal()
+      var signal = new AbortSignal()
       signal.aborted = true
 
       return fetch('/request', {
@@ -966,8 +966,21 @@ suite('fetch method', function() {
       })
     })
 
+    test('initially aborted signal within Request', function () {
+      var signal = new AbortSignal()
+      signal.aborted = true
+
+      var request = new Request('/request', { signal: signal })
+
+      return fetch(request).then(function() {
+        assert.ok(false)
+      }, function(error) {
+        assert.equal(error.name, 'AbortError')
+      })
+    })
+
     test('mid-request', function() {
-      const signal = new AbortSignal()
+      var signal = new AbortSignal()
 
       setTimeout(function() {
         signal.dispatchEvent({ type: 'abort' })
@@ -982,8 +995,23 @@ suite('fetch method', function() {
       })
     })
 
+    test('mid-request within Request', function() {
+      var signal = new AbortSignal()
+      var request = new Request('/slow', { signal: signal })
+
+      setTimeout(function() {
+        signal.dispatchEvent({ type: 'abort' })
+      }, 30)
+
+      return fetch(request).then(function() {
+        assert.ok(false)
+      }, function(error) {
+        assert.equal(error.name, 'AbortError')
+      })
+    })
+
     test('abort multiple with same signal', function() {
-      const signal = new AbortSignal()
+      var signal = new AbortSignal()
 
       setTimeout(function() {
         signal.dispatchEvent({ type: 'abort' })
@@ -1008,7 +1036,7 @@ suite('fetch method', function() {
     })
 
     test('does not leak memory', function() {
-      const signal = new AbortSignal()
+      var signal = new AbortSignal()
 
       // success
       return fetch('/request', {
