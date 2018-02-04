@@ -21,6 +21,6 @@
   "globals": {
     "JSON": false,
     "URLSearchParams": false,
-    "AbortSignal": false
+    "AbortController": false
   }
 }

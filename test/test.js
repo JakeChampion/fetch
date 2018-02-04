@@ -954,11 +954,11 @@ suite('fetch method', function() {
 
   suite('aborting', function() {
     test('initially aborted signal', function() {
-      var signal = new AbortSignal()
-      signal.aborted = true
+      var controller = new AbortController()
+      controller.abort()
 
       return fetch('/request', {
-        signal: signal
+        signal: controller.signal
       }).then(function() {
         assert.ok(false)
       }, function(error) {
@@ -967,10 +967,10 @@ suite('fetch method', function() {
     })
 
     test('initially aborted signal within Request', function () {
-      var signal = new AbortSignal()
-      signal.aborted = true
+      var controller = new AbortController()
+      controller.abort()
 
-      var request = new Request('/request', { signal: signal })
+      var request = new Request('/request', { signal: controller.signal })
 
       return fetch(request).then(function() {
         assert.ok(false)
@@ -980,14 +980,14 @@ suite('fetch method', function() {
     })
 
     test('mid-request', function() {
-      var signal = new AbortSignal()
+      var controller = new AbortController()
 
       setTimeout(function() {
-        signal.dispatchEvent({ type: 'abort' })
+        controller.abort()
       }, 30)
 
       return fetch('/slow', {
-        signal: signal
+        signal: controller.signal
       }).then(function() {
         assert.ok(false)
       }, function(error) {
@@ -996,11 +996,11 @@ suite('fetch method', function() {
     })
 
     test('mid-request within Request', function() {
-      var signal = new AbortSignal()
-      var request = new Request('/slow', { signal: signal })
+      var controller = new AbortController()
+      var request = new Request('/slow', { signal: controller.signal })
 
       setTimeout(function() {
-        signal.dispatchEvent({ type: 'abort' })
+        controller.abort()
       }, 30)
 
       return fetch(request).then(function() {
@@ -1011,22 +1011,22 @@ suite('fetch method', function() {
     })
 
     test('abort multiple with same signal', function() {
-      var signal = new AbortSignal()
+      var controller = new AbortController()
 
       setTimeout(function() {
-        signal.dispatchEvent({ type: 'abort' })
+        controller.abort()
       }, 30)
 
       return Promise.all([
         fetch('/slow', {
-          signal: signal
+          signal: controller.signal
         }).then(function() {
           assert.ok(false)
         }, function(error) {
           assert.equal(error.name, 'AbortError')
         }),
         fetch('/slow', {
-          signal: signal
+          signal: controller.signal
         }).then(function() {
           assert.ok(false)
         }, function(error) {
@@ -1036,7 +1036,8 @@ suite('fetch method', function() {
     })
 
     test('does not leak memory', function() {
-      var signal = new AbortSignal()
+      var controller = new AbortController()
+      var signal = controller.signal
 
       // success
       return fetch('/request', {
