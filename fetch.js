@@ -1,6 +1,10 @@
 (function(self) {
   'use strict';
 
+  if (!self) {
+    throw new Error('Fetch polyfill was unable to access the global object');
+  }
+
   if (self.fetch) {
     return
   }
@@ -463,4 +467,9 @@
     })
   }
   self.fetch.polyfill = true
-})(typeof self !== 'undefined' ? self : this);
+})(
+/* jshint ignore:start */
+/* we expect some of these to be undefined */
+  typeof self !== 'undefined' ? self : typeof this !== 'undefined' ? this : typeof global !== 'undefined' ? global : typeof window !== 'undefined' ? window : null
+/* jshint ignore:end */
+);
