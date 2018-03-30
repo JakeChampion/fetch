@@ -464,3 +464,119 @@
   }
   self.fetch.polyfill = true
 })(typeof self !== 'undefined' ? self : this);
+(function(self) {
+  'use strict';
+
+  if (self.AbortController) {
+    return
+  }
+
+  function Emitter() {
+    this.listeners = {}
+  }
+
+  Emitter.prototype.listeners = null
+  Emitter.prototype.addEventListener = function(type, callback) {
+    if (!(type in this.listeners)) {
+      this.listeners[type] = []
+    }
+    this.listeners[type].push(callback)
+  }
+
+  Emitter.prototype.removeEventListener = function(type, callback) {
+    if (!(type in this.listeners)) {
+      return
+    }
+    var stack = this.listeners[type]
+    for (var i = 0, l = stack.length; i < l; i++) {
+      if (stack[i] === callback){
+        stack.splice(i, 1)
+        return
+      }
+    }
+  }
+
+  Emitter.prototype.dispatchEvent = function(event) {
+    if (!(event.type in this.listeners)) {
+      return true
+    }
+    var stack = this.listeners[event.type]
+
+    for (var i = 0, l = stack.length; i < l; i++) {
+      stack[i].call(this, event)
+    }
+    return !event.defaultPrevented
+  }
+
+  function AbortSignal() {
+    Emitter.call(this)
+    this.aborted = false
+  }
+
+  AbortSignal.prototype = Object.create(Emitter.prototype)
+  AbortSignal.prototype.constructor = AbortSignal
+
+  AbortSignal.prototype.toString = function () {
+    return '[object AbortSignal]'
+  }
+
+
+  function AbortController() {
+    this.signal = new AbortSignal()
+  }
+
+  AbortController.prototype.abort = function() {
+    this.signal.aborted = true
+    this.signal.dispatchEvent(new Event('abort'))
+  }
+
+  AbortController.prototype.toString = function() {
+    return '[object AbortController]'
+  }
+
+  if (typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+    // These are necessary to make sure that we get correct output for:
+    // Object.prototype.toString.call(new AbortController())
+    AbortController.prototype[Symbol.toStringTag] = 'AbortController'
+    AbortSignal.prototype[Symbol.toStringTag] = 'AbortSignal'
+  }
+
+  var realFetch = fetch
+  var abortableFetch = function(input, init) {
+    if (init && init.signal) {
+      var abortError
+      try {
+        abortError = new DOMException('Aborted', 'AbortError')
+      } catch (err) {
+        // IE 11 does not support calling the DOMException constructor, use a
+        // regular error object on it instead.
+        abortError = new Error('Aborted')
+        abortError.name = 'AbortError'
+      }
+
+      // Return early if already aborted, thus avoiding making an HTTP request
+      if (init.signal.aborted) {
+        return Promise.reject(abortError)
+      }
+
+      // Turn an event into a promise, reject it once `abort` is dispatched
+      var cancellation = new Promise(function(_, reject) {
+        init.signal.addEventListener('abort', function() {
+          reject(abortError)
+        }, {once: true});
+      })
+
+      delete init.signal
+
+      // Return the fastest promise (don't need to wait for request to finish)
+      return Promise.race([cancellation, realFetch(input, init)])
+    }
+
+    return realFetch(input, init)
+  };
+
+  self.fetch = abortableFetch
+  self.AbortController = AbortController
+  self.AbortSignal = AbortSignal
+
+})(typeof self !== 'undefined' ? self : this);

@@ -20,6 +20,10 @@
   "worker": true,
   "globals": {
     "JSON": false,
-    "URLSearchParams": false
+    "URLSearchParams": false,
+    "AbortController": false,
+    "AbortSignal": false,
+    "DOMException": false,
+    "Event": false
   }
 }

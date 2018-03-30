@@ -95,6 +95,11 @@ var routes = {
     res.writeHead(200, {'Content-Type': 'application/json'});
     res.end('not json {');
   },
+  '/testAbort': function(res, req) {
+    setTimeout(function() {
+      res.end();
+    }, 200);
+  },
   '/cookie': function(res, req) {
     var setCookie, cookie
     var params = querystring.parse(url.parse(req.url).query);
