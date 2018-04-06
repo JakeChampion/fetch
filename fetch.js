@@ -1,9 +1,15 @@
-(function(self) {
-  'use strict';
-
-  if (self.fetch) {
-    return
+(function(root, factory) {
+  /* jshint strict:false */
+  /* globals define, module */
+  if (typeof define === 'function' && define.amd) {
+    define([], function() { return factory({}, root) })
+  } else if (typeof module === 'object' && module.exports) {
+    factory(module.exports, root)
+  } else {
+    root.WHATWGFetch = factory({}, root)
   }
+})(typeof self !== 'undefined' ? self : this, function(exports, self) {
+  'use strict';
 
   var support = {
     searchParams: 'URLSearchParams' in self,
@@ -415,11 +421,11 @@
     return new Response(null, {status: status, headers: {location: url}})
   }
 
-  self.Headers = Headers
-  self.Request = Request
-  self.Response = Response
+  exports.Headers = Headers
+  exports.Request = Request
+  exports.Response = Response
 
-  self.fetch = function(input, init) {
+  exports.fetch = function(input, init) {
     return new Promise(function(resolve, reject) {
       var request = new Request(input, init)
       var xhr = new XMLHttpRequest()
@@ -462,5 +468,14 @@
       xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
     })
   }
-  self.fetch.polyfill = true
-})(typeof self !== 'undefined' ? self : this);
+  exports.fetch.polyfill = true
+
+  if (!self.fetch) {
+    self.fetch = exports.fetch
+    self.Headers = Headers
+    self.Request = Request
+    self.Response = Response
+  }
+
+  return exports
+});

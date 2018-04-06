@@ -7,3 +7,5 @@ if [ -n "$SAUCE_BROWSER" ]; then
 else
   ./script/phantomjs
 fi
+
+./node_modules/mocha/bin/mocha test/cjs.js
