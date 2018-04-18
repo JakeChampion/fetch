@@ -342,6 +342,14 @@
   Request.prototype.clone = function() {
     return new Request(this, { body: this._bodyInit })
   }
+  
+  function fixUrl(url) {
+    try {
+      return url === '' && self.location.href ? self.location.href : url
+    } catch(e) {
+      return url;
+    }
+  }
 
   function decode(body) {
     var form = new FormData()
@@ -443,7 +451,7 @@
         reject(new TypeError('Network request failed'))
       }
 
-      xhr.open(request.method, request.url, true)
+      xhr.open(request.method, fixUrl(request.url), true)
 
       if (request.credentials === 'include') {
         xhr.withCredentials = true
