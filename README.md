@@ -50,7 +50,7 @@ expected to uphold this code.
 
 * This project **doesn't work under Node.js environments**. It's meant for web
   browsers only. You should ensure that your application doesn't try to package
-  and run this on the server.
+  and run this on the server or you can use [isomorphic-fetch package](https://github.com/matthew-andrews/isomorphic-fetch).
 
 * If you have an idea for a new feature of `fetch`, **submit your feature
   requests** to the [specification's repository](https://github.com/whatwg/fetch/issues).
@@ -58,9 +58,9 @@ expected to uphold this code.
 
 ## Installation
 
-* `npm install whatwg-fetch --save`; or
+* `npm install whatwg-fetch --save` or
 
-* `bower install fetch`; or
+* `bower install fetch` or
 
 * `yarn add whatwg-fetch`.
 
