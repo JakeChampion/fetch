@@ -16,6 +16,10 @@ var support = {
   arrayBuffer: 'ArrayBuffer' in self
 }
 
+function isDataView(obj) {
+  return obj && DataView.prototype.isPrototypeOf(obj)
+}
+
 if (support.arrayBuffer) {
   var viewClasses = [
     '[object Int8Array]',
@@ -29,10 +33,6 @@ if (support.arrayBuffer) {
     '[object Float64Array]'
   ]
 
-  var isDataView = function(obj) {
-    return obj && DataView.prototype.isPrototypeOf(obj)
-  }
-
   var isArrayBufferView =
     ArrayBuffer.isView ||
     function(obj) {
@@ -44,7 +44,7 @@ function normalizeName(name) {
   if (typeof name !== 'string') {
     name = String(name)
   }
-  if (/[^a-z0-9\-#$%&'*+.\^_`|~]/i.test(name)) {
+  if (/[^a-z0-9\-#$%&'*+.^_`|~]/i.test(name)) {
     throw new TypeError('Invalid character in header field name')
   }
   return name.toLowerCase()
