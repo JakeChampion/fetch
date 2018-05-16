@@ -70,7 +70,7 @@ function iteratorFor(items) {
   return iterator
 }
 
-function Headers(headers) {
+export function Headers(headers) {
   this.map = {}
 
   if (headers instanceof Headers) {
@@ -295,7 +295,7 @@ function normalizeMethod(method) {
   return (methods.indexOf(upcased) > -1) ? upcased : method
 }
 
-function Request(input, options) {
+export function Request(input, options) {
   options = options || {}
   var body = options.body
 
@@ -367,7 +367,7 @@ function parseHeaders(rawHeaders) {
 
 Body.call(Request.prototype)
 
-function Response(bodyInit, options) {
+export function Response(bodyInit, options) {
   if (!options) {
     options = {}
   }
@@ -408,7 +408,7 @@ Response.redirect = function(url, status) {
   return new Response(null, {status: status, headers: {location: url}})
 }
 
-function fetch(input, init) {
+export function fetch(input, init) {
   return new Promise(function(resolve, reject) {
     var request = new Request(input, init)
     var xhr = new XMLHttpRequest()
