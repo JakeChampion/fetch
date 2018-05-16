@@ -1,14 +1,17 @@
 var support = {
   searchParams: 'URLSearchParams' in self,
   iterable: 'Symbol' in self && 'iterator' in Symbol,
-  blob: 'FileReader' in self && 'Blob' in self && (function() {
-    try {
-      new Blob()
-      return true
-    } catch(e) {
-      return false
-    }
-  })(),
+  blob:
+    'FileReader' in self &&
+    'Blob' in self &&
+    (function() {
+      try {
+        new Blob()
+        return true
+      } catch (e) {
+        return false
+      }
+    })(),
   formData: 'FormData' in self,
   arrayBuffer: 'ArrayBuffer' in self
 }
@@ -30,9 +33,11 @@ if (support.arrayBuffer) {
     return obj && DataView.prototype.isPrototypeOf(obj)
   }
 
-  var isArrayBufferView = ArrayBuffer.isView || function(obj) {
-    return obj && viewClasses.indexOf(Object.prototype.toString.call(obj)) > -1
-  }
+  var isArrayBufferView =
+    ArrayBuffer.isView ||
+    function(obj) {
+      return obj && viewClasses.indexOf(Object.prototype.toString.call(obj)) > -1
+    }
 }
 
 function normalizeName(name) {
@@ -92,7 +97,7 @@ Headers.prototype.append = function(name, value) {
   name = normalizeName(name)
   value = normalizeValue(value)
   var oldValue = this.map[name]
-  this.map[name] = oldValue ? oldValue+','+value : value
+  this.map[name] = oldValue ? oldValue + ',' + value : value
 }
 
 Headers.prototype['delete'] = function(name) {
@@ -122,19 +127,25 @@ Headers.prototype.forEach = function(callback, thisArg) {
 
 Headers.prototype.keys = function() {
   var items = []
-  this.forEach(function(value, name) { items.push(name) })
+  this.forEach(function(value, name) {
+    items.push(name)
+  })
   return iteratorFor(items)
 }
 
 Headers.prototype.values = function() {
   var items = []
-  this.forEach(function(value) { items.push(value) })
+  this.forEach(function(value) {
+    items.push(value)
+  })
   return iteratorFor(items)
 }
 
 Headers.prototype.entries = function() {
   var items = []
-  this.forEach(function(value, name) { items.push([name, value]) })
+  this.forEach(function(value, name) {
+    items.push([name, value])
+  })
   return iteratorFor(items)
 }
 
@@ -292,7 +303,7 @@ var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
 
 function normalizeMethod(method) {
   var upcased = method.toUpperCase()
-  return (methods.indexOf(upcased) > -1) ? upcased : method
+  return methods.indexOf(upcased) > -1 ? upcased : method
 }
 
 export function Request(input, options) {
@@ -333,19 +344,22 @@ export function Request(input, options) {
 }
 
 Request.prototype.clone = function() {
-  return new Request(this, { body: this._bodyInit })
+  return new Request(this, {body: this._bodyInit})
 }
 
 function decode(body) {
   var form = new FormData()
-  body.trim().split('&').forEach(function(bytes) {
-    if (bytes) {
-      var split = bytes.split('=')
-      var name = split.shift().replace(/\+/g, ' ')
-      var value = split.join('=').replace(/\+/g, ' ')
-      form.append(decodeURIComponent(name), decodeURIComponent(value))
-    }
-  })
+  body
+    .trim()
+    .split('&')
+    .forEach(function(bytes) {
+      if (bytes) {
+        var split = bytes.split('=')
+        var name = split.shift().replace(/\+/g, ' ')
+        var value = split.join('=').replace(/\+/g, ' ')
+        form.append(decodeURIComponent(name), decodeURIComponent(value))
+      }
+    })
   return form
 }
 
