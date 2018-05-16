@@ -1,0 +1,18 @@
+{
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "globals": {
+    "ArrayBuffer": true,
+    "DataView": true,
+    "Promise": true,
+    "Symbol": true,
+    "Uint8Array": true
+  },
+  "extends": [
+    "plugin:github/browser"
+  ],
+  "rules": {
+    "object-shorthand": "off"
+  }
+}

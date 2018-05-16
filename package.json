@@ -7,7 +7,8 @@
   "license": "MIT",
   "devDependencies": {
     "chai": "1.10.0",
-    "jshint": "2.8.0",
+    "eslint": "^4.19.1",
+    "eslint-plugin-github": "^1.0.0",
     "mocha": "2.1.0",
     "mocha-phantomjs-core": "2.0.1",
     "promise-polyfill": "6.0.2",

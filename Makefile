@@ -2,7 +2,7 @@ test: node_modules/ lint
 	./script/test
 
 lint: node_modules/
-	./node_modules/.bin/jshint *.js test/*.js
+	./node_modules/.bin/eslint --report-unused-disable-directives *.js test/*.js
 
 node_modules/:
 	npm install
