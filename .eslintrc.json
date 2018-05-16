@@ -14,5 +14,25 @@
   ],
   "rules": {
     "object-shorthand": "off"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["test/*.js"],
+      "env": {
+        "browser": true,
+        "mocha": true
+      },
+      "globals": {
+        "assert": true,
+        "chai": true,
+        "FileReaderSync": true
+      }
+    },
+    {
+      "files": ["test/worker.js"],
+      "env": {
+        "worker": true
+      }
+    }
+  ]
 }

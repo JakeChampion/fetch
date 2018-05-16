@@ -1,5 +1,3 @@
-/* global describe, it, require */
-
 var isFunction = require('chai').assert.isFunction
 var WHATWGFetch = require('../')
 
