@@ -5,8 +5,8 @@ mocha.setup('tdd')
 self.assert = chai.assert
 
 importScripts('/node_modules/promise-polyfill/promise.js')
-importScripts('/test/test.js')
 importScripts('/dist/fetch.umd.js')
+importScripts('/test/test.js')
 
 function title(test) {
   return test.fullTitle().replace(/#/g, '')

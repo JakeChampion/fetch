@@ -87,13 +87,14 @@ var preservedGlobals = {}
 var keepGlobals = ['fetch', 'Headers', 'Request', 'Response']
 var exercise = ['polyfill']
 
-// If native fetch implementation exists, save it and allow it to be replaced
-// by the polyfill. Native implementation will be exercised additionally.
-if (self.fetch) {
+// If native fetch implementation exists, replace it with the polyfilled
+// version at first. The native implementation will be restored before the
+// additional `native` pass of the test suite.
+if (!self.fetch.polyfill) {
   keepGlobals.forEach(function(name) {
     preservedGlobals[name] = self[name]
+    self[name] = WHATWGFetch[name]
   })
-  self.fetch = undefined
   exercise.push('native')
 }
 
