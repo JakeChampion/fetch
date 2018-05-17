@@ -1,8 +1,11 @@
-test: node_modules/ lint
+test: lint dist/fetch.umd.js
 	./script/test
 
 lint: node_modules/
 	./node_modules/.bin/eslint --report-unused-disable-directives *.js test/*.js
+
+dist/fetch.umd.js: fetch.js rollup.config.js node_modules/
+	./node_modules/.bin/rollup -c
 
 node_modules/:
 	npm install

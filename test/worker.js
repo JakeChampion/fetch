@@ -6,7 +6,7 @@ self.assert = chai.assert
 
 importScripts('/node_modules/promise-polyfill/promise.js')
 importScripts('/test/test.js')
-importScripts('/fetch.js')
+importScripts('/dist/fetch.umd.js')
 
 function title(test) {
   return test.fullTitle().replace(/#/g, '')
