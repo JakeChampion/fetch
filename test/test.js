@@ -20,6 +20,7 @@ var support = {
     })(),
   formData: 'FormData' in self,
   arrayBuffer: 'ArrayBuffer' in self,
+  aborting: 'signal' in new Request(''),
   permanentRedirect: !/Trident/.test(navigator.userAgent)
 }
 
@@ -1047,7 +1048,7 @@ exercise.forEach(function(exerciseMode) {
         })
       })
 
-      suite('aborting', function() {
+      featureDependent(suite, exerciseMode !== 'native' || support.aborting, 'aborting', function() {
         test('initially aborted signal', function() {
           var controller = new AbortController()
           controller.abort()
