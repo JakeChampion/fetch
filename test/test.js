@@ -179,7 +179,7 @@ exercise.forEach(function(exerciseMode) {
         original.append('Content-Type', 'text/html')
 
         var headers = new Headers(original)
-        assert.equal(headers.get('Accept'), 'application/json,text/plain')
+        assert.equal(headers.get('Accept'), 'application/json, text/plain')
         assert.equal(headers.get('Content-type'), 'text/html')
       })
       test('constructor works with arrays', function() {
@@ -205,7 +205,7 @@ exercise.forEach(function(exerciseMode) {
       test('appends values to existing header name', function() {
         var headers = new Headers({Accept: 'application/json'})
         headers.append('Accept', 'text/plain')
-        assert.equal(headers.get('Accept'), 'application/json,text/plain')
+        assert.equal(headers.get('Accept'), 'application/json, text/plain')
       })
       test('sets header name and value', function() {
         var headers = new Headers()
@@ -266,7 +266,7 @@ exercise.forEach(function(exerciseMode) {
         })
 
         assert.equal(results.length, 2)
-        assert.deepEqual({key: 'accept', value: 'application/json,text/plain', object: headers}, results[0])
+        assert.deepEqual({key: 'accept', value: 'application/json, text/plain', object: headers}, results[0])
         assert.deepEqual({key: 'content-type', value: 'text/html', object: headers}, results[1])
       })
       test('forEach accepts second thisArg argument', function() {
@@ -294,7 +294,7 @@ exercise.forEach(function(exerciseMode) {
         headers.append('Content-Type', 'text/html')
 
         var iterator = headers.values()
-        assert.deepEqual({done: false, value: 'application/json,text/plain'}, iterator.next())
+        assert.deepEqual({done: false, value: 'application/json, text/plain'}, iterator.next())
         assert.deepEqual({done: false, value: 'text/html'}, iterator.next())
         assert.deepEqual({done: true, value: undefined}, iterator.next())
       })
@@ -305,7 +305,7 @@ exercise.forEach(function(exerciseMode) {
         headers.append('Content-Type', 'text/html')
 
         var iterator = headers.entries()
-        assert.deepEqual({done: false, value: ['accept', 'application/json,text/plain']}, iterator.next())
+        assert.deepEqual({done: false, value: ['accept', 'application/json, text/plain']}, iterator.next())
         assert.deepEqual({done: false, value: ['content-type', 'text/html']}, iterator.next())
         assert.deepEqual({done: true, value: undefined}, iterator.next())
       })
