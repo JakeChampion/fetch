@@ -9,7 +9,13 @@ module.exports = function(config) {
         ui: 'tdd'
       }
     },
-    files: ['dist/fetch.umd.js', 'test/test.js'],
+    files: [
+      'node_modules/promise-polyfill/promise.js',
+      'node_modules/abortcontroller-polyfill/dist/abortcontroller-polyfill-only.js',
+      'node_modules/url-search-params/build/url-search-params.max.js',
+      'dist/fetch.umd.js',
+      'test/test.js'
+    ],
     reporters: ['progress'],
     port: 9876,
     colors: true,
