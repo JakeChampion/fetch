@@ -424,7 +424,7 @@ Response.redirect = function(url, status) {
   return new Response(null, {status: status, headers: {location: url}})
 }
 
-var DOMException = self.DOMException
+export var DOMException = self.DOMException
 try {
   new DOMException()
 } catch (err) {

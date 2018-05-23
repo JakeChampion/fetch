@@ -1060,6 +1060,7 @@ exercise.forEach(function(exerciseMode) {
               assert.ok(false)
             },
             function(error) {
+              assert.instanceOf(error, WHATWGFetch.DOMException)
               assert.equal(error.name, 'AbortError')
             }
           )
