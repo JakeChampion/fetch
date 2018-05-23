@@ -27,6 +27,7 @@
     "fetch.js"
   ],
   "scripts": {
+    "karma": "karma start ./test/karma.config.js --no-single-run --auto-watch",
     "prepublish": "make dist/fetch.umd.js",
     "pretest": "make",
     "test": "karma start ./test/karma.config.js && karma start ./test/karma-worker.config.js"
