@@ -7,6 +7,7 @@
   "repository": "github/fetch",
   "license": "MIT",
   "devDependencies": {
+    "abortcontroller-polyfill": "^1.1.9",
     "chai": "1.10.0",
     "eslint": "^4.19.1",
     "eslint-plugin-github": "^1.0.0",

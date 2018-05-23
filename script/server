@@ -80,6 +80,12 @@ var routes = {
     res.writeHead(204);
     res.end();
   },
+  '/slow': function(res) {
+    setTimeout(function() {
+      res.writeHead(200);
+      res.end();
+    }, 100);
+  },
   '/error': function(res) {
     res.destroy();
   },

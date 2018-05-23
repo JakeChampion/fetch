@@ -1048,6 +1048,142 @@ exercise.forEach(function(exerciseMode) {
         })
       })
 
+      suite('aborting', function() {
+        test('initially aborted signal', function() {
+          var controller = new AbortController()
+          controller.abort()
+
+          return fetch('/request', {
+            signal: controller.signal
+          }).then(
+            function() {
+              assert.ok(false)
+            },
+            function(error) {
+              assert.instanceOf(error, WHATWGFetch.DOMException)
+              assert.equal(error.name, 'AbortError')
+            }
+          )
+        })
+
+        test('initially aborted signal within Request', function() {
+          var controller = new AbortController()
+          controller.abort()
+
+          var request = new Request('/request', {signal: controller.signal})
+
+          return fetch(request).then(
+            function() {
+              assert.ok(false)
+            },
+            function(error) {
+              assert.equal(error.name, 'AbortError')
+            }
+          )
+        })
+
+        test('mid-request', function() {
+          var controller = new AbortController()
+
+          setTimeout(function() {
+            controller.abort()
+          }, 30)
+
+          return fetch('/slow', {
+            signal: controller.signal
+          }).then(
+            function() {
+              assert.ok(false)
+            },
+            function(error) {
+              assert.equal(error.name, 'AbortError')
+            }
+          )
+        })
+
+        test('mid-request within Request', function() {
+          var controller = new AbortController()
+          var request = new Request('/slow', {signal: controller.signal})
+
+          setTimeout(function() {
+            controller.abort()
+          }, 30)
+
+          return fetch(request).then(
+            function() {
+              assert.ok(false)
+            },
+            function(error) {
+              assert.equal(error.name, 'AbortError')
+            }
+          )
+        })
+
+        test('abort multiple with same signal', function() {
+          var controller = new AbortController()
+
+          setTimeout(function() {
+            controller.abort()
+          }, 30)
+
+          return Promise.all([
+            fetch('/slow', {
+              signal: controller.signal
+            }).then(
+              function() {
+                assert.ok(false)
+              },
+              function(error) {
+                assert.equal(error.name, 'AbortError')
+              }
+            ),
+            fetch('/slow', {
+              signal: controller.signal
+            }).then(
+              function() {
+                assert.ok(false)
+              },
+              function(error) {
+                assert.equal(error.name, 'AbortError')
+              }
+            )
+          ])
+        })
+
+        test('does not leak memory', function() {
+          var controller = new AbortController()
+          var signal = controller.signal
+
+          // success
+          return fetch('/request', {
+            signal: signal
+          })
+            .then(function() {
+              assert.deepEqual(signal.listeners['abort'], [])
+            })
+            .then(function() {
+              // failure
+              return fetch('/boom', {
+                signal: signal
+              }).catch(function() {
+                assert.deepEqual(signal.listeners['abort'], [])
+              })
+            })
+            .then(function() {
+              // aborted
+              setTimeout(function() {
+                signal.dispatchEvent({type: 'abort'})
+              }, 30)
+
+              return fetch('/slow', {
+                signal: signal
+              }).catch(function() {
+                assert.deepEqual(signal.listeners['abort'], [])
+              })
+            })
+        })
+      })
+
       suite('response', function() {
         test('populates body', function() {
           return fetch('/hello')

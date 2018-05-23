@@ -24,6 +24,7 @@ expected to uphold this code.
     * [Sending cookies](#sending-cookies)
     * [Receiving cookies](#receiving-cookies)
     * [Obtaining the Response URL](#obtaining-the-response-url)
+    * [Aborting requests](#aborting-requests)
 * [Browser Support](#browser-support)
 
 ## Read this first
@@ -259,6 +260,36 @@ response.headers['X-Request-URL'] = request.url
 
 This server workaround is necessary if you need reliable `response.url` in
 Firefox < 32, Chrome < 37, Safari, or IE.
+
+#### Aborting requests
+
+This polyfill supports
+[the abortable fetch API](https://developers.google.com/web/updates/2017/09/abortable-fetch).
+However, aborting a fetch requires use of two additional DOM APIs:
+[AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) and
+[AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal).
+Typically, browsers that do not support fetch will also not support
+AbortController or AbortSignal. Consequently, you will need to include
+[an additional polyfill](https://github.com/mo/abortcontroller-polyfill#readme)
+for these APIs to abort fetches:
+
+```js
+import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only'
+import {fetch} from 'whatwg-fetch'
+
+const controller = new AbortController()
+
+fetch('/avatars', {
+  signal: controller.signal
+}).catch(function(ex) {
+  if (ex.name === 'AbortError') {
+    console.log('request aborted')
+  }
+})
+
+// some time later...
+controller.abort()
+```
 
 ## Browser Support
 
