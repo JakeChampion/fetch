@@ -1149,39 +1149,6 @@ exercise.forEach(function(exerciseMode) {
             )
           ])
         })
-
-        test('does not leak memory', function() {
-          var controller = new AbortController()
-          var signal = controller.signal
-
-          // success
-          return fetch('/request', {
-            signal: signal
-          })
-            .then(function() {
-              assert.deepEqual(signal.listeners['abort'], [])
-            })
-            .then(function() {
-              // failure
-              return fetch('/boom', {
-                signal: signal
-              }).catch(function() {
-                assert.deepEqual(signal.listeners['abort'], [])
-              })
-            })
-            .then(function() {
-              // aborted
-              setTimeout(function() {
-                signal.dispatchEvent({type: 'abort'})
-              }, 30)
-
-              return fetch('/slow', {
-                signal: signal
-              }).catch(function() {
-                assert.deepEqual(signal.listeners['abort'], [])
-              })
-            })
-        })
       })
 
       suite('response', function() {
