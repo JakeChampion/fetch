@@ -266,17 +266,17 @@ Firefox < 32, Chrome < 37, Safari, or IE.
 This polyfill supports
 [the abortable fetch API](https://developers.google.com/web/updates/2017/09/abortable-fetch).
 However, aborting a fetch requires use of two additional DOM APIs:
-[AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController)
-and
+[AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) and
 [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal).
 Typically, browsers that do not support fetch will also not support
-AbortController or AbortSignal. Consequently, you will need to include an
-additional polyfill for these APIs to abort fetches.
-
-Once you have an AbortController and AbortSignal polyfill in place, you can
-abort a fetch like so:
+AbortController or AbortSignal. Consequently, you will need to include
+[an additional polyfill](https://github.com/mo/abortcontroller-polyfill#readme)
+for these APIs to abort fetches:
 
 ```js
+import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only'
+import {fetch} from 'whatwg-fetch'
+
 const controller = new AbortController()
 
 fetch('/avatars', {
@@ -288,7 +288,7 @@ fetch('/avatars', {
 })
 
 // some time later...
-controller.abort();
+controller.abort()
 ```
 
 ## Browser Support
