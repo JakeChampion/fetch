@@ -20,8 +20,7 @@ var support = {
     })(),
   formData: 'FormData' in self,
   arrayBuffer: 'ArrayBuffer' in self,
-  patch: !/PhantomJS/.test(navigator.userAgent),
-  permanentRedirect: !/PhantomJS|Trident/.test(navigator.userAgent)
+  permanentRedirect: !/Trident/.test(navigator.userAgent)
 }
 
 function readBlobAsText(blob) {
@@ -1233,7 +1232,7 @@ exercise.forEach(function(exerciseMode) {
             })
         })
 
-        featureDependent(test, support.patch, 'supports HTTP PATCH', function() {
+        test('supports HTTP PATCH', function() {
           return fetch('/request', {
             method: 'PATCH',
             body: 'name=Hubot'
