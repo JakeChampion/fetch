@@ -1,5 +1,4 @@
 test: lint dist/fetch.umd.js
-	./script/test
 
 lint: node_modules/
 	./node_modules/.bin/eslint --report-unused-disable-directives *.js test/*.js

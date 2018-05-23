@@ -8,11 +8,15 @@
   "license": "MIT",
   "devDependencies": {
     "abortcontroller-polyfill": "^1.1.9",
-    "chai": "1.10.0",
+    "chai": "^4.1.2",
     "eslint": "^4.19.1",
     "eslint-plugin-github": "^1.0.0",
-    "mocha": "2.1.0",
-    "mocha-phantomjs-core": "2.0.1",
+    "karma": "^1.7.1",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-firefox-launcher": "^1.0.1",
+    "karma-mocha": "^1.3.0",
+    "mocha": "^4.0.1",
     "promise-polyfill": "6.0.2",
     "rollup": "^0.59.1",
     "url-search-params": "0.6.1"
@@ -24,6 +28,7 @@
   ],
   "scripts": {
     "prepublish": "make dist/fetch.umd.js",
-    "test": "make"
+    "pretest": "make",
+    "test": "karma start ./test/karma.config.js"
   }
 }
