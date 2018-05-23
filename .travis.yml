@@ -10,7 +10,7 @@ before_script:
   - sh -e /etc/init.d/xvfb start
 cache:
   directories:
-  - phantomjs
+  - node_modules
 deploy:
   provider: npm
   email: mislav.marohnic@gmail.com
