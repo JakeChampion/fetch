@@ -29,6 +29,6 @@
   "scripts": {
     "prepublish": "make dist/fetch.umd.js",
     "pretest": "make",
-    "test": "karma start ./test/karma.config.js"
+    "test": "karma start ./test/karma.config.js && karma start ./test/karma-worker.config.js"
   }
 }

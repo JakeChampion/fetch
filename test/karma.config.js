@@ -2,13 +2,14 @@ const serverEndpoints = require('./server')
 
 module.exports = function(config) {
   config.set({
+    basePath: '..',
     frameworks: ['mocha', 'chai'],
     client: {
       mocha: {
         ui: 'tdd'
       }
     },
-    files: ['../dist/fetch.umd.js', 'test.js'],
+    files: ['dist/fetch.umd.js', 'test/test.js'],
     reporters: ['progress'],
     port: 9876,
     colors: true,
