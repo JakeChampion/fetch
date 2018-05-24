@@ -11,7 +11,7 @@ module.exports = function(config) {
         included: false
       },
       {
-        pattern: 'node_modules/{mocha,chai}/*.js',
+        pattern: 'node_modules/{mocha,chai,abortcontroller-polyfill/dist}/*.js',
         included: false,
         watched: false
       }
