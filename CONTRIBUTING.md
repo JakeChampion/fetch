@@ -14,24 +14,24 @@ Contributions to this project are [released][tos] to the public under the
 
 Running `npm test` will:
 
-0. Build the `dist/` files;
-0. Run the test suite in headless Chrome & Firefox;
-0. Run the same test suite in Web Worker mode.
+1. Build the `dist/` files;
+1. Run the test suite in headless Chrome & Firefox;
+1. Run the same test suite in Web Worker mode.
 
 When editing tests or implementation, keep `npm run karma` running:
 
-* You can connect additional browsers by navigating to `http://localhost:9876/`;
-* Changes to [test.js](test/test.js) will automatically re-run the tests in all
+- You can connect additional browsers by navigating to `http://localhost:9876/`;
+- Changes to [test.js](test/test.js) will automatically re-run the tests in all
   connected browsers;
-* When changing [fetch.js](fetch.js), re-run tests by executing `make`;
-* Re-run specific tests with `./node_modules/.bin/karma run -- --grep=<PATTERN>`.
+- When changing [fetch.js](fetch.js), re-run tests by executing `make`;
+- Re-run specific tests with `./node_modules/.bin/karma run -- --grep=<PATTERN>`.
 
 ## Submitting a pull request
 
-0. [Fork][fork] and clone the repository;
-0. Create a new branch: `git checkout -b my-branch-name`;
-0. Make your change, push to your fork and [submit a pull request][pr];
-0. Pat your self on the back and wait for your pull request to be reviewed.
+1. [Fork][fork] and clone the repository;
+1. Create a new branch: `git checkout -b my-branch-name`;
+1. Make your change, push to your fork and [submit a pull request][pr];
+1. Pat your self on the back and wait for your pull request to be reviewed.
 
 Here are a few things you can do that will increase the likelihood of your pull
 request being accepted:
