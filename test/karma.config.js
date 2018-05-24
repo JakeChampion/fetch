@@ -16,10 +16,10 @@ module.exports = function(config) {
       'dist/fetch.umd.js',
       'test/test.js'
     ],
-    reporters: ['progress'],
+    reporters: process.env.CI ? ['dots'] : ['progress'],
     port: 9876,
     colors: true,
-    logLevel: config.LOG_INFO,
+    logLevel: process.env.CI ? config.LOG_WARN : config.LOG_INFO,
     browsers: ['ChromeHeadlessNoSandbox', 'FirefoxHeadless'],
     autoWatch: false,
     singleRun: true,
