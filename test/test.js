@@ -119,7 +119,9 @@ exercise.forEach(function(exerciseMode) {
     var nativeChrome = /Chrome\//.test(navigator.userAgent) && !IEorEdge && exerciseMode === 'native'
     var nativeSafari = /Safari\//.test(navigator.userAgent) && !IEorEdge && exerciseMode === 'native'
     var nativeEdge = /Edge\//.test(navigator.userAgent) && exerciseMode === 'native'
-    var polyfillFirefox = /Firefox\//.test(navigator.userAgent) && exerciseMode === 'polyfill'
+    var firefox = navigator.userAgent.match(/Firefox\/(\d+)/)
+    var brokenFF = firefox && firefox[1] <= 56 && exerciseMode === 'native'
+    var polyfillFirefox = firefox && exerciseMode === 'polyfill'
 
     // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
     function testBodyExtract(factory) {
@@ -257,7 +259,7 @@ exercise.forEach(function(exerciseMode) {
           headers.set({field: 'value'}, 'application/json')
         }, TypeError)
       })
-      test('is iterable with forEach', function() {
+      featureDependent(test, !brokenFF, 'is iterable with forEach', function() {
         var headers = new Headers()
         headers.append('Accept', 'application/json')
         headers.append('Accept', 'text/plain')
@@ -279,7 +281,7 @@ exercise.forEach(function(exerciseMode) {
           assert.equal(this, thisArg)
         }, thisArg)
       })
-      test('is iterable with keys', function() {
+      featureDependent(test, !brokenFF, 'is iterable with keys', function() {
         var headers = new Headers()
         headers.append('Accept', 'application/json')
         headers.append('Accept', 'text/plain')
@@ -290,7 +292,7 @@ exercise.forEach(function(exerciseMode) {
         assert.deepEqual({done: false, value: 'content-type'}, iterator.next())
         assert.deepEqual({done: true, value: undefined}, iterator.next())
       })
-      test('is iterable with values', function() {
+      featureDependent(test, !brokenFF, 'is iterable with values', function() {
         var headers = new Headers()
         headers.append('Accept', 'application/json')
         headers.append('Accept', 'text/plain')
@@ -301,7 +303,7 @@ exercise.forEach(function(exerciseMode) {
         assert.deepEqual({done: false, value: 'text/html'}, iterator.next())
         assert.deepEqual({done: true, value: undefined}, iterator.next())
       })
-      test('is iterable with entries', function() {
+      featureDependent(test, !brokenFF, 'is iterable with entries', function() {
         var headers = new Headers()
         headers.append('Accept', 'application/json')
         headers.append('Accept', 'text/plain')
