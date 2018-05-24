@@ -1,5 +1,6 @@
+var IEorEdge = /Edge\//.test(navigator.userAgent) || /MSIE/.test(navigator.userAgent)
+
 var support = {
-  searchParams: 'URLSearchParams' in self,
   url: (function(url) {
     try {
       return new URL(url).toString() === url
@@ -464,23 +465,18 @@ exercise.forEach(function(exerciseMode) {
         assert.equal(req.headers.get('content-type'), 'image/png')
       })
 
-      featureDependent(
-        test,
-        support.searchParams,
-        'construct with URLSearchParams body sets Content-Type header',
-        function() {
-          var req = new Request('https://fetch.spec.whatwg.org/', {
-            method: 'post',
-            body: new URLSearchParams('a=1&b=2')
-          })
+      featureDependent(test, !IEorEdge, 'construct with URLSearchParams body sets Content-Type header', function() {
+        var req = new Request('https://fetch.spec.whatwg.org/', {
+          method: 'post',
+          body: new URLSearchParams('a=1&b=2')
+        })
 
-          assert.equal(req.headers.get('content-type'), 'application/x-www-form-urlencoded;charset=UTF-8')
-        }
-      )
+        assert.equal(req.headers.get('content-type'), 'application/x-www-form-urlencoded;charset=UTF-8')
+      })
 
       featureDependent(
         test,
-        support.searchParams,
+        !IEorEdge,
         'construct with URLSearchParams body and explicit Content-Type header',
         function() {
           var req = new Request('https://fetch.spec.whatwg.org/', {
@@ -840,7 +836,7 @@ exercise.forEach(function(exerciseMode) {
               return response.json()
             })
             .catch(function(error) {
-              assert(error instanceof Error, 'JSON exception is an Error instance')
+              if (!IEorEdge) assert(error instanceof Error, 'JSON exception is an Error instance')
               assert(error.message, 'JSON exception has an error message')
             })
         })
@@ -1033,7 +1029,7 @@ exercise.forEach(function(exerciseMode) {
           })
         })
 
-        featureDependent(test, support.searchParams, 'sends URLSearchParams body', function() {
+        featureDependent(test, !IEorEdge, 'sends URLSearchParams body', function() {
           return fetch('/request', {
             method: 'post',
             body: new URLSearchParams('a=1&b=2')
@@ -1060,7 +1056,7 @@ exercise.forEach(function(exerciseMode) {
               assert.ok(false)
             },
             function(error) {
-              assert.instanceOf(error, WHATWGFetch.DOMException)
+              if (!IEorEdge) assert.instanceOf(error, WHATWGFetch.DOMException)
               assert.equal(error.name, 'AbortError')
             }
           )
