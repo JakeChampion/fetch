@@ -30,6 +30,12 @@
       }
     },
     {
+      "files": ["test/{karma,server}*.js"],
+      "env": {
+        "node": true
+      }
+    },
+    {
       "files": ["test/worker.js"],
       "env": {
         "worker": true
