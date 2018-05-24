@@ -116,7 +116,9 @@ exercise.forEach(function(exerciseMode) {
       })
     }
 
-    var nativeChrome = /Chrome\//.test(navigator.userAgent) && exerciseMode === 'native'
+    var nativeChrome = /Chrome\//.test(navigator.userAgent) && !IEorEdge && exerciseMode === 'native'
+    var nativeSafari = /Safari\//.test(navigator.userAgent) && !IEorEdge && exerciseMode === 'native'
+    var nativeEdge = /Edge\//.test(navigator.userAgent) && exerciseMode === 'native'
     var polyfillFirefox = /Firefox\//.test(navigator.userAgent) && exerciseMode === 'polyfill'
 
     // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
@@ -777,7 +779,7 @@ exercise.forEach(function(exerciseMode) {
             })
         })
 
-        featureDependent(test, !nativeChrome, 'rejects formData promise after body is consumed', function() {
+        featureDependent(test, !nativeChrome && !nativeEdge, 'formData rejects after body was consumed', function() {
           return fetch('/json')
             .then(function(response) {
               assert(response.formData, 'Body does not implement formData')
@@ -793,15 +795,20 @@ exercise.forEach(function(exerciseMode) {
             })
         })
 
-        featureDependent(test, !nativeChrome, 'parses form encoded response', function() {
-          return fetch('/form')
-            .then(function(response) {
-              return response.formData()
-            })
-            .then(function(form) {
-              assert(form instanceof FormData, 'Parsed a FormData object')
-            })
-        })
+        featureDependent(
+          test,
+          !nativeChrome && !nativeSafari && !nativeEdge,
+          'parses form encoded response',
+          function() {
+            return fetch('/form')
+              .then(function(response) {
+                return response.formData()
+              })
+              .then(function(form) {
+                assert(form instanceof FormData, 'Parsed a FormData object')
+              })
+          }
+        )
       })
 
       suite('json', function() {
