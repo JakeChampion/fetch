@@ -82,7 +82,7 @@ const routes = {
   },
   '/slow': function(res) {
     setTimeout(function() {
-      res.writeHead(200)
+      res.writeHead(200, {'Cache-Control': 'no-cache, must-revalidate'})
       res.end()
     }, 100)
   },

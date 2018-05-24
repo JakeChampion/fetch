@@ -1089,10 +1089,13 @@ exercise.forEach(function(exerciseMode) {
             controller.abort()
           }, 30)
 
-          return fetch('/slow', {
+          var start = new Date()
+
+          return fetch('/slow?_=' + new Date().getTime(), {
             signal: controller.signal
           }).then(
             function() {
+              assert.isAtLeast(new Date() - start, 100, 'request finished too soon')
               assert.ok(false)
             },
             function(error) {
@@ -1103,14 +1106,17 @@ exercise.forEach(function(exerciseMode) {
 
         test('mid-request within Request', function() {
           var controller = new AbortController()
-          var request = new Request('/slow', {signal: controller.signal})
+          var request = new Request('/slow?_=' + new Date().getTime(), {signal: controller.signal})
 
           setTimeout(function() {
             controller.abort()
           }, 30)
 
+          var start = new Date()
+
           return fetch(request).then(
             function() {
+              assert.isAtLeast(new Date() - start, 100, 'request finished too soon')
               assert.ok(false)
             },
             function(error) {
@@ -1127,7 +1133,7 @@ exercise.forEach(function(exerciseMode) {
           }, 30)
 
           return Promise.all([
-            fetch('/slow', {
+            fetch('/slow?_=' + new Date().getTime(), {
               signal: controller.signal
             }).then(
               function() {
@@ -1137,7 +1143,7 @@ exercise.forEach(function(exerciseMode) {
                 assert.equal(error.name, 'AbortError')
               }
             ),
-            fetch('/slow', {
+            fetch('/slow?_=' + new Date().getTime(), {
               signal: controller.signal
             }).then(
               function() {
