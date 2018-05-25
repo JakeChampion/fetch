@@ -31,7 +31,7 @@ const routes = {
       'Content-Type': 'text/plain; charset=utf-8'
     })
     // "hello"
-    var buf = new Buffer([104, 101, 108, 108, 111])
+    var buf = Buffer.from([104, 101, 108, 108, 111])
     res.end(buf)
   },
   '/hello/utf16le': function(res) {
@@ -39,12 +39,12 @@ const routes = {
       'Content-Type': 'text/plain; charset=utf-16le'
     })
     // "hello"
-    var buf = new Buffer([104, 0, 101, 0, 108, 0, 108, 0, 111, 0])
+    var buf = Buffer.from([104, 0, 101, 0, 108, 0, 108, 0, 111, 0])
     res.end(buf)
   },
   '/binary': function(res) {
     res.writeHead(200, {'Content-Type': 'application/octet-stream'})
-    var buf = new Buffer(256)
+    var buf = Buffer.alloc(256)
     for (var i = 0; i < 256; i++) {
       buf[i] = i
     }
