@@ -5,6 +5,7 @@ node_js:
 dist: trusty
 addons:
   chrome: stable
+  firefox: latest
 cache:
   directories:
   - node_modules
