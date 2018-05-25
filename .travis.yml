@@ -2,9 +2,13 @@ sudo: false
 language: node_js
 node_js:
   - "node"
+dist: trusty
+addons:
+  chrome: stable
+  firefox: latest
 cache:
   directories:
-  - phantomjs
+  - node_modules
 deploy:
   provider: npm
   email: mislav.marohnic@gmail.com

@@ -1,5 +1,6 @@
+var IEorEdge = /Edge\//.test(navigator.userAgent) || /MSIE/.test(navigator.userAgent)
+
 var support = {
-  searchParams: 'URLSearchParams' in self,
   url: (function(url) {
     try {
       return new URL(url).toString() === url
@@ -20,8 +21,8 @@ var support = {
     })(),
   formData: 'FormData' in self,
   arrayBuffer: 'ArrayBuffer' in self,
-  patch: !/PhantomJS/.test(navigator.userAgent),
-  permanentRedirect: !/PhantomJS|Trident/.test(navigator.userAgent)
+  aborting: 'signal' in new Request(''),
+  permanentRedirect: !/Trident/.test(navigator.userAgent)
 }
 
 function readBlobAsText(blob) {
@@ -115,8 +116,12 @@ exercise.forEach(function(exerciseMode) {
       })
     }
 
-    var nativeChrome = /Chrome\//.test(navigator.userAgent) && exerciseMode === 'native'
-    var polyfillFirefox = /Firefox\//.test(navigator.userAgent) && exerciseMode === 'polyfill'
+    var nativeChrome = /Chrome\//.test(navigator.userAgent) && !IEorEdge && exerciseMode === 'native'
+    var nativeSafari = /Safari\//.test(navigator.userAgent) && !IEorEdge && exerciseMode === 'native'
+    var nativeEdge = /Edge\//.test(navigator.userAgent) && exerciseMode === 'native'
+    var firefox = navigator.userAgent.match(/Firefox\/(\d+)/)
+    var brokenFF = firefox && firefox[1] <= 56 && exerciseMode === 'native'
+    var polyfillFirefox = firefox && exerciseMode === 'polyfill'
 
     // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
     function testBodyExtract(factory) {
@@ -179,7 +184,7 @@ exercise.forEach(function(exerciseMode) {
         original.append('Content-Type', 'text/html')
 
         var headers = new Headers(original)
-        assert.equal(headers.get('Accept'), 'application/json,text/plain')
+        assert.equal(headers.get('Accept'), 'application/json, text/plain')
         assert.equal(headers.get('Content-type'), 'text/html')
       })
       test('constructor works with arrays', function() {
@@ -205,7 +210,7 @@ exercise.forEach(function(exerciseMode) {
       test('appends values to existing header name', function() {
         var headers = new Headers({Accept: 'application/json'})
         headers.append('Accept', 'text/plain')
-        assert.equal(headers.get('Accept'), 'application/json,text/plain')
+        assert.equal(headers.get('Accept'), 'application/json, text/plain')
       })
       test('sets header name and value', function() {
         var headers = new Headers()
@@ -254,7 +259,7 @@ exercise.forEach(function(exerciseMode) {
           headers.set({field: 'value'}, 'application/json')
         }, TypeError)
       })
-      test('is iterable with forEach', function() {
+      featureDependent(test, !brokenFF, 'is iterable with forEach', function() {
         var headers = new Headers()
         headers.append('Accept', 'application/json')
         headers.append('Accept', 'text/plain')
@@ -266,7 +271,7 @@ exercise.forEach(function(exerciseMode) {
         })
 
         assert.equal(results.length, 2)
-        assert.deepEqual({key: 'accept', value: 'application/json,text/plain', object: headers}, results[0])
+        assert.deepEqual({key: 'accept', value: 'application/json, text/plain', object: headers}, results[0])
         assert.deepEqual({key: 'content-type', value: 'text/html', object: headers}, results[1])
       })
       test('forEach accepts second thisArg argument', function() {
@@ -276,7 +281,7 @@ exercise.forEach(function(exerciseMode) {
           assert.equal(this, thisArg)
         }, thisArg)
       })
-      test('is iterable with keys', function() {
+      featureDependent(test, !brokenFF, 'is iterable with keys', function() {
         var headers = new Headers()
         headers.append('Accept', 'application/json')
         headers.append('Accept', 'text/plain')
@@ -287,25 +292,25 @@ exercise.forEach(function(exerciseMode) {
         assert.deepEqual({done: false, value: 'content-type'}, iterator.next())
         assert.deepEqual({done: true, value: undefined}, iterator.next())
       })
-      test('is iterable with values', function() {
+      featureDependent(test, !brokenFF, 'is iterable with values', function() {
         var headers = new Headers()
         headers.append('Accept', 'application/json')
         headers.append('Accept', 'text/plain')
         headers.append('Content-Type', 'text/html')
 
         var iterator = headers.values()
-        assert.deepEqual({done: false, value: 'application/json,text/plain'}, iterator.next())
+        assert.deepEqual({done: false, value: 'application/json, text/plain'}, iterator.next())
         assert.deepEqual({done: false, value: 'text/html'}, iterator.next())
         assert.deepEqual({done: true, value: undefined}, iterator.next())
       })
-      test('is iterable with entries', function() {
+      featureDependent(test, !brokenFF, 'is iterable with entries', function() {
         var headers = new Headers()
         headers.append('Accept', 'application/json')
         headers.append('Accept', 'text/plain')
         headers.append('Content-Type', 'text/html')
 
         var iterator = headers.entries()
-        assert.deepEqual({done: false, value: ['accept', 'application/json,text/plain']}, iterator.next())
+        assert.deepEqual({done: false, value: ['accept', 'application/json, text/plain']}, iterator.next())
         assert.deepEqual({done: false, value: ['content-type', 'text/html']}, iterator.next())
         assert.deepEqual({done: true, value: undefined}, iterator.next())
       })
@@ -464,23 +469,18 @@ exercise.forEach(function(exerciseMode) {
         assert.equal(req.headers.get('content-type'), 'image/png')
       })
 
-      featureDependent(
-        test,
-        support.searchParams,
-        'construct with URLSearchParams body sets Content-Type header',
-        function() {
-          var req = new Request('https://fetch.spec.whatwg.org/', {
-            method: 'post',
-            body: new URLSearchParams('a=1&b=2')
-          })
+      featureDependent(test, !IEorEdge, 'construct with URLSearchParams body sets Content-Type header', function() {
+        var req = new Request('https://fetch.spec.whatwg.org/', {
+          method: 'post',
+          body: new URLSearchParams('a=1&b=2')
+        })
 
-          assert.equal(req.headers.get('content-type'), 'application/x-www-form-urlencoded;charset=UTF-8')
-        }
-      )
+        assert.equal(req.headers.get('content-type'), 'application/x-www-form-urlencoded;charset=UTF-8')
+      })
 
       featureDependent(
         test,
-        support.searchParams,
+        !IEorEdge,
         'construct with URLSearchParams body and explicit Content-Type header',
         function() {
           var req = new Request('https://fetch.spec.whatwg.org/', {
@@ -781,7 +781,7 @@ exercise.forEach(function(exerciseMode) {
             })
         })
 
-        featureDependent(test, !nativeChrome, 'rejects formData promise after body is consumed', function() {
+        featureDependent(test, !nativeChrome && !nativeEdge, 'formData rejects after body was consumed', function() {
           return fetch('/json')
             .then(function(response) {
               assert(response.formData, 'Body does not implement formData')
@@ -797,15 +797,20 @@ exercise.forEach(function(exerciseMode) {
             })
         })
 
-        featureDependent(test, !nativeChrome, 'parses form encoded response', function() {
-          return fetch('/form')
-            .then(function(response) {
-              return response.formData()
-            })
-            .then(function(form) {
-              assert(form instanceof FormData, 'Parsed a FormData object')
-            })
-        })
+        featureDependent(
+          test,
+          !nativeChrome && !nativeSafari && !nativeEdge,
+          'parses form encoded response',
+          function() {
+            return fetch('/form')
+              .then(function(response) {
+                return response.formData()
+              })
+              .then(function(form) {
+                assert(form instanceof FormData, 'Parsed a FormData object')
+              })
+          }
+        )
       })
 
       suite('json', function() {
@@ -840,7 +845,7 @@ exercise.forEach(function(exerciseMode) {
               return response.json()
             })
             .catch(function(error) {
-              assert(error instanceof Error, 'JSON exception is an Error instance')
+              if (!IEorEdge) assert(error instanceof Error, 'JSON exception is an Error instance')
               assert(error.message, 'JSON exception has an error message')
             })
         })
@@ -1033,7 +1038,7 @@ exercise.forEach(function(exerciseMode) {
           })
         })
 
-        featureDependent(test, support.searchParams, 'sends URLSearchParams body', function() {
+        featureDependent(test, !IEorEdge, 'sends URLSearchParams body', function() {
           return fetch('/request', {
             method: 'post',
             body: new URLSearchParams('a=1&b=2')
@@ -1048,7 +1053,7 @@ exercise.forEach(function(exerciseMode) {
         })
       })
 
-      suite('aborting', function() {
+      featureDependent(suite, exerciseMode !== 'native' || support.aborting, 'aborting', function() {
         test('initially aborted signal', function() {
           var controller = new AbortController()
           controller.abort()
@@ -1060,7 +1065,7 @@ exercise.forEach(function(exerciseMode) {
               assert.ok(false)
             },
             function(error) {
-              assert.instanceOf(error, WHATWGFetch.DOMException)
+              if (!IEorEdge) assert.instanceOf(error, WHATWGFetch.DOMException)
               assert.equal(error.name, 'AbortError')
             }
           )
@@ -1089,10 +1094,13 @@ exercise.forEach(function(exerciseMode) {
             controller.abort()
           }, 30)
 
-          return fetch('/slow', {
+          var start = new Date()
+
+          return fetch('/slow?_=' + new Date().getTime(), {
             signal: controller.signal
           }).then(
             function() {
+              assert.isAtLeast(new Date() - start, 100, 'request finished too soon')
               assert.ok(false)
             },
             function(error) {
@@ -1103,14 +1111,17 @@ exercise.forEach(function(exerciseMode) {
 
         test('mid-request within Request', function() {
           var controller = new AbortController()
-          var request = new Request('/slow', {signal: controller.signal})
+          var request = new Request('/slow?_=' + new Date().getTime(), {signal: controller.signal})
 
           setTimeout(function() {
             controller.abort()
           }, 30)
 
+          var start = new Date()
+
           return fetch(request).then(
             function() {
+              assert.isAtLeast(new Date() - start, 100, 'request finished too soon')
               assert.ok(false)
             },
             function(error) {
@@ -1127,7 +1138,7 @@ exercise.forEach(function(exerciseMode) {
           }, 30)
 
           return Promise.all([
-            fetch('/slow', {
+            fetch('/slow?_=' + new Date().getTime(), {
               signal: controller.signal
             }).then(
               function() {
@@ -1137,7 +1148,7 @@ exercise.forEach(function(exerciseMode) {
                 assert.equal(error.name, 'AbortError')
               }
             ),
-            fetch('/slow', {
+            fetch('/slow?_=' + new Date().getTime(), {
               signal: controller.signal
             }).then(
               function() {
@@ -1148,39 +1159,6 @@ exercise.forEach(function(exerciseMode) {
               }
             )
           ])
-        })
-
-        test('does not leak memory', function() {
-          var controller = new AbortController()
-          var signal = controller.signal
-
-          // success
-          return fetch('/request', {
-            signal: signal
-          })
-            .then(function() {
-              assert.deepEqual(signal.listeners['abort'], [])
-            })
-            .then(function() {
-              // failure
-              return fetch('/boom', {
-                signal: signal
-              }).catch(function() {
-                assert.deepEqual(signal.listeners['abort'], [])
-              })
-            })
-            .then(function() {
-              // aborted
-              setTimeout(function() {
-                signal.dispatchEvent({type: 'abort'})
-              }, 30)
-
-              return fetch('/slow', {
-                signal: signal
-              }).catch(function() {
-                assert.deepEqual(signal.listeners['abort'], [])
-              })
-            })
         })
       })
 
@@ -1266,7 +1244,7 @@ exercise.forEach(function(exerciseMode) {
             })
         })
 
-        featureDependent(test, support.patch, 'supports HTTP PATCH', function() {
+        test('supports HTTP PATCH', function() {
           return fetch('/request', {
             method: 'PATCH',
             body: 'name=Hubot'
