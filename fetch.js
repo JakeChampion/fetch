@@ -330,7 +330,7 @@ export function Request(input, options) {
     this.url = String(input)
   }
 
-  this.credentials = options.credentials || this.credentials || 'omit'
+  this.credentials = options.credentials || this.credentials || 'same-origin'
   if (options.headers || !this.headers) {
     this.headers = new Headers(options.headers)
   }
