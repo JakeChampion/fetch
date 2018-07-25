@@ -198,8 +198,8 @@ fetch('/users')
 
 #### Sending cookies
 
-For [CORS][] requests, use the "include" value to allow sending credentials to
-other domains:
+For [CORS][] requests, use `credentials: 'include'` to allow sending credentials
+to other domains:
 
 ```javascript
 fetch('https://example.com:1234/users', {
@@ -207,8 +207,8 @@ fetch('https://example.com:1234/users', {
 })
 ```
 
-To disable sending or receiving cookies for requests to the same domain, use
-the "omit" value:
+To disable sending or receiving cookies for requests to any domain, including
+the current one, use the "omit" value:
 
 ```javascript
 fetch('/users', {
@@ -216,7 +216,25 @@ fetch('/users', {
 })
 ```
 
-The default value is `credentials: 'same-origin'`.
+The default value for `credentials` is "same-origin".
+
+The default for `credentials` wasn't always the same, though. The following
+versions of browsers implemented an older version of the fetch specification
+where the default was "omit":
+
+* Firefox 39-60
+* Chrome 42-67
+* Safari 10.1-11.1.2
+
+If you target these browsers, it's advisable to always specify `credentials:
+'same-origin'` explicitly with all fetch requests instead of relying on the
+default:
+
+```javascript
+fetch('/users', {
+  credentials: 'same-origin'
+})
+```
 
 #### Receiving cookies
 
