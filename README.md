@@ -166,6 +166,10 @@ fetch('/avatars', {
   and it will only reject on network failure or if anything prevented the
   request from completing.
 
+* For maximum browser compatibility when it comes to sending & receiving
+  cookies, always supply the `credentials: 'same-origin'` option instead of
+  relying on the default. See [Sending cookies](#sending-cookies).
+
 #### Handling HTTP error statuses
 
 To have `fetch` Promise reject on HTTP error statuses, i.e. on any non-2xx
