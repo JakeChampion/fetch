@@ -29,11 +29,12 @@ expected to uphold this code.
 
 ## Read this first
 
-* If you believe you found a bug with how `fetch` behaves in Chrome or Firefox,
-  please **don't open an issue in this repository**. This project is a
-  _polyfill_, and since Chrome and Firefox both implement the `window.fetch`
-  function natively, no code from this project actually takes any effect in
-  these browsers. See [Browser support](#browser-support) for detailed
+* If you believe you found a bug with how `fetch` behaves in your browser,
+  please **don't open an issue in this repository** unless you are testing in
+  an old version of a browser that doesn't support `window.fetch` natively.
+  This project is a _polyfill_, and since all modern browsers now implement the
+  `fetch` function natively, **no code from this project** actually takes any
+  effect there. See [Browser support](#browser-support) for detailed
   information.
 
 * If you have trouble **making a request to another domain** (a different
