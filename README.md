@@ -45,11 +45,6 @@ expected to uphold this code.
   exclusively handled by the browser's internal mechanisms which this polyfill
   cannot influence.
 
-* If you have trouble **maintaining the user's session** or [CSRF][] protection
-  through `fetch` requests, please ensure that you've read and understood the
-  [Sending cookies](#sending-cookies) section. `fetch` doesn't send cookies
-  unless you ask it to.
-
 * This project **doesn't work under Node.js environments**. It's meant for web
   browsers only. You should ensure that your application doesn't try to package
   and run this on the server.
@@ -166,18 +161,10 @@ fetch('/avatars', {
 
 ### Caveats
 
-The `fetch` specification differs from `jQuery.ajax()` in mainly two ways that
-bear keeping in mind:
-
 * The Promise returned from `fetch()` **won't reject on HTTP error status**
   even if the response is an HTTP 404 or 500. Instead, it will resolve normally,
   and it will only reject on network failure or if anything prevented the
   request from completing.
-
-* By default, `fetch` **won't send or receive any cookies** from the server,
-  resulting in unauthenticated requests if the site relies on maintaining a user
-  session. See [Sending cookies](#sending-cookies) for how to opt into cookie
-  handling.
 
 #### Handling HTTP error statuses
 
@@ -211,19 +198,6 @@ fetch('/users')
 
 #### Sending cookies
 
-To automatically send cookies for the current domain, the `credentials` option
-must be provided:
-
-```javascript
-fetch('/users', {
-  credentials: 'same-origin'
-})
-```
-
-The "same-origin" value makes `fetch` behave similarly to XMLHttpRequest with
-regards to cookies. Otherwise, cookies won't get sent, resulting in these
-requests not preserving the authentication session.
-
 For [CORS][] requests, use the "include" value to allow sending credentials to
 other domains:
 
@@ -233,6 +207,17 @@ fetch('https://example.com:1234/users', {
 })
 ```
 
+To disable sending or receiving cookies for requests to the same domain, use
+the "omit" value:
+
+```javascript
+fetch('/users', {
+  credentials: 'omit'
+})
+```
+
+The default value is `credentials: 'same-origin'`.
+
 #### Receiving cookies
 
 As with XMLHttpRequest, the `Set-Cookie` response header returned from the
@@ -240,10 +225,6 @@ server is a [forbidden header name][] and therefore can't be programmatically
 read with `response.headers.get()`. Instead, it's the browser's responsibility
 to handle new cookies being set (if applicable to the current URL). Unless they
 are HTTP-only, new cookies will be available through `document.cookie`.
-
-Bear in mind that the default behavior of `fetch` is to ignore the `Set-Cookie`
-header completely. To opt into accepting cookies from the server, you must use
-the `credentials` option.
 
 #### Obtaining the Response URL
 

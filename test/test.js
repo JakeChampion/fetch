@@ -540,6 +540,16 @@ exercise.forEach(function(exerciseMode) {
       testBodyExtract(function(body) {
         return new Request('', {method: 'POST', body: body})
       })
+
+      test('credentials defaults to same-origin', function() {
+        var request = new Request('')
+        assert.equal(request.credentials, 'same-origin')
+      })
+
+      test('credentials is overridable', function() {
+        var request = new Request('', {credentials: 'omit'})
+        assert.equal(request.credentials, 'omit')
+      })
     })
 
     // https://fetch.spec.whatwg.org/#response-class
@@ -1347,24 +1357,6 @@ exercise.forEach(function(exerciseMode) {
         })
 
         featureDependent(suite, exerciseMode === 'native', 'omit', function() {
-          test('request credentials defaults to omit', function() {
-            var request = new Request('')
-            assert.equal(request.credentials, 'omit')
-          })
-
-          test('does not accept cookies with implicit omit credentials', function() {
-            return fetch('/cookie?name=foo&value=bar')
-              .then(function() {
-                return fetch('/cookie?name=foo', {credentials: 'same-origin'})
-              })
-              .then(function(response) {
-                return response.text()
-              })
-              .then(function(data) {
-                assert.equal(data, 'reset')
-              })
-          })
-
           test('does not accept cookies with omit credentials', function() {
             return fetch('/cookie?name=foo&value=bar', {credentials: 'omit'})
               .then(function() {
@@ -1375,19 +1367,6 @@ exercise.forEach(function(exerciseMode) {
               })
               .then(function(data) {
                 assert.equal(data, 'reset')
-              })
-          })
-
-          test('does not send cookies with implicit omit credentials', function() {
-            return fetch('/cookie?name=foo&value=bar', {credentials: 'same-origin'})
-              .then(function() {
-                return fetch('/cookie?name=foo')
-              })
-              .then(function(response) {
-                return response.text()
-              })
-              .then(function(data) {
-                assert.equal(data, '')
               })
           })
 
@@ -1406,11 +1385,6 @@ exercise.forEach(function(exerciseMode) {
         })
 
         suite('same-origin', function() {
-          test('request credentials uses inits member', function() {
-            var request = new Request('', {credentials: 'same-origin'})
-            assert.equal(request.credentials, 'same-origin')
-          })
-
           test('send cookies with same-origin credentials', function() {
             return fetch('/cookie?name=foo&value=bar', {credentials: 'same-origin'})
               .then(function() {
