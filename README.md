@@ -5,9 +5,6 @@ web requests in the browser. This project is a polyfill that implements a subset
 of the standard [Fetch specification][], enough to make `fetch` a viable
 replacement for most uses of XMLHttpRequest in traditional web applications.
 
-This project adheres to the [Open Code of Conduct][]. By participating, you are
-expected to uphold this code.
-
 ## Table of Contents
 
 * [Read this first](#read-this-first)
@@ -310,7 +307,6 @@ an issue with that browser vendor instead of this project.
 
 
   [fetch specification]: https://fetch.spec.whatwg.org
-  [open code of conduct]: http://todogroup.org/opencodeofconduct/#fetch/opensource@github.com
   [cors]: https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
     "Cross-origin resource sharing"
   [csrf]: https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet
