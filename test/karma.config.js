@@ -6,7 +6,9 @@ module.exports = function(config) {
     frameworks: ['detectBrowsers', 'mocha', 'chai'],
     detectBrowsers: {
       preferHeadless: true,
-      usePhantomJS: false
+      usePhantomJS: false,
+      postDetection: availableBrowsers =>
+        availableBrowsers.map(browser => (browser.startsWith('Chrom') ? `${browser}NoSandbox` : browser))
     },
     client: {
       mocha: {
@@ -27,6 +29,16 @@ module.exports = function(config) {
     autoWatch: false,
     singleRun: true,
     concurrency: Infinity,
+    customLaunchers: {
+      ChromeHeadlessNoSandbox: {
+        base: 'ChromeHeadless',
+        flags: ['--no-sandbox']
+      },
+      ChromiumHeadlessNoSandbox: {
+        base: 'ChromiumHeadless',
+        flags: ['--no-sandbox']
+      }
+    },
     beforeMiddleware: ['custom'],
     plugins: [
       'karma-*',
