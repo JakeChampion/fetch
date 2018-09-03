@@ -227,7 +227,7 @@ function Body() {
     } else if (support.arrayBuffer && (ArrayBuffer.prototype.isPrototypeOf(body) || isArrayBufferView(body))) {
       this._bodyArrayBuffer = bufferClone(body)
     } else {
-      throw new Error('unsupported BodyInit type')
+      this._bodyText = body = Object.prototype.toString.call(body)
     }
 
     if (!this.headers.get('content-type')) {
