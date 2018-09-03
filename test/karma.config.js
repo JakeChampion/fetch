@@ -1,14 +1,12 @@
 const serverEndpoints = require('./server')
 
-const browsers = ['ChromeHeadlessNoSandbox', 'FirefoxHeadless']
-if ('darwin' === process.platform) {
-  browsers.push('Safari')
-}
-
 module.exports = function(config) {
   config.set({
     basePath: '..',
-    frameworks: ['mocha', 'chai'],
+    frameworks: ['detectBrowsers', 'mocha', 'chai'],
+    detectBrowsers: {
+      usePhantomJS: false
+    },
     client: {
       mocha: {
         ui: 'tdd'
@@ -25,21 +23,9 @@ module.exports = function(config) {
     port: 9876,
     colors: true,
     logLevel: process.env.CI ? config.LOG_WARN : config.LOG_INFO,
-    browsers,
     autoWatch: false,
     singleRun: true,
     concurrency: Infinity,
-    customLaunchers: {
-      ChromeHeadlessNoSandbox: {
-        base: 'ChromeHeadless',
-        flags: ['--no-sandbox']
-      },
-      FirefoxHeadless: {
-        base: 'Firefox',
-        flags: ['-headless'],
-        displayName: 'HeadlessFirefox'
-      }
-    },
     beforeMiddleware: ['custom'],
     plugins: [
       'karma-*',
