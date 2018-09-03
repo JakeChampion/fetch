@@ -8,7 +8,12 @@ module.exports = function(config) {
       preferHeadless: true,
       usePhantomJS: false,
       postDetection: availableBrowsers =>
-        availableBrowsers.map(browser => (browser.startsWith('Chrom') ? `${browser}NoSandbox` : browser))
+        availableBrowsers
+          .filter(
+            browser =>
+              !process.env.CI || !browser.startsWith('Chromium') || !availableBrowsers.some(b => b.startsWith('Chrome'))
+          )
+          .map(browser => (browser.startsWith('Chrom') ? `${browser}NoSandbox` : browser))
     },
     client: {
       mocha: {
