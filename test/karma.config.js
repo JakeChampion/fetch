@@ -1,5 +1,10 @@
 const serverEndpoints = require('./server')
 
+const browsers = ['ChromeHeadlessNoSandbox', 'FirefoxHeadless']
+if ('darwin' === process.platform) {
+  browsers.push('Safari')
+}
+
 module.exports = function(config) {
   config.set({
     basePath: '..',
@@ -20,7 +25,7 @@ module.exports = function(config) {
     port: 9876,
     colors: true,
     logLevel: process.env.CI ? config.LOG_WARN : config.LOG_INFO,
-    browsers: ['ChromeHeadlessNoSandbox', 'FirefoxHeadless'],
+    browsers,
     autoWatch: false,
     singleRun: true,
     concurrency: Infinity,
