@@ -1108,13 +1108,10 @@ exercise.forEach(function(exerciseMode) {
             controller.abort()
           }, 30)
 
-          var start = new Date()
-
           return fetch('/slow?_=' + new Date().getTime(), {
             signal: controller.signal
           }).then(
             function() {
-              assert.isAtLeast(new Date() - start, 100, 'request finished too soon')
               assert.ok(false)
             },
             function(error) {
@@ -1131,11 +1128,8 @@ exercise.forEach(function(exerciseMode) {
             controller.abort()
           }, 30)
 
-          var start = new Date()
-
           return fetch(request).then(
             function() {
-              assert.isAtLeast(new Date() - start, 100, 'request finished too soon')
               assert.ok(false)
             },
             function(error) {
