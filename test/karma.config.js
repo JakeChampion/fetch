@@ -5,6 +5,7 @@ module.exports = function(config) {
     basePath: '..',
     frameworks: ['detectBrowsers', 'mocha', 'chai'],
     detectBrowsers: {
+      preferHeadless: true,
       usePhantomJS: false
     },
     client: {
