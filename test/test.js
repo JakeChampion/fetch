@@ -1,4 +1,6 @@
 var IEorEdge = /Edge\//.test(navigator.userAgent) || /MSIE/.test(navigator.userAgent)
+var Chrome = /Chrome\//.test(navigator.userAgent) && !IEorEdge
+var Safari = /Safari\//.test(navigator.userAgent) && !IEorEdge && !Chrome
 
 var support = {
   url: (function(url) {
@@ -116,12 +118,14 @@ exercise.forEach(function(exerciseMode) {
       })
     }
 
-    var nativeChrome = /Chrome\//.test(navigator.userAgent) && !IEorEdge && exerciseMode === 'native'
-    var nativeSafari = /Safari\//.test(navigator.userAgent) && !IEorEdge && exerciseMode === 'native'
+    var nativeChrome = Chrome && exerciseMode === 'native'
+    var nativeSafari = Safari && exerciseMode === 'native'
     var nativeEdge = /Edge\//.test(navigator.userAgent) && exerciseMode === 'native'
     var firefox = navigator.userAgent.match(/Firefox\/(\d+)/)
     var brokenFF = firefox && firefox[1] <= 56 && exerciseMode === 'native'
     var polyfillFirefox = firefox && exerciseMode === 'polyfill'
+    var omitSafari =
+      Safari && exerciseMode === 'native' && navigator.userAgent.match(/Version\/(\d+\.\d+)/)[1] <= '11.1'
 
     // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
     function testBodyExtract(factory) {
@@ -541,7 +545,7 @@ exercise.forEach(function(exerciseMode) {
         return new Request('', {method: 'POST', body: body})
       })
 
-      test('credentials defaults to same-origin', function() {
+      featureDependent(test, !omitSafari, 'credentials defaults to same-origin', function() {
         var request = new Request('')
         assert.equal(request.credentials, 'same-origin')
       })
