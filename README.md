@@ -62,18 +62,27 @@ You will also need a Promise polyfill for [older browsers](http://caniuse.com/#f
 We recommend [taylorhakes/promise-polyfill](https://github.com/taylorhakes/promise-polyfill)
 for its small size and Promises/A+ compatibility.
 
-For use with webpack, add this package in the `entry` configuration option
+For use with webpack, either add this package in the `entry` configuration option
 before your application entry point:
 
 ```javascript
 entry: ['whatwg-fetch', ...]
 ```
 
-For Babel and ES2015+, make sure to import the file:
+... or require the file:
+
+```javascript
+require('whatwg-fetch')
+```
+
+For Babel and ES2015+, import the file:
 
 ```javascript
 import 'whatwg-fetch'
 ```
+
+In either case the polyfill sets up a global variable. The module does not export
+anything directly, so do not use the `import fetch from ...` form of the import statement.
 
 ## Usage
 
