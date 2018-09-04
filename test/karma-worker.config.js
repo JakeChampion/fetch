@@ -3,7 +3,7 @@ const parentConfig = require('./karma.config')
 module.exports = function(config) {
   parentConfig(config)
   config.set({
-    frameworks: ['mocha'],
+    frameworks: ['detectBrowsers', 'mocha'],
     files: [
       'test/worker-adapter.js',
       {

@@ -3,7 +3,18 @@ const serverEndpoints = require('./server')
 module.exports = function(config) {
   config.set({
     basePath: '..',
-    frameworks: ['mocha', 'chai'],
+    frameworks: ['detectBrowsers', 'mocha', 'chai'],
+    detectBrowsers: {
+      preferHeadless: true,
+      usePhantomJS: false,
+      postDetection: availableBrowsers =>
+        availableBrowsers
+          .filter(
+            browser =>
+              !process.env.CI || !browser.startsWith('Chromium') || !availableBrowsers.some(b => b.startsWith('Chrome'))
+          )
+          .map(browser => (browser.startsWith('Chrom') ? `${browser}NoSandbox` : browser))
+    },
     client: {
       mocha: {
         ui: 'tdd'
@@ -20,7 +31,6 @@ module.exports = function(config) {
     port: 9876,
     colors: true,
     logLevel: process.env.CI ? config.LOG_WARN : config.LOG_INFO,
-    browsers: ['ChromeHeadlessNoSandbox', 'FirefoxHeadless'],
     autoWatch: false,
     singleRun: true,
     concurrency: Infinity,
@@ -29,10 +39,9 @@ module.exports = function(config) {
         base: 'ChromeHeadless',
         flags: ['--no-sandbox']
       },
-      FirefoxHeadless: {
-        base: 'Firefox',
-        flags: ['-headless'],
-        displayName: 'HeadlessFirefox'
+      ChromiumHeadlessNoSandbox: {
+        base: 'ChromiumHeadless',
+        flags: ['--no-sandbox']
       }
     },
     beforeMiddleware: ['custom'],
