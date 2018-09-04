@@ -497,6 +497,29 @@ exercise.forEach(function(exerciseMode) {
         }
       )
 
+      test('construct with unsupported body type', function() {
+        var req = new Request('https://fetch.spec.whatwg.org/', {
+          method: 'post',
+          body: {}
+        })
+
+        assert.equal(req.headers.get('content-type'), 'text/plain;charset=UTF-8')
+        return req.text().then(function(bodyText) {
+          assert.equal(bodyText, '[object Object]')
+        })
+      })
+
+      test('construct with null body', function() {
+        var req = new Request('https://fetch.spec.whatwg.org/', {
+          method: 'post'
+        })
+
+        assert.isNull(req.headers.get('content-type'))
+        return req.text().then(function(bodyText) {
+          assert.equal(bodyText, '')
+        })
+      })
+
       test('clone GET request', function() {
         var req = new Request('https://fetch.spec.whatwg.org/', {
           headers: {'content-type': 'text/plain'}
@@ -646,6 +669,30 @@ exercise.forEach(function(exerciseMode) {
         })
 
         assert.equal(r.headers.get('content-type'), 'text/plain')
+      })
+
+      test('init object as first argument', function() {
+        var r = new Response({
+          status: 201,
+          headers: {
+            'Content-Type': 'text/html'
+          }
+        })
+
+        assert.equal(r.status, 200)
+        assert.equal(r.headers.get('content-type'), 'text/plain;charset=UTF-8')
+        return r.text().then(function(bodyText) {
+          assert.equal(bodyText, '[object Object]')
+        })
+      })
+
+      test('null as first argument', function() {
+        var r = new Response(null)
+
+        assert.isNull(r.headers.get('content-type'))
+        return r.text().then(function(bodyText) {
+          assert.equal(bodyText, '')
+        })
       })
     })
 
