@@ -10,6 +10,7 @@ replacement for most uses of XMLHttpRequest in traditional web applications.
 * [Read this first](#read-this-first)
 * [Installation](#installation)
 * [Usage](#usage)
+  * [Importing](#importing)
   * [HTML](#html)
   * [JSON](#json)
   * [Response metadata](#response-metadata)
@@ -52,15 +53,42 @@ replacement for most uses of XMLHttpRequest in traditional web applications.
 
 ## Installation
 
-* `npm install whatwg-fetch --save`; or
-
-* `bower install fetch`; or
-
-* `yarn add whatwg-fetch`.
+```
+npm install whatwg-fetch --save
+```
 
 You will also need a Promise polyfill for [older browsers](http://caniuse.com/#feat=promises).
 We recommend [taylorhakes/promise-polyfill](https://github.com/taylorhakes/promise-polyfill)
 for its small size and Promises/A+ compatibility.
+
+## Usage
+
+For a more comprehensive API reference that this polyfill supports, refer to
+https://github.github.io/fetch/.
+
+### Importing
+
+Importing will automatically polyfill `window.fetch` and related APIs:
+
+```javascript
+import 'whatwg-fetch'
+
+window.fetch(...)
+```
+
+If for some reason you need to access the polyfill implementation, it is
+available via exports:
+
+```javascript
+import {fetch as fetchPolyfill} from 'whatwg-fetch'
+
+window.fetch(...)   // use native browser version
+fetchPolyfill(...)  // use polyfill implementation
+```
+
+This approach can be used to, for example, use [abort
+functionality](#aborting-requests) in browsers that implement a native but
+outdated version of fetch that doesn't support aborting.
 
 For use with webpack, add this package in the `entry` configuration option
 before your application entry point:
@@ -68,17 +96,6 @@ before your application entry point:
 ```javascript
 entry: ['whatwg-fetch', ...]
 ```
-
-For Babel and ES2015+, make sure to import the file:
-
-```javascript
-import 'whatwg-fetch'
-```
-
-## Usage
-
-For a more comprehensive API reference that this polyfill supports, refer to
-https://github.github.io/fetch/.
 
 ### HTML
 
@@ -278,9 +295,12 @@ for these APIs to abort fetches:
 import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only'
 import {fetch} from 'whatwg-fetch'
 
+// use native browser implementation if it supports aborting
+const abortableFetch = ('signal' in new Request('')) ? window.fetch : fetch
+
 const controller = new AbortController()
 
-fetch('/avatars', {
+abortableFetch('/avatars', {
   signal: controller.signal
 }).catch(function(ex) {
   if (ex.name === 'AbortError') {
