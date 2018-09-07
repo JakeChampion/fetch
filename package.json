@@ -27,7 +27,9 @@
   "files": [
     "LICENSE",
     "dist/fetch.umd.js",
-    "fetch.js"
+    "dist/fetch.umd.js.flow",
+    "fetch.js",
+    "fetch.js.flow"
   ],
   "scripts": {
     "karma": "karma start ./test/karma.config.js --no-single-run --auto-watch",
