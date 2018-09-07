@@ -6,6 +6,9 @@ lint: node_modules/
 dist/fetch.umd.js: fetch.js rollup.config.js node_modules/
 	./node_modules/.bin/rollup -c
 
+dist/fetch.umd.js.flow: fetch.js.flow
+	cp $< $@
+
 node_modules/:
 	npm install
 
