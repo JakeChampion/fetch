@@ -106,9 +106,14 @@ declare class Response {
   text(): Promise<string>;
 }
 
+declare class DOMException extends Error {
+  constructor(message?: string, name?: string): void;
+}
+
 declare module.exports: {
   fetch(input: RequestInfo, init?: RequestOptions): Promise<Response>;
   Headers: typeof Headers;
   Request: typeof Request;
   Response: typeof Response;
+  DOMException: typeof DOMException;
 }
