@@ -410,6 +410,11 @@ exercise.forEach(function(exerciseMode) {
         })
       })
 
+      test('construct with Cloudflare Request Attribute', function() {
+        var request = new Request('https://fetch.spec.whatwg.org/', {cf: {country: 'AUS'}})
+        assert.equal(request.cf, {country: 'AUS'})
+      })
+
       featureDependent(test, !nativeChrome, 'construct with used Request body', function() {
         var request1 = new Request('https://fetch.spec.whatwg.org/', {
           method: 'post',
