@@ -338,6 +338,7 @@ export function Request(input, options) {
   this.mode = options.mode || this.mode || null
   this.signal = options.signal || this.signal
   this.referrer = null
+  this.cf = options.cf || {}
 
   if ((this.method === 'GET' || this.method === 'HEAD') && body) {
     throw new TypeError('Body not allowed for GET or HEAD requests')
