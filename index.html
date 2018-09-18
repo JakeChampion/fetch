@@ -63,7 +63,8 @@
 
 <p>
 This documents the polyfillable parts of the
-<a href="https://fetch.spec.whatwg.org/">WHATWG fetch spec</a>.
+<a href="https://fetch.spec.whatwg.org/">WHATWG Fetch standard</a>.
+See <a href="#caveats">Caveats</a> for notable exceptions.
 </p>
 
 <p>
@@ -138,7 +139,7 @@ More comprehensive usage example:
     <li><code>method</code> (String) - HTTP request method. Default: <code>"GET"</code></li>
     <li><code>body</code> (String, <a href="#request-body">body types</a>) - HTTP request body</li>
     <li><code>headers</code> (Object, <a href="#Headers">Headers</a>) - Default: <code>{}</code></li>
-    <li id="credentials"><code>credentials</code> (String) - Authentication credentials mode. Default: <code>"same-origin"</code>
+    <li id="credentials"><code>credentials</code> (String) - Authentication credentials mode. Default: <code>"omit"</code>
       <ul>
         <li><code>"omit"</code> - don't include authentication credentials (e.g. cookies) in the request</li>
         <li><code>"same-origin"</code> - include credentials in requests to the same site</li>
@@ -299,8 +300,10 @@ More comprehensive usage example:
   <h2 id="caveats">Caveats</h2>
 
   <p>
-  <span class="name">fetch</span> isn't able to polyfill the entire standard.
-  Some notable differences include:
+  The <a href="https://github.com/github/fetch">whatwg-fetch polyfill</a> isn't
+  able nor does it aim to implement the entire WHATWG Fetch standard, since some
+  of the standard features would be non-trivial or otherwise unfeasible to
+  implement. Notable examples include:
   </p>
   <ul>
     <li>Inability to <a href="https://github.com/github/fetch/issues/137">set the redirect mode</a></li>
