@@ -4,8 +4,9 @@ Thank you for your interest in contributing to our `fetch` polyfill!
 
 Note that we only accept features that are also described in the official [fetch
 specification][]. However, the aim of this project is not to implement the
-complete specification; just the parts that are possible to emulate using
-XMLHttpRequest.
+complete specification; just the parts that are feasible to emulate using
+XMLHttpRequest. See [Caveats][] for some examples of features that we are
+unlikely to implement.
 
 Contributions to this project are [released][tos] to the public under the
 [project's open source license](LICENSE).
@@ -53,3 +54,4 @@ request being accepted:
   [fork]: https://github.com/github/fetch/fork
   [pr]: https://github.com/github/fetch/compare
   [good commit message]: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
+  [caveats]: https://github.github.io/fetch/#caveats
