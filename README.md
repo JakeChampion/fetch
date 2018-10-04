@@ -57,6 +57,10 @@ replacement for most uses of XMLHttpRequest in traditional web applications.
 npm install whatwg-fetch --save
 ```
 
+As an alternative to using npm, you can obtain `fetch.umd.js` from the
+[Releases][] section. The UMD distribution is compatible with AMD and CommonJS
+module loaders, as well as loading directly into a page via `<script>` tag.
+
 You will also need a Promise polyfill for [older browsers](http://caniuse.com/#feat=promises).
 We recommend [taylorhakes/promise-polyfill](https://github.com/taylorhakes/promise-polyfill)
 for its small size and Promises/A+ compatibility.
@@ -332,3 +336,4 @@ an issue with that browser vendor instead of this project.
   [csrf]: https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet
     "Cross-site request forgery"
   [forbidden header name]: https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name
+  [releases]: https://github.com/github/fetch/releases
