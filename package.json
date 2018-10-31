@@ -31,6 +31,7 @@
     "fetch.js",
     "fetch.js.flow"
   ],
+  
   "scripts": {
     "karma": "karma start ./test/karma.config.js --no-single-run --auto-watch",
     "prepare": "make dist/fetch.umd.js dist/fetch.umd.js.flow",
