@@ -26,7 +26,8 @@
       "globals": {
         "assert": true,
         "chai": true,
-        "FileReaderSync": true
+        "FileReaderSync": true,
+        "Mocha": true
       }
     },
     {

@@ -10,7 +10,7 @@
     "abortcontroller-polyfill": "^1.1.9",
     "chai": "^4.1.2",
     "eslint": "^4.19.1",
-    "eslint-plugin-github": "^1.0.0",
+    "eslint-plugin-github": "^1.6.0",
     "karma": "^3.0.0",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^2.2.0",

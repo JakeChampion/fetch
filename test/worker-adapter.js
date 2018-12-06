@@ -1,5 +1,3 @@
-/* global Mocha */
-
 var mochaRun = mocha.run
 mocha.run = function() {}
 

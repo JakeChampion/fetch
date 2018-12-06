@@ -253,7 +253,7 @@ exercise.forEach(function(exerciseMode) {
       })
       test('throws TypeError on invalid character in field name', function() {
         assert.throws(function() {
-          new Headers({'<Accept>': 'application/json'})
+          new Headers({'[Accept]': 'application/json'})
         }, TypeError)
         assert.throws(function() {
           new Headers({'Accept:': 'application/json'})
