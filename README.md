@@ -39,7 +39,7 @@ replacement for most uses of XMLHttpRequest in traditional web applications.
   subdomain or port number also constitutes another domain), please familiarize
   yourself with all the intricacies and limitations of [CORS][] requests.
   Because CORS requires participation of the server by implementing specific
-  HTTP response headers, it is often nontrivial to set up or debug. CORS is
+  HTTP response headers, it is often non-trivial to set up or debug. CORS is
   exclusively handled by the browser's internal mechanisms which this polyfill
   cannot influence.
 
