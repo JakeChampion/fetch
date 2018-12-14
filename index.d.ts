@@ -1,6 +1,1 @@
-// Type definitions for fetch 0.0
-// TypeScript Version: 3.2.2
-
-declare namespace _fetch { }
-declare const _fetch: typeof fetch;
-export default _fetch;
+export declare const fetch: (input: RequestInfo, init?: RequestInit | undefined) => Promise<Response>;
