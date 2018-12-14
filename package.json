@@ -1,11 +1,9 @@
 {
-  "name": "whatwg-fetch",
-  "description": "A window.fetch polyfill.",
-  "version": "3.0.0",
+  "name": "@ksyos/fetch",
+  "version": "1.0.0",
+  "description": "A fetch polyfill fork",
   "main": "./dist/fetch.umd.js",
   "module": "./fetch.js",
-  "repository": "github/fetch",
-  "license": "MIT",
   "devDependencies": {
     "abortcontroller-polyfill": "^1.1.9",
     "chai": "^4.1.2",
@@ -36,5 +34,19 @@
     "prepare": "make dist/fetch.umd.js dist/fetch.umd.js.flow",
     "pretest": "make",
     "test": "karma start ./test/karma.config.js && karma start ./test/karma-worker.config.js"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KsyosTech/fetch.git"
+  },
+  "keywords": [
+    "Fetch",
+    "polyfill"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KsyosTech/fetch/issues"
+  },
+  "homepage": "https://github.com/KsyosTech/fetch#readme"
 }
