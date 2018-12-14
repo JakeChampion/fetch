@@ -1,6 +1,6 @@
 {
   "name": "@ksyos/fetch",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A fetch polyfill fork",
   "main": "./dist/fetch.umd.js",
   "module": "./fetch.js",
@@ -26,6 +26,7 @@
     "LICENSE",
     "dist/fetch.umd.js",
     "dist/fetch.umd.js.flow",
+    "index.d.ts",
     "fetch.js",
     "fetch.js.flow"
   ],
