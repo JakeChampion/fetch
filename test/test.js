@@ -262,6 +262,9 @@ exercise.forEach(function(exerciseMode) {
           var headers = new Headers()
           headers.set({field: 'value'}, 'application/json')
         }, TypeError)
+        assert.throws(function() {
+          new Headers({'': 'application/json'})
+        }, TypeError)
       })
       featureDependent(test, !brokenFF, 'is iterable with forEach', function() {
         var headers = new Headers()
