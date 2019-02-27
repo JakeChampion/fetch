@@ -1,5 +1,5 @@
 {
-  "parserOptions": {
+  "parserOptions": {{
     "sourceType": "module"
   },
   "globals": {
