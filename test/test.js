@@ -586,7 +586,7 @@ exercise.forEach(function(exerciseMode) {
 
     // https://fetch.spec.whatwg.org/#response-class
     suite('Response', function() {
-      featureDependent(test, emptyDefaultStatusText, "default status is 200 ''", function() {
+      featureDependent(test, emptyDefaultStatusText, 'default status is 200', function() {
         var res = new Response()
         assert.equal(res.status, 200)
         assert.equal(res.statusText, '')
@@ -596,7 +596,7 @@ exercise.forEach(function(exerciseMode) {
       featureDependent(
         test,
         emptyDefaultStatusText,
-        "default status is 200 '' when an explicit undefined status code is passed",
+        'default status is 200 when an explicit undefined status code is passed',
         function() {
           var res = new Response('', {status: undefined})
           assert.equal(res.status, 200)
@@ -619,24 +619,6 @@ exercise.forEach(function(exerciseMode) {
           var res = new Response('', {status: undefined})
           assert.equal(res.status, 200)
           assert.equal(res.statusText, 'OK')
-          assert.isTrue(res.ok)
-        }
-      )
-      featureDependent(test, exerciseMode !== 'native', "default status is 200 ''", function() {
-        var res = new Response()
-        assert.equal(res.status, 200)
-        assert.equal(res.statusText, '')
-        assert.isTrue(res.ok)
-      })
-
-      featureDependent(
-        test,
-        exerciseMode !== 'native',
-        "default status is 200 '' when an explicit undefined status code is passed",
-        function() {
-          var res = new Response('', {status: undefined})
-          assert.equal(res.status, 200)
-          assert.equal(res.statusText, '')
           assert.isTrue(res.ok)
         }
       )
