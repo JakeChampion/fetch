@@ -604,24 +604,6 @@ exercise.forEach(function(exerciseMode) {
           assert.isTrue(res.ok)
         }
       )
-      featureDependent(test, !emptyDefaultStatusText, 'default status is 200 OK', function() {
-        var res = new Response()
-        assert.equal(res.status, 200)
-        assert.equal(res.statusText, 'OK')
-        assert.isTrue(res.ok)
-      })
-
-      featureDependent(
-        test,
-        !emptyDefaultStatusText,
-        'default status is 200 OK when an explicit undefined status code is passed',
-        function() {
-          var res = new Response('', {status: undefined})
-          assert.equal(res.status, 200)
-          assert.equal(res.statusText, 'OK')
-          assert.isTrue(res.ok)
-        }
-      )
 
       testBodyExtract(function(body) {
         return new Response(body)
