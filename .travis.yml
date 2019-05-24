@@ -9,11 +9,3 @@ addons:
 cache:
   directories:
   - node_modules
-deploy:
-  provider: npm
-  email: mislav.marohnic@gmail.com
-  api_key:
-    secure: ZEyP/T3jWwvrMp/rdZoMkyc3T7SoFJpGFFCjd7rOG76k/DTRxcYVTAPES8mEq/Xk0fF8qM4ZY//izuxEtFEuJmdRFuvJcIptVrAlbEiqlyNiN1EkwRPayd3qte/UYLvD9bGrfKRVrXeohW0GGDZH48CsHVo3yNrX6NWS7Nxxze4=
-  on:
-    tags: true
-    repo: github/fetch
