@@ -515,4 +515,4 @@ if (!self.fetch) {
   self.Response = Response
 }
 
-self.WHATWGFetch = true
+// self.WHATWGFetch = true
