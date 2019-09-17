@@ -514,3 +514,5 @@ if (!self.fetch) {
   self.Request = Request
   self.Response = Response
 }
+
+self.WHATWGFetch = true
