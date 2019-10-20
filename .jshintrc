@@ -17,8 +17,5 @@
   "esnext": true,
   "eqnull": true,
   "browser": true,
-  "worker": true,
-  "globals": {
-    "JSON": false
-  }
+  "worker": true
 }

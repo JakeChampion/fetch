@@ -8,15 +8,18 @@ env:
     - SAUCE_ACCESS_KEY=c3d37f93-0c2e-4834-9da5-eddc0d8c6299
   matrix:
     - PHANTOMJS=1
-    - SAUCE_PLATFORM="Windows 7" SAUCE_BROWSER="firefox" SAUCE_VERSION=""
     - SAUCE_PLATFORM="Windows 7" SAUCE_BROWSER="googlechrome" SAUCE_VERSION=""
     - SAUCE_PLATFORM="Windows 7" SAUCE_BROWSER="internet explorer" SAUCE_VERSION="11"
     - SAUCE_PLATFORM="Windows 7" SAUCE_BROWSER="internet explorer" SAUCE_VERSION="10"
+    - SAUCE_PLATFORM="Windows 7" SAUCE_BROWSER="internet explorer" SAUCE_VERSION="9"
+addons:
+  sauce_connect: true
 deploy:
   provider: npm
-  email: mislav.marohnic@gmail.com
+  email: matt@mattandre.ws
   api_key:
-    secure: gt9g5/bXhxSKjxfFSPCdpWGJKBrSG8zdGRYgPouUgRqNeD2Ff4Nc8HGQTxp0OLKnP/jJ5FIru5jUur6LWzJCyEd+aNUEvFf5J078m3pzHN9AP2fiWUkKXcc5lKV0PQnI+JDRxJwd/PggtjubrneGfCzyFoys9apRrd/TzTGEtGw=
+    secure: FcQZz0HCJhrz8FZyyfkuXj4cwoBP+PeQ7LzOVU1bG7v3kX7Z33n8glD+32QScT2Uu369exdjkk3mzCaCMsfZTTvRm9STnuJIrPtdB2/FwfaWiyJiB1oZ2UCd5UQM0zMiQrtg+gR8FUBBgi3GICOkzAqTbso+C7P2IJtvpP9RTTI=
   on:
+    all_branches: true
     tags: true
     repo: github/fetch

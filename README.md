@@ -15,7 +15,7 @@ Available on [Bower](http://bower.io) as **fetch**.
 $ bower install fetch
 ```
 
-You'll also need a Promise polyfill for [older browsers](http://caniuse.com/#feat=promises).
+You'll also need a Promise polyfill for older browsers.
 
 ```sh
 $ bower install es6-promise
@@ -27,9 +27,7 @@ This can also be installed with `npm`.
 $ npm install whatwg-fetch --save
 ```
 
-For a node.js implementation, try [node-fetch](https://github.com/bitinn/node-fetch).
-
-For use with webpack, refer to [Using WebPack with shims and polyfills](http://mts.io/2015/04/08/webpack-shims-polyfills/).
+(For a node.js implementation, try [node-fetch](https://github.com/bitinn/node-fetch))
 
 ## Usage
 
@@ -171,15 +169,6 @@ This option makes `fetch` behave similar to XMLHttpRequest with regards to
 cookies. Otherwise, cookies won't get sent, resulting in these requests not
 preserving the authentication session.
 
-Use the `include` value to send cookies in a [cross-origin resource sharing](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) (CORS) request.
-
-```javascript
-fetch('https://example.com:1234/users', {
-  credentials: 'include'
-})
-```
-
-
 #### Receiving cookies
 
 Like with XMLHttpRequest, the `Set-Cookie` response header returned from the
@@ -211,4 +200,4 @@ Firefox < 32, Chrome < 37, Safari, or IE.
 
 ![Chrome](https://raw.github.com/alrra/browser-logos/master/chrome/chrome_48x48.png) | ![Firefox](https://raw.github.com/alrra/browser-logos/master/firefox/firefox_48x48.png) | ![IE](https://raw.github.com/alrra/browser-logos/master/internet-explorer/internet-explorer_48x48.png) | ![Opera](https://raw.github.com/alrra/browser-logos/master/opera/opera_48x48.png) | ![Safari](https://raw.github.com/alrra/browser-logos/master/safari/safari_48x48.png)
 --- | --- | --- | --- | --- |
-Latest ✔ | Latest ✔ | 10+ ✔ | Latest ✔ | 6.1+ ✔ |
+Latest ✔ | Latest ✔ | 9+ ✔ | Latest ✔ | 6.1+ ✔ |

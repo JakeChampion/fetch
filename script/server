@@ -123,13 +123,12 @@ var types = {
   txt: 'text/plain'
 };
 
-server = http.createServer(function(req, res) {
+http.createServer(function(req, res) {
   var pathname = url.parse(req.url).pathname;
   var route = routes[pathname];
   if (route) {
     route(res, req);
   } else {
-    if (pathname == '/') pathname = '/test/test.html'
     fs.readFile(__dirname + '/..' + pathname, function(err, data) {
       if (err) {
         res.writeHead(404, {'Content-Type': types.txt});
@@ -141,8 +140,4 @@ server = http.createServer(function(req, res) {
       }
     });
   }
-});
-
-console.warn("Started test server on localhost:" + port);
-server.listen(port);
-
+}).listen(port);
