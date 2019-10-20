@@ -13,7 +13,7 @@ module.exports = function(config) {
       {
         pattern: 'node_modules/{mocha,chai,abortcontroller-polyfill/dist}/*.js',
         included: false,
-        watched: false
+        watched: true
       }
     ]
   })
