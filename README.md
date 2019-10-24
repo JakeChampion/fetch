@@ -13,6 +13,7 @@ replacement for most uses of XMLHttpRequest in traditional web applications.
   * [Importing](#importing)
   * [HTML](#html)
   * [JSON](#json)
+
   * [Response metadata](#response-metadata)
   * [Post form](#post-form)
   * [Post JSON](#post-json)
@@ -337,3 +338,4 @@ an issue with that browser vendor instead of this project.
     "Cross-site request forgery"
   [forbidden header name]: https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name
   [releases]: https://github.com/github/fetch/releases
+nice one
