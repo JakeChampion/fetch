@@ -1,7 +1,4 @@
 declare module 'whatwg-fetch' {
-  import {Agent} from 'http'
-  import {URLSearchParams, URL} from 'url'
-
   export interface AbortSignal {
     aborted: boolean
 
@@ -41,9 +38,6 @@ declare module 'whatwg-fetch' {
     redirect: RequestRedirect
     referrer: string
     url: string
-
-    // node-fetch extensions to the whatwg/fetch spec
-    agent?: Agent | ((parsedUrl: URL) => Agent)
     compress: boolean
     counter: number
     follow: number
@@ -121,7 +115,7 @@ declare module 'whatwg-fetch' {
     values(): Iterator<[string]>
     [Symbol.iterator](): Iterator<[string, string]>
   }
-
+  
   type BlobPart = ArrayBuffer | ArrayBufferView | Blob | string
 
   interface BlobOptions {
