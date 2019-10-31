@@ -21,6 +21,7 @@ replacement for most uses of XMLHttpRequest in traditional web applications.
     * [Handling HTTP error statuses](#handling-http-error-statuses)
     * [Sending cookies](#sending-cookies)
     * [Receiving cookies](#receiving-cookies)
+    * [Redirect modes](#redirect-modes)
     * [Obtaining the Response URL](#obtaining-the-response-url)
     * [Aborting requests](#aborting-requests)
 * [Browser Support](#browser-support)
@@ -292,8 +293,6 @@ response.headers['X-Request-URL'] = request.url
 
 This server workaround is necessary if you need reliable `response.url` in
 Firefox < 32, Chrome < 37, Safari, or IE.
-
-#### Controlling redirects
 
 #### Aborting requests
 
