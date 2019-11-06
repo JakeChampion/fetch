@@ -209,6 +209,7 @@ function Body() {
   this.bodyUsed = false
 
   this._initBody = function(body) {
+    this.bodyUsed = this.bodyUsed // copy prototype to instance for proxy-pollyfill
     this._bodyInit = body
     if (!body) {
       this._bodyText = ''
