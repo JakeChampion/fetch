@@ -21,6 +21,7 @@ replacement for most uses of XMLHttpRequest in traditional web applications.
     * [Handling HTTP error statuses](#handling-http-error-statuses)
     * [Sending cookies](#sending-cookies)
     * [Receiving cookies](#receiving-cookies)
+    * [Redirect modes](#redirect-modes)
     * [Obtaining the Response URL](#obtaining-the-response-url)
     * [Aborting requests](#aborting-requests)
 * [Browser Support](#browser-support)
@@ -188,6 +189,10 @@ fetch('/avatars', {
   cookies, always supply the `credentials: 'same-origin'` option instead of
   relying on the default. See [Sending cookies](#sending-cookies).
 
+* Not all Fetch standard options are supported in this polyfill. For instance,
+  [`redirect`](#redirect-modes) and
+  [`cache`](https://github.github.io/fetch/#caveats) directives are ignored.
+
 #### Handling HTTP error statuses
 
 To have `fetch` Promise reject on HTTP error statuses, i.e. on any non-2xx
@@ -229,15 +234,6 @@ fetch('https://example.com:1234/users', {
 })
 ```
 
-To disable sending or receiving cookies for requests to any domain, including
-the current one, use the "omit" value:
-
-```javascript
-fetch('/users', {
-  credentials: 'omit'
-})
-```
-
 The default value for `credentials` is "same-origin".
 
 The default for `credentials` wasn't always the same, though. The following
@@ -258,6 +254,12 @@ fetch('/users', {
 })
 ```
 
+Note: due to [limitations of
+XMLHttpRequest](https://github.com/github/fetch/pull/56#issuecomment-68835992),
+using `credentials: 'omit'` is not respected for same domains in browsers where
+this polyfill is active. Cookies will always be sent to same domains in older
+browsers.
+
 #### Receiving cookies
 
 As with XMLHttpRequest, the `Set-Cookie` response header returned from the
@@ -265,6 +267,15 @@ server is a [forbidden header name][] and therefore can't be programmatically
 read with `response.headers.get()`. Instead, it's the browser's responsibility
 to handle new cookies being set (if applicable to the current URL). Unless they
 are HTTP-only, new cookies will be available through `document.cookie`.
+
+#### Redirect modes
+
+The Fetch specification defines these values for [the `redirect`
+option](https://fetch.spec.whatwg.org/#concept-request-redirect-mode): "follow"
+(the default), "error", and "manual".
+
+Due to limitations of XMLHttpRequest, only the "follow" mode is available in
+browsers where this polyfill is active.
 
 #### Obtaining the Response URL
 
