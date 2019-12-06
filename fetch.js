@@ -287,6 +287,14 @@ function Body() {
 
   if (support.formData) {
     this.formData = function() {
+      if (this._bodyFormData) {
+        var rejected = consumed(this)
+        if (rejected) {
+          return rejected
+        }
+        return Promise.resolve(cloneFormData(this._bodyFormData))
+      }
+
       return this.text().then(decode)
     }
   }
@@ -363,6 +371,16 @@ function decode(body) {
       }
     })
   return form
+}
+
+function cloneFormData(formData) {
+  const cloned = new FormData()
+
+  formData.forEach(function(value, key) {
+    cloned.append(key, value)
+  })
+
+  return cloned
 }
 
 function parseHeaders(rawHeaders) {

@@ -86,6 +86,16 @@ function readArrayBufferAsText(buf) {
   return chars.join('')
 }
 
+function encodeFormData(formData) {
+  var encoded = ''
+
+  formData.forEach(function(value, key) {
+    encoded += encodeURIComponent(key) + '=' + encodeURIComponent(value) + '&'
+  })
+
+  return encoded.substring(0, encoded.length - 1)
+}
+
 var preservedGlobals = {}
 var keepGlobals = ['fetch', 'Headers', 'Request', 'Response']
 var exercise = ['polyfill']
@@ -192,7 +202,10 @@ exercise.forEach(function(exerciseMode) {
         assert.equal(headers.get('Content-type'), 'text/html')
       })
       test('constructor works with arrays', function() {
-        var array = [['Content-Type', 'text/xml'], ['Breaking-Bad', '<3']]
+        var array = [
+          ['Content-Type', 'text/xml'],
+          ['Breaking-Bad', '<3']
+        ]
         var headers = new Headers(array)
 
         assert.equal(headers.get('Content-Type'), 'text/xml')
@@ -843,6 +856,47 @@ exercise.forEach(function(exerciseMode) {
               assert.equal(json.method, 'POST')
               assert(/^multipart\/form-data;/.test(json.headers['content-type']))
             })
+        })
+
+        test('formData returns cloned FormData body from request', function() {
+          var body = new FormData()
+          body.append('key1', 'value1')
+          body.append('key2', 'value2')
+
+          var request = new Request('/request', {
+            method: 'post',
+            body: body
+          })
+
+          return request.formData().then(function(formData) {
+            assert.notEqual(formData, body)
+            assert.equal(encodeFormData(formData), encodeFormData(body))
+          })
+        })
+
+        test('formData rejects after a FormData body was consumed', function() {
+          var body = new FormData()
+          body.append('key1', 'value1')
+          body.append('key2', 'value2')
+
+          var request = new Request('/request', {
+            method: 'post',
+            body: body
+          })
+
+          return request
+            .formData()
+            .then(function() {
+              return request.formData()
+            })
+            .then(
+              function() {
+                assert(false, 'original request body should have been consumed')
+              },
+              function(error) {
+                assert(error instanceof TypeError, 'expected TypeError for already read body')
+              }
+            )
         })
 
         featureDependent(test, !nativeChrome && !nativeEdge, 'formData rejects after body was consumed', function() {
