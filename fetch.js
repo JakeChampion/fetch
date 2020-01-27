@@ -1,6 +1,6 @@
-import {fetch, Headers, Request, Response} from './polyfill'
+import {fetch, Headers, Request, Response, DOMException} from './polyfill'
 
-export {fetch, Headers, Request, Response}
+export {fetch, Headers, Request, Response, DOMException}
 
 if (!self.fetch) {
   self.fetch = fetch
