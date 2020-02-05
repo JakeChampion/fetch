@@ -483,8 +483,12 @@ export function fetch(input, init) {
       xhr.withCredentials = false
     }
 
-    if ('responseType' in xhr && support.blob) {
-      xhr.responseType = 'blob'
+    if ('responseType' in xhr) {
+      if (support.arrayBuffer && request.headers.get('Content-Type').indexOf('application/octet-stream') !== -1) {
+        xhr.responseType = 'arraybuffer'
+      } else if (support.blob) {
+        xhr.responseType = 'blob'
+      }
     }
 
     request.headers.forEach(function(value, name) {
