@@ -38,7 +38,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/KsyosTech/fetch.git"
+    "url": "git@github.com:ksyos/fetch"
   },
   "keywords": [
     "Fetch",
@@ -47,7 +47,7 @@
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/KsyosTech/fetch/issues"
+    "url": "https://github.com/Ksyos/fetch/issues"
   },
-  "homepage": "https://github.com/KsyosTech/fetch#readme"
+  "homepage": "https://github.com/Ksyos/fetch#readme"
 }
