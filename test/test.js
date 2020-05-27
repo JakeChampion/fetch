@@ -194,7 +194,10 @@ exercise.forEach(function(exerciseMode) {
         assert.equal(headers.get('Content-type'), 'text/html')
       })
       test('constructor works with arrays', function() {
-        var array = [['Content-Type', 'text/xml'], ['Breaking-Bad', '<3']]
+        var array = [
+          ['Content-Type', 'text/xml'],
+          ['Breaking-Bad', '<3']
+        ]
         var headers = new Headers(array)
 
         assert.equal(headers.get('Content-Type'), 'text/xml')
