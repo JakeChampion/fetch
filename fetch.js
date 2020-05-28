@@ -485,12 +485,12 @@ export function fetch(input, init) {
     xhr.onabort = function() {
       reject(new DOMException('Aborted', 'AbortError'))
     }
-    
+
     function fixUrl(url) {
       try {
         return url === '' && self.location.href ? self.location.href : url
       } catch(e) {
-        return url;
+        return url
       }
     }
 
