@@ -1,13 +1,11 @@
 sudo: false
 language: node_js
+node_js:
+  - "node"
+dist: trusty
+addons:
+  chrome: stable
+  firefox: latest
 cache:
   directories:
-  - phantomjs
-deploy:
-  provider: npm
-  email: mislav.marohnic@gmail.com
-  api_key:
-    secure: gt9g5/bXhxSKjxfFSPCdpWGJKBrSG8zdGRYgPouUgRqNeD2Ff4Nc8HGQTxp0OLKnP/jJ5FIru5jUur6LWzJCyEd+aNUEvFf5J078m3pzHN9AP2fiWUkKXcc5lKV0PQnI+JDRxJwd/PggtjubrneGfCzyFoys9apRrd/TzTGEtGw=
-  on:
-    tags: true
-    repo: github/fetch
+  - node_modules
