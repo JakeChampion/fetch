@@ -486,7 +486,10 @@ export function fetch(input, init) {
     if ('responseType' in xhr) {
       if (support.blob) {
         xhr.responseType = 'blob'
-      } else if (support.arrayBuffer && request.headers.get('Content-Type').indexOf('application/octet-stream') !== -1) {
+      } else if (
+        support.arrayBuffer &&
+        request.headers.get('Content-Type').indexOf('application/octet-stream') !== -1
+      ) {
         xhr.responseType = 'arraybuffer'
       }
     }
