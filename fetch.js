@@ -486,7 +486,15 @@ export function fetch(input, init) {
       reject(new DOMException('Aborted', 'AbortError'))
     }
 
-    xhr.open(request.method, request.url, true)
+    function fixUrl(url) {
+      try {
+        return url === '' && self.location.href ? self.location.href : url
+      } catch (e) {
+        return url
+      }
+    }
+
+    xhr.open(request.method, fixUrl(request.url), true)
 
     if (request.credentials === 'include') {
       xhr.withCredentials = true
