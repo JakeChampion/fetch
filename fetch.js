@@ -44,7 +44,7 @@ function normalizeName(name) {
   if (typeof name !== 'string') {
     name = String(name)
   }
-  if (/[^a-z0-9\-#$%&'*+.^_`|~]/i.test(name) || name === '') {
+  if (/[^a-z0-9\-#$%&'*+.^_`|~!]/i.test(name) || name === '') {
     throw new TypeError('Invalid character in header field name')
   }
   return name.toLowerCase()
@@ -209,6 +209,17 @@ function Body() {
   this.bodyUsed = false
 
   this._initBody = function(body) {
+    /*
+      fetch-mock wraps the Response object in an ES6 Proxy to
+      provide useful test harness features such as flush. However, on
+      ES5 browsers without fetch or Proxy support pollyfills must be used;
+      the proxy-pollyfill is unable to proxy an attribute unless it exists
+      on the object before the Proxy is created. This change ensures
+      Response.bodyUsed exists on the instance, while maintaining the
+      semantic of setting Request.bodyUsed in the constructor before
+      _initBody is called.
+    */
+    this.bodyUsed = this.bodyUsed
     this._bodyInit = body
     if (!body) {
       this._bodyText = ''
@@ -391,7 +402,7 @@ export function Response(bodyInit, options) {
   this.type = 'default'
   this.status = options.status === undefined ? 200 : options.status
   this.ok = this.status >= 200 && this.status < 300
-  this.statusText = 'statusText' in options ? options.statusText : 'OK'
+  this.statusText = 'statusText' in options ? options.statusText : ''
   this.headers = new Headers(options.headers)
   this.url = options.url || ''
   this._initBody(bodyInit)
@@ -483,7 +494,15 @@ export function fetch(input, init) {
       }, 0)
     }
 
-    xhr.open(request.method, request.url, true)
+    function fixUrl(url) {
+      try {
+        return url === '' && self.location.href ? self.location.href : url
+      } catch (e) {
+        return url
+      }
+    }
+
+    xhr.open(request.method, fixUrl(request.url), true)
 
     if (request.credentials === 'include') {
       xhr.withCredentials = true
@@ -491,8 +510,15 @@ export function fetch(input, init) {
       xhr.withCredentials = false
     }
 
-    if ('responseType' in xhr && support.blob) {
-      xhr.responseType = 'blob'
+    if ('responseType' in xhr) {
+      if (support.blob) {
+        xhr.responseType = 'blob'
+      } else if (
+        support.arrayBuffer &&
+        request.headers.get('Content-Type').indexOf('application/octet-stream') !== -1
+      ) {
+        xhr.responseType = 'arraybuffer'
+      }
     }
 
     request.headers.forEach(function(value, name) {
