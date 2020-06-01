@@ -491,7 +491,7 @@ export function fetch(input, init) {
     xhr.onabort = function() {
       setTimeout(function() {
         reject(new DOMException('Aborted', 'AbortError'))
-      })
+      }, 0)
     }
 
     function fixUrl(url) {
