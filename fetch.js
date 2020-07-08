@@ -515,6 +515,7 @@ export function fetch(input, init) {
         xhr.responseType = 'blob'
       } else if (
         support.arrayBuffer &&
+        request.headers.get('Content-Type') &&
         request.headers.get('Content-Type').indexOf('application/octet-stream') !== -1
       ) {
         xhr.responseType = 'arraybuffer'
