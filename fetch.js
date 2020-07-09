@@ -455,9 +455,8 @@ Response.redirect = function(url, status) {
 }
 
 export var DOMException = global.DOMException
-try {
-  new DOMException()
-} catch (err) {
+
+if (typeof DOMException !== 'function') {
   DOMException = function(message, name) {
     this.message = message
     this.name = name
