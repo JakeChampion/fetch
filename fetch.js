@@ -547,9 +547,15 @@ export function fetch(input, init) {
       }
     }
 
-    request.headers.forEach(function(value, name) {
-      xhr.setRequestHeader(name, value)
-    })
+    if (init && typeof init.headers === 'object' && !(init.headers instanceof Headers)) {
+      Object.getOwnPropertyNames(init.headers).forEach(function(name) {
+        xhr.setRequestHeader(name, normalizeValue(init.headers[name]))
+      })
+    } else {
+      request.headers.forEach(function(value, name) {
+        xhr.setRequestHeader(name, value)
+      })
+    }
 
     if (request.signal) {
       request.signal.addEventListener('abort', abortXhr)
