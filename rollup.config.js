@@ -5,5 +5,6 @@ export default {
     format: 'umd',
     name: 'WHATWGFetch',
     strict: false
-  }
+  },
+  context: 'this'
 }
