@@ -322,6 +322,10 @@ function normalizeMethod(method) {
 }
 
 export function Request(input, options) {
+  if (!(this instanceof Request)) {
+    throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.')
+  }
+
   options = options || {}
   var body = options.body
 
@@ -414,6 +418,9 @@ function parseHeaders(rawHeaders) {
 Body.call(Request.prototype)
 
 export function Response(bodyInit, options) {
+  if (!(this instanceof Response)) {
+    throw new TypeError('Please use the "new" operator, this DOM object constructor cannot be called as a function.')
+  }
   if (!options) {
     options = {}
   }

@@ -330,6 +330,11 @@ exercise.forEach(function(exerciseMode) {
 
     // https://fetch.spec.whatwg.org/#request-class
     suite('Request', function() {
+      test('called as normal function', function() {
+        assert.throws(function() {
+          Request('https://fetch.spec.whatwg.org/')
+        })
+      })
       test('construct with string url', function() {
         var request = new Request('https://fetch.spec.whatwg.org/')
         assert.equal(request.url, 'https://fetch.spec.whatwg.org/')
@@ -612,6 +617,11 @@ exercise.forEach(function(exerciseMode) {
         return new Response(body)
       })
 
+      test('called as normal function', function() {
+        assert.throws(function() {
+          Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}})
+        })
+      })
       test('creates Headers object from raw headers', function() {
         var r = new Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}})
         assert.equal(r.headers instanceof Headers, true)
