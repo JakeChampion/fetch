@@ -192,6 +192,8 @@ fetch('/avatars', {
 * Not all Fetch standard options are supported in this polyfill. For instance,
   [`redirect`](#redirect-modes) and
   [`cache`](https://github.github.io/fetch/#caveats) directives are ignored.
+  
+* `keepalive` is not supported because it would involve making a synchronous XHR, which is something this project is not willing to do. See [issue #700](https://github.com/github/fetch/issues/700#issuecomment-484188326) for more information.
 
 #### Handling HTTP error statuses
 
