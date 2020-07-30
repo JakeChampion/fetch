@@ -1,7 +1,8 @@
-var global = (function(self) {
-  return self
-  // eslint-disable-next-line no-invalid-this
-})(typeof self !== 'undefined' ? self : this)
+var global =
+  (typeof globalThis !== "undefined" && globalThis) ||
+  (typeof self !== "undefined" && self) ||
+  (typeof global !== "undefined" && global);
+
 var support = {
   searchParams: 'URLSearchParams' in global,
   iterable: 'Symbol' in global && 'iterator' in Symbol,
