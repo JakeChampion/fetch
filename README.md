@@ -307,11 +307,11 @@ However, aborting a fetch requires use of two additional DOM APIs:
 [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal).
 Typically, browsers that do not support fetch will also not support
 AbortController or AbortSignal. Consequently, you will need to include
-[an additional polyfill](https://github.com/mo/abortcontroller-polyfill#readme)
+[an additional polyfill](https://www.npmjs.com/package/yet-another-abortcontroller-polyfill)
 for these APIs to abort fetches:
 
 ```js
-import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only'
+import 'yet-another-abortcontroller-polyfill'
 import {fetch} from 'whatwg-fetch'
 
 // use native browser implementation if it supports aborting
