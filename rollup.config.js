@@ -3,7 +3,6 @@ export default {
   output: {
     file: 'dist/fetch.umd.js',
     format: 'umd',
-    name: 'WHATWGFetch',
-    strict: false
+    name: 'WHATWGFetch'
   }
 }
