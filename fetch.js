@@ -274,7 +274,10 @@ function Body() {
 
     this.arrayBuffer = function() {
       if (this._bodyArrayBuffer) {
-        consumed(this)
+        var consumed = consumed(this);
+        if (consumed) {
+          return consumed;
+        }
         if (ArrayBuffer.isView(this._bodyArrayBuffer)) {
           return Promise.resolve(
             this._bodyArrayBuffer.buffer.slice(
