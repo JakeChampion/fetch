@@ -276,7 +276,7 @@ function Body() {
       if (this._bodyArrayBuffer) {
         var consumed = consumed(this);
         if (consumed) {
-          return consumed;
+          return consumed
         }
         if (ArrayBuffer.isView(this._bodyArrayBuffer)) {
           return Promise.resolve(
