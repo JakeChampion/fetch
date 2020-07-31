@@ -274,7 +274,15 @@ function Body() {
 
     this.arrayBuffer = function() {
       if (this._bodyArrayBuffer) {
-        return consumed(this) || Promise.resolve(this._bodyArrayBuffer)
+        consumed(this)
+        if (ArrayBuffer.isView(this._bodyArrayBuffer)) {
+          return Promise.resolve(this._bodyArrayBuffer.buffer.slice(
+            this._bodyArrayBuffer.byteOffset,
+            this._bodyArrayBuffer.byteOffset + this._bodyArrayBuffer.byteLength
+          ))
+        } else {
+          return Promise.resolve(this._bodyArrayBuffer)
+        }
       } else {
         return this.blob().then(readBlobAsArrayBuffer)
       }
