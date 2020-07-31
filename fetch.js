@@ -276,10 +276,12 @@ function Body() {
       if (this._bodyArrayBuffer) {
         consumed(this)
         if (ArrayBuffer.isView(this._bodyArrayBuffer)) {
-          return Promise.resolve(this._bodyArrayBuffer.buffer.slice(
-            this._bodyArrayBuffer.byteOffset,
-            this._bodyArrayBuffer.byteOffset + this._bodyArrayBuffer.byteLength
-          ))
+          return Promise.resolve(
+            this._bodyArrayBuffer.buffer.slice(
+              this._bodyArrayBuffer.byteOffset,
+              this._bodyArrayBuffer.byteOffset + this._bodyArrayBuffer.byteLength
+            )
+          )
         } else {
           return Promise.resolve(this._bodyArrayBuffer)
         }
