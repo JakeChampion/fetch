@@ -1,5 +1,4 @@
-var global =
-  (typeof self !== 'undefined' && self) ||
+var global = (typeof self !== 'undefined' && self) ||
   (typeof global !== 'undefined' && global)
 
 var support = {
