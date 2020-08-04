@@ -274,7 +274,7 @@ function Body() {
 
     this.arrayBuffer = function() {
       if (this._bodyArrayBuffer) {
-        var consumed = consumed(this);
+        var consumed = consumed(this)
         if (consumed) {
           return consumed
         }
