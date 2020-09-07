@@ -1,0 +1,6 @@
+.env
+package-lock.json
+bower_components/
+node_modules/
+sauce_connect/
+sauce_connect.log
