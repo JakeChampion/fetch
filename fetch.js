@@ -265,7 +265,8 @@ function Body() {
       }
 
       if (this._bodyBlob) {
-        return Promise.resolve(this._bodyBlob)
+        this.bodyUsed = false
+        return Promise.resolve(this)
       } else if (this._bodyArrayBuffer) {
         return Promise.resolve(new Blob([this._bodyArrayBuffer]))
       } else if (this._bodyFormData) {
