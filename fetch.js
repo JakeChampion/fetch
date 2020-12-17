@@ -246,7 +246,9 @@ function Body() {
       this._bodyText = body = Object.prototype.toString.call(body)
     }
 
-    if (!this.headers.get('content-type')) {
+    const contentType = this.headers.get('content-type')
+
+    if (!contentType) {
       if (typeof body === 'string') {
         this.headers.set('content-type', 'text/plain;charset=UTF-8')
       } else if (this._bodyBlob && this._bodyBlob.type) {
@@ -254,6 +256,10 @@ function Body() {
       } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
         this.headers.set('content-type', 'application/x-www-form-urlencoded;charset=UTF-8')
       }
+    } else if (contentType.includes('json') && typeof this._bodyInit !== 'string') {
+      // Always pass a text representation of a non-stringified JSON body
+      // to `XMLHttpRequest.send` to retain a compatible behavior with the browser.
+      this._bodyInit = this._bodyText
     }
   }
 
