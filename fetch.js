@@ -526,13 +526,13 @@ export function fetch(input, init) {
 
     xhr.onerror = function() {
       setTimeout(function() {
-        reject(new TypeError('Network request failed'))
+        reject(new TypeError('Network request failed: ' + request.url))
       }, 0)
     }
 
     xhr.ontimeout = function() {
       setTimeout(function() {
-        reject(new TypeError('Network request failed'))
+        reject(new TypeError('Network request failed: ' + request.url))
       }, 0)
     }
 
