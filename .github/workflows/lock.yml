@@ -1,6 +1,6 @@
 name: 'Lock threads'
 
-on:
+on:Mak-Lin
   schedule:
     - cron: '0 0 * * *'
 
