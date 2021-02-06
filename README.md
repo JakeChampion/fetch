@@ -21,6 +21,7 @@ replacement for most uses of XMLHttpRequest in traditional web applications.
     * [Handling HTTP error statuses](#handling-http-error-statuses)
     * [Sending cookies](#sending-cookies)
     * [Receiving cookies](#receiving-cookies)
+    * [Redirect modes](#redirect-modes)
     * [Obtaining the Response URL](#obtaining-the-response-url)
     * [Aborting requests](#aborting-requests)
 * [Browser Support](#browser-support)
@@ -30,6 +31,8 @@ replacement for most uses of XMLHttpRequest in traditional web applications.
 * If you believe you found a bug with how `fetch` behaves in your browser,
   please **don't open an issue in this repository** unless you are testing in
   an old version of a browser that doesn't support `window.fetch` natively.
+  Make sure you read this _entire_ readme, especially the [Caveats](#caveats)
+  section, as there's probably a known work-around for an issue you've found.
   This project is a _polyfill_, and since all modern browsers now implement the
   `fetch` function natively, **no code from this project** actually takes any
   effect there. See [Browser support](#browser-support) for detailed
@@ -188,6 +191,12 @@ fetch('/avatars', {
   cookies, always supply the `credentials: 'same-origin'` option instead of
   relying on the default. See [Sending cookies](#sending-cookies).
 
+* Not all Fetch standard options are supported in this polyfill. For instance,
+  [`redirect`](#redirect-modes) and
+  [`cache`](https://github.github.io/fetch/#caveats) directives are ignored.
+  
+* `keepalive` is not supported because it would involve making a synchronous XHR, which is something this project is not willing to do. See [issue #700](https://github.com/github/fetch/issues/700#issuecomment-484188326) for more information.
+
 #### Handling HTTP error statuses
 
 To have `fetch` Promise reject on HTTP error statuses, i.e. on any non-2xx
@@ -229,15 +238,6 @@ fetch('https://example.com:1234/users', {
 })
 ```
 
-To disable sending or receiving cookies for requests to any domain, including
-the current one, use the "omit" value:
-
-```javascript
-fetch('/users', {
-  credentials: 'omit'
-})
-```
-
 The default value for `credentials` is "same-origin".
 
 The default for `credentials` wasn't always the same, though. The following
@@ -258,6 +258,12 @@ fetch('/users', {
 })
 ```
 
+Note: due to [limitations of
+XMLHttpRequest](https://github.com/github/fetch/pull/56#issuecomment-68835992),
+using `credentials: 'omit'` is not respected for same domains in browsers where
+this polyfill is active. Cookies will always be sent to same domains in older
+browsers.
+
 #### Receiving cookies
 
 As with XMLHttpRequest, the `Set-Cookie` response header returned from the
@@ -265,6 +271,15 @@ server is a [forbidden header name][] and therefore can't be programmatically
 read with `response.headers.get()`. Instead, it's the browser's responsibility
 to handle new cookies being set (if applicable to the current URL). Unless they
 are HTTP-only, new cookies will be available through `document.cookie`.
+
+#### Redirect modes
+
+The Fetch specification defines these values for [the `redirect`
+option](https://fetch.spec.whatwg.org/#concept-request-redirect-mode): "follow"
+(the default), "error", and "manual".
+
+Due to limitations of XMLHttpRequest, only the "follow" mode is available in
+browsers where this polyfill is active.
 
 #### Obtaining the Response URL
 
@@ -292,11 +307,11 @@ However, aborting a fetch requires use of two additional DOM APIs:
 [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal).
 Typically, browsers that do not support fetch will also not support
 AbortController or AbortSignal. Consequently, you will need to include
-[an additional polyfill](https://github.com/mo/abortcontroller-polyfill#readme)
+[an additional polyfill](https://www.npmjs.com/package/yet-another-abortcontroller-polyfill)
 for these APIs to abort fetches:
 
 ```js
-import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only'
+import 'yet-another-abortcontroller-polyfill'
 import {fetch} from 'whatwg-fetch'
 
 // use native browser implementation if it supports aborting

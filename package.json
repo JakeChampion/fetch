@@ -1,7 +1,7 @@
 {
   "name": "whatwg-fetch",
   "description": "A window.fetch polyfill.",
-  "version": "3.0.0",
+  "version": "3.5.0",
   "main": "./dist/fetch.umd.js",
   "module": "./fetch.js",
   "repository": "github/fetch",
@@ -20,6 +20,7 @@
     "karma-safari-launcher": "^1.0.0",
     "karma-safaritechpreview-launcher": "0.0.6",
     "mocha": "^4.0.1",
+    "prettier": "^1.19.1",
     "promise-polyfill": "6.0.2",
     "rollup": "^0.59.1",
     "url-search-params": "0.6.1"

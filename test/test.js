@@ -123,6 +123,8 @@ exercise.forEach(function(exerciseMode) {
     var nativeEdge = /Edge\//.test(navigator.userAgent) && exerciseMode === 'native'
     var firefox = navigator.userAgent.match(/Firefox\/(\d+)/)
     var brokenFF = firefox && firefox[1] <= 56 && exerciseMode === 'native'
+    var emptyDefaultStatusText =
+      exerciseMode !== 'native' || (exerciseMode === 'native' && (Chrome || (firefox && firefox[1] >= 67)))
     var polyfillFirefox = firefox && exerciseMode === 'polyfill'
     var omitSafari =
       Safari && exerciseMode === 'native' && navigator.userAgent.match(/Version\/(\d+\.\d+)/)[1] <= '11.1'
@@ -192,7 +194,10 @@ exercise.forEach(function(exerciseMode) {
         assert.equal(headers.get('Content-type'), 'text/html')
       })
       test('constructor works with arrays', function() {
-        var array = [['Content-Type', 'text/xml'], ['Breaking-Bad', '<3']]
+        var array = [
+          ['Content-Type', 'text/xml'],
+          ['Breaking-Bad', '<3']
+        ]
         var headers = new Headers(array)
 
         assert.equal(headers.get('Content-Type'), 'text/xml')
@@ -325,6 +330,11 @@ exercise.forEach(function(exerciseMode) {
 
     // https://fetch.spec.whatwg.org/#request-class
     suite('Request', function() {
+      test('called as normal function', function() {
+        assert.throws(function() {
+          Request('https://fetch.spec.whatwg.org/')
+        })
+      })
       test('construct with string url', function() {
         var request = new Request('https://fetch.spec.whatwg.org/')
         assert.equal(request.url, 'https://fetch.spec.whatwg.org/')
@@ -584,24 +594,34 @@ exercise.forEach(function(exerciseMode) {
 
     // https://fetch.spec.whatwg.org/#response-class
     suite('Response', function() {
-      test('default status is 200 OK', function() {
+      featureDependent(test, emptyDefaultStatusText, 'default status is 200', function() {
         var res = new Response()
         assert.equal(res.status, 200)
-        assert.equal(res.statusText, 'OK')
+        assert.equal(res.statusText, '')
         assert.isTrue(res.ok)
       })
 
-      test('default status is 200 OK when an explicit undefined status code is passed', function() {
-        var res = new Response('', {status: undefined})
-        assert.equal(res.status, 200)
-        assert.equal(res.statusText, 'OK')
-        assert.isTrue(res.ok)
-      })
+      featureDependent(
+        test,
+        emptyDefaultStatusText,
+        'default status is 200 when an explicit undefined status code is passed',
+        function() {
+          var res = new Response('', {status: undefined})
+          assert.equal(res.status, 200)
+          assert.equal(res.statusText, '')
+          assert.isTrue(res.ok)
+        }
+      )
 
       testBodyExtract(function(body) {
         return new Response(body)
       })
 
+      test('called as normal function', function() {
+        assert.throws(function() {
+          Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}})
+        })
+      })
       test('creates Headers object from raw headers', function() {
         var r = new Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}})
         assert.equal(r.headers instanceof Headers, true)
@@ -672,6 +692,16 @@ exercise.forEach(function(exerciseMode) {
         })
 
         assert.equal(r.headers.get('content-type'), 'text/plain')
+      })
+
+      test('construct with undefined statusText', function() {
+        var r = new Response('', {statusText: undefined})
+        assert.equal(r.statusText, '')
+      })
+
+      test('construct with null statusText', function() {
+        var r = new Response('', {statusText: null})
+        assert.equal(r.statusText, 'null')
       })
 
       test('init object as first argument', function() {
