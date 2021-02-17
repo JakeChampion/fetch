@@ -694,6 +694,16 @@ exercise.forEach(function(exerciseMode) {
         assert.equal(r.headers.get('content-type'), 'text/plain')
       })
 
+      test('construct with undefined statusText', function() {
+        var r = new Response('', {statusText: undefined})
+        assert.equal(r.statusText, '')
+      })
+
+      test('construct with null statusText', function() {
+        var r = new Response('', {statusText: null})
+        assert.equal(r.statusText, 'null')
+      })
+
       test('init object as first argument', function() {
         var r = new Response({
           status: 201,
