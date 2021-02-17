@@ -104,7 +104,6 @@ if (!self.fetch.polyfill) {
 var slice = Array.prototype.slice
 
 function featureDependent(testOrSuite, condition) {
-  // eslint-disable-next-line no-invalid-this
   ;(condition ? testOrSuite : testOrSuite.skip).apply(this, slice.call(arguments, 2))
 }
 
