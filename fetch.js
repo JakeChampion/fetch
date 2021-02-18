@@ -256,7 +256,7 @@ function Body() {
       } else if (support.searchParams && URLSearchParams.prototype.isPrototypeOf(body)) {
         this.headers.set('content-type', 'application/x-www-form-urlencoded;charset=UTF-8')
       }
-    } else if (contentType.includes('json') && typeof this._bodyInit !== 'string') {
+    } else if (contentType.indexOf('json') >= 0 && typeof this._bodyInit !== 'string') {
       // Always pass a text representation of a non-stringified JSON body
       // to `XMLHttpRequest.send` to retain a compatible behavior with the browser.
       this._bodyInit = this._bodyText
