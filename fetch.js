@@ -246,7 +246,7 @@ function Body() {
       this._bodyText = body = Object.prototype.toString.call(body)
     }
 
-    const contentType = this.headers.get('content-type')
+    var contentType = this.headers.get('content-type')
 
     if (!contentType) {
       if (typeof body === 'string') {
