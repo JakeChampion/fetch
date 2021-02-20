@@ -26,7 +26,7 @@ When editing tests or implementation, keep `npm run karma` running:
   connected browsers;
 - When changing [fetch.js](fetch.js), re-run tests by executing `make`;
 - Re-run specific tests with `./node_modules/.bin/karma run -- --grep=<PATTERN>`.
-
+ 
 ## Submitting a pull request
 
 1. [Fork][fork] and clone the repository;
