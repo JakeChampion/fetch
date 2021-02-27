@@ -1,7 +1,7 @@
 {
   "name": "whatwg-fetch",
   "description": "A window.fetch polyfill.",
-  "version": "3.6.1",
+  "version": "3.6.2",
   "main": "./dist/fetch.umd.js",
   "module": "./fetch.js",
   "repository": "github/fetch",
