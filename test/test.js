@@ -330,6 +330,11 @@ exercise.forEach(function(exerciseMode) {
 
     // https://fetch.spec.whatwg.org/#request-class
     suite('Request', function() {
+      test('called as normal function', function() {
+        assert.throws(function() {
+          Request('https://fetch.spec.whatwg.org/')
+        })
+      })
       test('construct with string url', function() {
         var request = new Request('https://fetch.spec.whatwg.org/')
         assert.equal(request.url, 'https://fetch.spec.whatwg.org/')
@@ -612,6 +617,11 @@ exercise.forEach(function(exerciseMode) {
         return new Response(body)
       })
 
+      test('called as normal function', function() {
+        assert.throws(function() {
+          Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}})
+        })
+      })
       test('creates Headers object from raw headers', function() {
         var r = new Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}})
         assert.equal(r.headers instanceof Headers, true)
@@ -682,6 +692,16 @@ exercise.forEach(function(exerciseMode) {
         })
 
         assert.equal(r.headers.get('content-type'), 'text/plain')
+      })
+
+      test('construct with undefined statusText', function() {
+        var r = new Response('', {statusText: undefined})
+        assert.equal(r.statusText, '')
+      })
+
+      test('construct with null statusText', function() {
+        var r = new Response('', {statusText: null})
+        assert.equal(r.statusText, 'null')
       })
 
       test('init object as first argument', function() {

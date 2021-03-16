@@ -31,6 +31,8 @@ replacement for most uses of XMLHttpRequest in traditional web applications.
 * If you believe you found a bug with how `fetch` behaves in your browser,
   please **don't open an issue in this repository** unless you are testing in
   an old version of a browser that doesn't support `window.fetch` natively.
+  Make sure you read this _entire_ readme, especially the [Caveats](#caveats)
+  section, as there's probably a known work-around for an issue you've found.
   This project is a _polyfill_, and since all modern browsers now implement the
   `fetch` function natively, **no code from this project** actually takes any
   effect there. See [Browser support](#browser-support) for detailed
@@ -192,6 +194,8 @@ fetch('/avatars', {
 * Not all Fetch standard options are supported in this polyfill. For instance,
   [`redirect`](#redirect-modes) and
   [`cache`](https://github.github.io/fetch/#caveats) directives are ignored.
+  
+* `keepalive` is not supported because it would involve making a synchronous XHR, which is something this project is not willing to do. See [issue #700](https://github.com/github/fetch/issues/700#issuecomment-484188326) for more information.
 
 #### Handling HTTP error statuses
 
@@ -303,11 +307,11 @@ However, aborting a fetch requires use of two additional DOM APIs:
 [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal).
 Typically, browsers that do not support fetch will also not support
 AbortController or AbortSignal. Consequently, you will need to include
-[an additional polyfill](https://github.com/mo/abortcontroller-polyfill#readme)
+[an additional polyfill](https://www.npmjs.com/package/yet-another-abortcontroller-polyfill)
 for these APIs to abort fetches:
 
 ```js
-import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only'
+import 'yet-another-abortcontroller-polyfill'
 import {fetch} from 'whatwg-fetch'
 
 // use native browser implementation if it supports aborting
