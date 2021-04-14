@@ -120,6 +120,14 @@ const routes = {
       'Content-Type': 'text/html; charset=utf-8'
     })
     res.end()
+  },
+  '/invalid-headers': function(res) {
+    res.writeHead(200, {
+      'Content-Type': 'text/plain',
+      'Invalid Header': 'valid value',
+      'Westworld-S01': "<3"
+    })
+    res.end()
   }
 }
 

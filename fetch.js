@@ -437,7 +437,11 @@ function parseHeaders(rawHeaders) {
       var key = parts.shift().trim()
       if (key) {
         var value = parts.join(':').trim()
-        headers.append(key, value)
+        try {
+          headers.append(key, value)
+        } catch (error) {
+          console.warn('Response ' + error.message)
+        }
       }
     })
   return headers

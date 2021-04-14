@@ -1281,6 +1281,12 @@ exercise.forEach(function(exerciseMode) {
             assert.equal(response.headers.get('Content-Type'), 'text/html; charset=utf-8')
           })
         })
+        test('parses invalid headers', function() {
+          return fetch('/invalid-headers').then(function(response) {
+            assert.equal(response.headers.get('Content-Type'), 'text/plain')
+            assert.equal(response.headers.get('Westworld-S01'), '<3')
+          })
+        })
       })
 
       // https://fetch.spec.whatwg.org/#methods
