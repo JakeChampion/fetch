@@ -605,9 +605,19 @@ export function fetch(input, init) {
 
 fetch.polyfill = true
 
-if (!global.fetch) {
-  global.fetch = fetch
-  global.Headers = Headers
-  global.Request = Request
-  global.Response = Response
+var getGlobal = function () {
+  if (typeof globalThis !== 'undefined') { return globalThis }
+  if (typeof self !== 'undefined') { return self }
+  if (typeof window !== 'undefined') { return window }
+  if (typeof global !== 'undefined') { return global }
+  throw new Error('unable to locate global object')
+}
+
+var globals = getGlobal()
+
+if (!globals.fetch) {
+  globals.fetch = fetch
+  globals.Headers = Headers
+  globals.Request = Request
+  globals.Response = Response
 }
