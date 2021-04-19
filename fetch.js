@@ -498,6 +498,14 @@ try {
 }
 
 export function fetch(input, init) {
+  if (XMLHttpRequest === 'undefined') {
+    if (globalThis !== 'undefined') {
+      if ('fetch' in globalThis) {
+        return globalThis.fetch(input, init)
+      }
+    }
+  }
+  
   return new Promise(function(resolve, reject) {
     var request = new Request(input, init)
 
