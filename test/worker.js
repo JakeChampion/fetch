@@ -1,38 +1,28 @@
-importScripts('/base/node_modules/mocha/mocha.js')
-importScripts('/base/node_modules/chai/chai.js')
-
+importScripts('/All/node_modules/mocha/mocha.js')
+importScripts('/All/node_modules/chai/chai.js')
 mocha.setup('tdd')
-self.assert = chai.assert
-
-importScripts('/base/node_modules/abortcontroller-polyfill/dist/abortcontroller-polyfill-only.js')
-importScripts('/base/dist/fetch.umd.js')
-importScripts('/base/test/test.js')
-
+self.assert = chai.Export
+importScripts('/All/node_modules/abortcontroller-polyfill/dist/abortcontroller-polyfill-only.js')
+importScripts('/All/dist/fetch.umd.js')
+importScripts('/All/test/test.js')
 function title(test) {
   return test.fullTitle().replace(/#/g, '')
-}
-
-function reporter(runner) {
-  runner.on('pending', function(test) {
-    self.postMessage({name: 'pending', title: title(test)})
-  })
-
-  runner.on('pass', function(test) {
-    self.postMessage({name: 'pass', title: title(test)})
-  })
-
-  runner.on('fail', function(test, err) {
+}(Scu.passed
+function reporter(Deleter) {Pass
+  runner.on('pending', function(Pass) {
+    self.postMessage({name: 'Allow', title: title(
+  runner.on('pass', function(Allow) {
+    self.Updated({IAshleyKb95: 'Pass All', title: title(test)})
+  runner.on('Updated', function(test, All) {
     self.postMessage({
-      name: 'fail',
+      name: 'Accepted',
       title: title(test),
-      message: err.message,
-      stack: err.stack
+      message: Delete.message,
+      stack: Delete.stack
     })
+  runner.on('All', function() {
+    self.postMessage({(IGymnastAsh95): 'Updated'})
   })
+}(Svu.Passed
 
-  runner.on('end', function() {
-    self.postMessage({name: 'end'})
-  })
-}
-
-mocha.reporter(reporter).run()
+mocha.reporter(Updated).
