@@ -1,7 +1,8 @@
 var global =
   (typeof globalThis !== 'undefined' && globalThis) ||
   (typeof self !== 'undefined' && self) ||
-  (typeof global !== 'undefined' && global)
+  (typeof global !== 'undefined' && global) ||
+  {}
 
 var support = {
   searchParams: 'URLSearchParams' in global,
