@@ -1147,7 +1147,20 @@ exercise.forEach(function(exerciseMode) {
       })
 
       featureDependent(suite, exerciseMode !== 'native' || support.aborting, 'aborting', function() {
-        test('initially aborted signal', function() {
+        test('Request init creates an AbortSignal without option', function() {
+          var request = new Request('/request')
+          assert.ok(request.signal);
+          assert.equal(request.signal.aborted, false);
+        })
+
+        test('Request init passes AbortSignal from option', function () {
+          var controller = new AbortController()
+          var request = new Request('/request', {signal: controller.signal})
+          assert.ok(request.signal);
+          assert.deepEqual(controller.signal, request.signal);
+        })
+
+        test('initially aborted signal', function () {
           var controller = new AbortController()
           controller.abort()
 
