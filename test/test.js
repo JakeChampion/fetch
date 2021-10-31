@@ -493,6 +493,18 @@ exercise.forEach(function(exerciseMode) {
 
         assert.equal(req.headers.get('content-type'), 'application/x-www-form-urlencoded;charset=UTF-8')
       })
+      
+      featureDependent(test, !IEorEdge, 'construct with URLSearchParams body and headers object sets Content-Type header', function() {
+        var req = new Request('https://fetch.spec.whatwg.org/', {
+          method: 'post',
+          headers: {
+            "Accept": "text/html"
+          },
+          body: new URLSearchParams('a=1&b=2')
+        })
+
+        assert.equal(req.headers.get('content-type'), 'application/x-www-form-urlencoded;charset=UTF-8')
+      })
 
       featureDependent(
         test,
