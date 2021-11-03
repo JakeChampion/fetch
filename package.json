@@ -1,5 +1,5 @@
 {
-  "name": "whatwg-fetch",
+  "name": "fetch-ie11",
   "description": "A window.fetch polyfill.",
   "version": "3.6.2",
   "main": "./dist/fetch.umd.js",

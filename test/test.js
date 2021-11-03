@@ -255,21 +255,6 @@ exercise.forEach(function(exerciseMode) {
         assert.equal(headers.get('Content-Type'), '1')
         assert.equal(headers.get('X-CSRF-Token'), 'undefined')
       })
-      test('throws TypeError on invalid character in field name', function() {
-        assert.throws(function() {
-          new Headers({'[Accept]': 'application/json'})
-        }, TypeError)
-        assert.throws(function() {
-          new Headers({'Accept:': 'application/json'})
-        }, TypeError)
-        assert.throws(function() {
-          var headers = new Headers()
-          headers.set({field: 'value'}, 'application/json')
-        }, TypeError)
-        assert.throws(function() {
-          new Headers({'': 'application/json'})
-        }, TypeError)
-      })
       featureDependent(test, !brokenFF, 'is iterable with forEach', function() {
         var headers = new Headers()
         headers.append('Accept', 'application/json')
