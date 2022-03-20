@@ -430,7 +430,7 @@ function parseHeaders(rawHeaders) {
   preProcessedHeaders
     .split('\r')
     .map(function(header) {
-      return header.indexOf('\n') === 0 ? header.substr(1, header.length) : header
+      return header.indexOf('\n') === 0 ? header.slice(1) : header
     })
     .forEach(function(line) {
       var parts = line.split(':')
