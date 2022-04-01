@@ -329,7 +329,7 @@ function Body() {
 }
 
 // HTTP methods whose capitalization should be normalized
-var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
+var methods = ['CONNECT', 'DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT', 'TRACE']
 
 function normalizeMethod(method) {
   var upcased = method.toUpperCase()
