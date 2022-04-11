@@ -518,9 +518,11 @@ export function fetch(input, init) {
     }
 
     xhr.onload = function() {
+      // Normalize IE's response to HTTP 204 when Win error 1223 under IE9
+      // REF: https://stackoverflow.com/a/10047236/5698182
       var options = {
-        status: xhr.status,
-        statusText: xhr.statusText,
+        status: xhr.status === 1223 ? 204 : xhr.status,
+        statusText: xhr.status === 1223 ? 'No Content' : xhr.statusText,
         headers: parseHeaders(xhr.getAllResponseHeaders() || '')
       }
       options.url = 'responseURL' in xhr ? xhr.responseURL : options.headers.get('X-Request-URL')
