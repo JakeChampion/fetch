@@ -243,6 +243,8 @@ function Body() {
       this._bodyInit = new Blob([this._bodyArrayBuffer])
     } else if (support.arrayBuffer && (ArrayBuffer.prototype.isPrototypeOf(body) || isArrayBufferView(body))) {
       this._bodyArrayBuffer = bufferClone(body)
+      // IE 10 can't handle a AraryBufferView body.
+      this._bodyInit = new Blob([this._bodyArrayBuffer])
     } else {
       this._bodyText = body = Object.prototype.toString.call(body)
     }
