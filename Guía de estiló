@@ -1,0 +1,39 @@
+Guía de estilo de contenido para GitHub Docs
+Bienvenido a la guía de estilo de contenido para GitHub Docs .
+
+Estas pautas son específicas para la documentación de GitHub. Para preguntas generales de estilo u orientación sobre temas que no se cubren aquí, consulte primero la Guía de marca de GitHub y luego la Guía de estilo de Microsoft . Para el marcado específico del contenido de origen en docs.github.com, consulte nuestra guía de referencia de marcado .
+
+Use el ícono de la tabla de contenido en la esquina superior izquierda de este documento para acceder rápidamente a una sección específica de esta guía.
+
+El enfoque de GitHub Docs para el estilo
+Nuestra guía de estilo busca la simplicidad. Las pautas deben ser fáciles de aplicar a una variedad de escenarios.
+Las decisiones no son sobre lo que está bien o mal según las reglas de la gramática o la guía de estilo, sino sobre lo que es mejor para nuestros usuarios. Somos flexibles y abiertos al cambio mientras mantenemos la consistencia.
+Para escalar la guía de estilo a medida que crecen nuestro equipo y los conjuntos de documentación, y para crear contenido significativo y de alta calidad que sirva a los usuarios, enfocamos nuestra atención en escenarios de alto impacto y valor en lugar de intentar cubrir de manera integral cada pregunta de estilo.
+La coherencia y la corrección gramatical son importantes, pero no tanto como la claridad y el significado.
+Al tomar una decisión de estilo o estructura, consideramos el flujo de información dentro de la unidad de contenido y el contexto de la información.
+Cuando una pregunta específica para la documentación de ayuda no está cubierta por la guía de estilo, lo pensamos detenidamente utilizando estos principios y luego tomamos una decisión. Si un revisor pregunta al respecto, estamos preparados para discutir la decisión.
+Rótulos
+Callouts highlight important information that customers need to know. We use standard formatting and colors for different types of callouts across doc sets.
+
+Use callouts sparingly for high-value information - do not include general information, permissions, or prerequisites in callouts. Do not include more than two bullet points in a callout.
+
+There are three types of in-content callouts: notes, warnings, and danger notices.
+
+Formatting callouts
+Each callout starts with text indicating the type of callout (e.g. Warning:) to orient the reader (whether accessing the site visually or with a screen reader) and helps every user gauge the importance and necessity of the information in the callout.
+
+Notes are rendered in blue {% note %} tags.
+
+Las notas proporcionan información útil o recordatorios para el usuario, pero no es obligatorio seguir la información. Las notas pueden no ser relevantes o necesarias para todos los usuarios.
+Preceda el contenido de la nota con **Note:**.
+Las advertencias y los avisos de peligro se muestran en {% warning %}etiquetas rojas.
+
+Las advertencias son acciones potencialmente peligrosas que un usuario debe tener en cuenta antes de continuar con una tarea. A menudo son pasos no opcionales.
+Preceda el contenido con **Warning:**.
+Los avisos de peligro son acciones peligrosas que el usuario debe extremar las precauciones antes de realizar. A menudo implican la posibilidad de pérdida de datos u otras acciones destructivas.
+Preceda el contenido con **Danger:**.
+Para obtener más información sobre el formato de las llamadas, consulte "Llamadas" en la guía de referencia de marcado .
+
+Código
+Bloques de código
+Mantenga las líneas en los ejemplos de código en aproximadamente 60 caracteres, para evitar que los lectores se desplacen horizontalmente en el bloque de código. Ubique el texto explicativo antes del bloque de código, en lugar de usar comentarios dentro del bloque de código.
