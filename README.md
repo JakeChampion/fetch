@@ -1,4 +1,4 @@
-# window.fetch polyfill
+#  window.fetch polyfill
 
 The `fetch()` function is a Promise-based mechanism for programmatically making
 web requests in the browser. This project is a polyfill that implements a subset
