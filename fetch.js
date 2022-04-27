@@ -27,22 +27,13 @@ function isDataView(obj) {
 }
 
 if (support.arrayBuffer) {
-  var viewClasses = [
-    '[object Int8Array]',
-    '[object Uint8Array]',
-    '[object Uint8ClampedArray]',
-    '[object Int16Array]',
-    '[object Uint16Array]',
-    '[object Int32Array]',
-    '[object Uint32Array]',
-    '[object Float32Array]',
-    '[object Float64Array]'
-  ]
-
   var isArrayBufferView =
     ArrayBuffer.isView ||
     function(obj) {
-      return obj && viewClasses.indexOf(Object.prototype.toString.call(obj)) > -1
+      // The regexp comes from @babel/helpers and @swc/helpers
+      // https://github.com/babel/babel/blob/38c23cded40af3ccc8d2c39dbe165e9b446e55a3/packages/babel-helpers/src/helpers.ts#L952-L958
+      // https://github.com/swc-project/swc/blob/ae4bb420ae2e8fe0fca37d08d54db27c000e905c/packages/swc-helpers/src/_unsupported_iterable_to_array.js#L6-L9
+      return obj && /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(Object.prototype.toString.call(obj).slice(8, -1))
     }
 }
 
