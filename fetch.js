@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 var global =
   (typeof globalThis !== 'undefined' && globalThis) ||
   (typeof self !== 'undefined' && self) ||
@@ -225,6 +226,7 @@ function Body() {
       semantic of setting Request.bodyUsed in the constructor before
       _initBody is called.
     */
+    // eslint-disable-next-line no-self-assign
     this.bodyUsed = this.bodyUsed
     this._bodyInit = body
     if (!body) {

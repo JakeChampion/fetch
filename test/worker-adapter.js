@@ -1,3 +1,5 @@
+/* eslint-env mocha */
+/* globals Mocha */
 var mochaRun = mocha.run
 mocha.run = function() {}
 

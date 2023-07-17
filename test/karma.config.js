@@ -1,3 +1,4 @@
+/* eslint-env node */
 const serverEndpoints = require('./server')
 
 module.exports = function(config) {
