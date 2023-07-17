@@ -162,6 +162,7 @@ if (support.iterable) {
 }
 
 function consumed(body) {
+  if (body._noBody) return
   if (body.bodyUsed) {
     return Promise.reject(new TypeError('Already read'))
   }
@@ -231,6 +232,7 @@ function Body() {
     this.bodyUsed = this.bodyUsed
     this._bodyInit = body
     if (!body) {
+      this._noBody = true;
       this._bodyText = ''
     } else if (typeof body === 'string') {
       this._bodyText = body
