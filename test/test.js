@@ -623,6 +623,21 @@ exercise.forEach(function(exerciseMode) {
           Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}})
         })
       })
+      test('status outside inclusive range 200-599 ', function() {
+        assert.throws(function() {
+          new Response('', {status: 199})
+        })
+        for (var i = 0; i < 200; i++) {
+          assert.throws(function() {
+            new Response('', {status: i})
+          })
+        }
+        for (i = 999; i > 599; i--) {
+          assert.throws(function() {
+            new Response('', {status: i})
+          })
+        }
+      })
       test('creates Headers object from raw headers', function() {
         var r = new Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}})
         assert.equal(r.headers instanceof Headers, true)

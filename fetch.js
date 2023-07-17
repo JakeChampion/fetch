@@ -462,6 +462,9 @@ export function Response(bodyInit, options) {
 
   this.type = 'default'
   this.status = options.status === undefined ? 200 : options.status
+  if (this.status < 200 || this.status > 599) {
+    throw new RangeError("Failed to construct 'Response': The status provided (0) is outside the range [200, 599].")
+  }
   this.ok = this.status >= 200 && this.status < 300
   this.statusText = options.statusText === undefined ? '' : '' + options.statusText
   this.headers = new Headers(options.headers)
@@ -481,7 +484,8 @@ Response.prototype.clone = function() {
 }
 
 Response.error = function() {
-  var response = new Response(null, {status: 0, statusText: ''})
+  var response = new Response(null, {status: 200, statusText: ''})
+  response.status = 0
   response.type = 'error'
   return response
 }
