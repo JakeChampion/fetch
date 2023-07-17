@@ -589,7 +589,7 @@ export function fetch(input, init) {
       }
     }
 
-    if (init && typeof init.headers === 'object' && !(init.headers instanceof Headers)) {
+    if (init && typeof init.headers === 'object' && !(init.headers instanceof Headers || (g.Headers && init.headers instanceof g.Headers))) {
       Object.getOwnPropertyNames(init.headers).forEach(function(name) {
         xhr.setRequestHeader(name, normalizeValue(init.headers[name]))
       })
