@@ -996,6 +996,15 @@ exercise.forEach(function(exerciseMode) {
               assert(error instanceof TypeError, 'Promise rejected after body consumed')
             })
         })
+
+        test('does not set bodyUsed to true if no body supplied', function() {
+          var response = new Response();
+          assert(response.text, 'Body does not implement text')
+          assert.equal(response.bodyUsed, false)
+          response.text()
+          assert.equal(response.bodyUsed, false)
+          return response.text()
+        })
       })
     })
 
