@@ -1,16 +1,17 @@
 /* eslint-disable no-prototype-builtins */
-var global =
+var g =
   (typeof globalThis !== 'undefined' && globalThis) ||
   (typeof self !== 'undefined' && self) ||
+  // eslint-disable-next-line no-undef
   (typeof global !== 'undefined' && global) ||
   {}
 
 var support = {
-  searchParams: 'URLSearchParams' in global,
-  iterable: 'Symbol' in global && 'iterator' in Symbol,
+  searchParams: 'URLSearchParams' in g,
+  iterable: 'Symbol' in g && 'iterator' in Symbol,
   blob:
-    'FileReader' in global &&
-    'Blob' in global &&
+    'FileReader' in g &&
+    'Blob' in g &&
     (function() {
       try {
         new Blob()
@@ -19,8 +20,8 @@ var support = {
         return false
       }
     })(),
-  formData: 'FormData' in global,
-  arrayBuffer: 'ArrayBuffer' in global
+  formData: 'FormData' in g,
+  arrayBuffer: 'ArrayBuffer' in g
 }
 
 function isDataView(obj) {
@@ -373,7 +374,7 @@ export function Request(input, options) {
   this.method = normalizeMethod(options.method || this.method || 'GET')
   this.mode = options.mode || this.mode || null
   this.signal = options.signal || this.signal || (function () {
-    if ('AbortController' in global) {
+    if ('AbortController' in g) {
       var ctrl = new AbortController();
       return ctrl.signal;
     }
@@ -495,7 +496,7 @@ Response.redirect = function(url, status) {
   return new Response(null, {status: status, headers: {location: url}})
 }
 
-export var DOMException = global.DOMException
+export var DOMException = g.DOMException
 try {
   new DOMException()
 } catch (err) {
@@ -556,7 +557,7 @@ export function fetch(input, init) {
 
     function fixUrl(url) {
       try {
-        return url === '' && global.location.href ? global.location.href : url
+        return url === '' && g.location.href ? g.location.href : url
       } catch (e) {
         return url
       }
@@ -609,9 +610,9 @@ export function fetch(input, init) {
 
 fetch.polyfill = true
 
-if (!global.fetch) {
-  global.fetch = fetch
-  global.Headers = Headers
-  global.Request = Request
-  global.Response = Response
+if (!g.fetch) {
+  g.fetch = fetch
+  g.Headers = Headers
+  g.Request = Request
+  g.Response = Response
 }
