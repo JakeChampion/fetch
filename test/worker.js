@@ -1,3 +1,5 @@
+/* eslint-env worker */
+/* globals mocha chai */
 importScripts('/base/node_modules/mocha/mocha.js')
 importScripts('/base/node_modules/chai/chai.js')
 

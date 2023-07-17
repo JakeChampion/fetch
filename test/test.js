@@ -1,3 +1,5 @@
+/* eslint-env mocha */
+/* globals chai assert FileReaderSync assert WHATWGFetch */
 var IEorEdge = /Edge\//.test(navigator.userAgent) || /MSIE/.test(navigator.userAgent)
 var Chrome = /Chrome\//.test(navigator.userAgent) && !IEorEdge
 var Safari = /Safari\//.test(navigator.userAgent) && !IEorEdge && !Chrome
@@ -104,7 +106,7 @@ if (!self.fetch.polyfill) {
 var slice = Array.prototype.slice
 
 function featureDependent(testOrSuite, condition) {
-  ;(condition ? testOrSuite : testOrSuite.skip).apply(this, slice.call(arguments, 2))
+  (condition ? testOrSuite : testOrSuite.skip).apply(this, slice.call(arguments, 2))
 }
 
 exercise.forEach(function(exerciseMode) {
