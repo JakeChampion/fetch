@@ -193,7 +193,9 @@ function readBlobAsArrayBuffer(blob) {
 function readBlobAsText(blob) {
   var reader = new FileReader()
   var promise = fileReaderReady(reader)
-  reader.readAsText(blob)
+  var match = /charset=([A-Za-z0-9_-]+)/.exec(blob.type)
+  var encoding = match ? match[1] : 'utf-8'
+  reader.readAsText(blob, encoding)
   return promise
 }
 
