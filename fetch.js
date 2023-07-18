@@ -280,26 +280,27 @@ function Body() {
         return Promise.resolve(new Blob([this._bodyText]))
       }
     }
+  }
 
-    this.arrayBuffer = function() {
-      if (this._bodyArrayBuffer) {
-        var isConsumed = consumed(this)
-        if (isConsumed) {
-          return isConsumed
-        }
-        if (ArrayBuffer.isView(this._bodyArrayBuffer)) {
-          return Promise.resolve(
-            this._bodyArrayBuffer.buffer.slice(
-              this._bodyArrayBuffer.byteOffset,
-              this._bodyArrayBuffer.byteOffset + this._bodyArrayBuffer.byteLength
-            )
+  this.arrayBuffer = function() {
+    if (this._bodyArrayBuffer) {
+      var isConsumed = consumed(this)
+      if (isConsumed) {
+        return isConsumed
+      } else if (ArrayBuffer.isView(this._bodyArrayBuffer)) {
+        return Promise.resolve(
+          this._bodyArrayBuffer.buffer.slice(
+            this._bodyArrayBuffer.byteOffset,
+            this._bodyArrayBuffer.byteOffset + this._bodyArrayBuffer.byteLength
           )
-        } else {
-          return Promise.resolve(this._bodyArrayBuffer)
-        }
+        )
       } else {
-        return this.blob().then(readBlobAsArrayBuffer)
+        return Promise.resolve(this._bodyArrayBuffer)
       }
+    } else if (support.blob) {
+      return this.blob().then(readBlobAsArrayBuffer)
+    } else {
+      throw new Error('could not read as ArrayBuffer')
     }
   }
 
