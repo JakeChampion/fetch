@@ -203,6 +203,16 @@ exercise.forEach(function(exerciseMode) {
 
         assert.equal(headers.get('Content-Type'), 'text/xml')
         assert.equal(headers.get('Breaking-Bad'), '<3')
+        assert.throws(function() {
+          new Headers([
+            ['Content-Type'],
+          ])
+        }, TypeError)
+        assert.throws(function() {
+          new Headers([
+            ['Content-Type', 'a', 'b'],
+          ])
+        }, TypeError)
       })
       test('headers are case insensitive', function() {
         var headers = new Headers({Accept: 'application/json'})

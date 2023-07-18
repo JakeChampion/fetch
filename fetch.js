@@ -92,6 +92,9 @@ export function Headers(headers) {
     }, this)
   } else if (Array.isArray(headers)) {
     headers.forEach(function(header) {
+      if (header.length != 2) {
+        throw new TypeError('Headers constructor: expected name/value pair to be length 2, found' + header.length)
+      }
       this.append(header[0], header[1])
     }, this)
   } else if (headers) {
