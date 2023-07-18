@@ -596,8 +596,15 @@ export function fetch(input, init) {
     }
 
     if (init && typeof init.headers === 'object' && !(init.headers instanceof Headers || (g.Headers && init.headers instanceof g.Headers))) {
+      var names = [];
       Object.getOwnPropertyNames(init.headers).forEach(function(name) {
+        names.push(normalizeName(name))
         xhr.setRequestHeader(name, normalizeValue(init.headers[name]))
+      })
+      request.headers.forEach(function(value, name) {
+        if (names.indexOf(name) === -1) {
+          xhr.setRequestHeader(name, value)
+        }
       })
     } else {
       request.headers.forEach(function(value, name) {
