@@ -537,15 +537,10 @@ export function fetch(input, init) {
     }
 
     xhr.onload = function() {
-      var responseHeaders = xhr.getAllResponseHeaders();
-      var setCookie = xhr.getResponseHeader('set-cookie');
-      if (setCookie) {
-        responseHeaders = responseHeaders.replace(setCookie, setCookie.replace(/\r?\n/g, ', '));
-      }
       var options = {
         status: xhr.status,
         statusText: xhr.statusText,
-        headers: parseHeaders(responseHeaders || '')
+        headers: parseHeaders(xhr.getAllResponseHeaders() || '')
       }
       options.url = 'responseURL' in xhr ? xhr.responseURL : options.headers.get('X-Request-URL')
       var body = 'response' in xhr ? xhr.response : xhr.responseText
