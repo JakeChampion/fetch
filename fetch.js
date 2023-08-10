@@ -538,7 +538,6 @@ export function fetch(input, init) {
 
     xhr.onload = function() {
       var options = {
-        status: xhr.status,
         statusText: xhr.statusText,
         headers: parseHeaders(xhr.getAllResponseHeaders() || '')
       }
