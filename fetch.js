@@ -542,6 +542,12 @@ export function fetch(input, init) {
         statusText: xhr.statusText,
         headers: parseHeaders(xhr.getAllResponseHeaders() || '')
       }
+      // This check if specifically for when a user fetches a file locally from the file system
+      if (request.url.startsWith('file://')) {
+        options.status = 200;
+      } else {
+        options.status = xhr.status;
+      }
       options.url = 'responseURL' in xhr ? xhr.responseURL : options.headers.get('X-Request-URL')
       var body = 'response' in xhr ? xhr.response : xhr.responseText
       setTimeout(function() {
