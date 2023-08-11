@@ -647,6 +647,10 @@ exercise.forEach(function(exerciseMode) {
             new Response('', {status: i})
           })
         }
+        // Check that no error is thrown for file:// URLs
+        assert.doesNotThrow(function() {
+          new Response('', {status: 0, request: {url: 'file://path/to/local/file'}})
+        })
       })
       test('when request url starts with "file://", status should be 200', function() {
         var request = { url: 'file://path/to/local/file' };
