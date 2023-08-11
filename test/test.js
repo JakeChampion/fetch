@@ -652,16 +652,6 @@ exercise.forEach(function(exerciseMode) {
           new Response('', {status: 0, request: {url: 'file://path/to/local/file'}})
         })
       })
-      test('when request url starts with "file://", status should be 200', function() {
-        var request = { url: 'file://path/to/local/file' };
-        var options = { status: 404 };
-
-        if (request.url.startsWith('file://')) {
-          options.status = 200;
-        }
-
-        assert.equal(options.status, 200);
-      });
 
       test('creates Headers object from raw headers', function() {
         var r = new Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}})
