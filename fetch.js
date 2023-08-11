@@ -470,9 +470,7 @@ export function Response(bodyInit, options) {
 
   this.type = 'default'
   this.status = options.status === undefined ? 200 : options.status
-
-  if ((this.status < 200 || this.status > 599) && !this.request.url.startsWith('file://')) {
-    // Certain devices don't return a status when fetching a file
+  if (this.status < 200 || this.status > 599) {
     throw new RangeError("Failed to construct 'Response': The status provided (0) is outside the range [200, 599].")
   }
   this.ok = this.status >= 200 && this.status < 300
@@ -540,11 +538,15 @@ export function fetch(input, init) {
 
     xhr.onload = function() {
       var options = {
-        status: xhr.status,
         statusText: xhr.statusText,
         headers: parseHeaders(xhr.getAllResponseHeaders() || '')
       }
-
+      // This check if specifically for when a user fetches a file locally from the file system
+      if (request.url.startsWith('file://')) {
+        options.status = 200;
+      } else {
+        options.status = xhr.status;
+      }
       options.url = 'responseURL' in xhr ? xhr.responseURL : options.headers.get('X-Request-URL')
       var body = 'response' in xhr ? xhr.response : xhr.responseText
       setTimeout(function() {
