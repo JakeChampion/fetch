@@ -542,7 +542,8 @@ export function fetch(input, init) {
         headers: parseHeaders(xhr.getAllResponseHeaders() || '')
       }
       // This check if specifically for when a user fetches a file locally from the file system
-      if (request.url.startsWith('file://')) {
+      // Only if the status is out of a normal range
+      if (request.url.startsWith('file://') && xhr.status < 200 || xhr.status > 599) {
         options.status = 200;
       } else {
         options.status = xhr.status;
