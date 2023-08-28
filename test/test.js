@@ -647,7 +647,15 @@ exercise.forEach(function(exerciseMode) {
             new Response('', {status: i})
           })
         }
+        // A fetch with the url of a `file://` scheme may have a status 0 or
+        // similar in some operating systems. In the event that a status is found outside 
+        // the standard range of 200-599, and the url start with `file://`
+        // the status should return 200
+        assert.doesNotThrow(function() {
+          new Request('', {status: 0, request: {url: 'file://path/to/local/file'}})
+        })
       })
+
       test('creates Headers object from raw headers', function() {
         var r = new Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}})
         assert.equal(r.headers instanceof Headers, true)
