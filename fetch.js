@@ -563,7 +563,7 @@ export function fetch(input, init) {
 
     xhr.ontimeout = function() {
       setTimeout(function() {
-        reject(new TypeError('Network request failed'))
+        reject(new TypeError('Network request timed out'))
       }, 0)
     }
 
