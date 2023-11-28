@@ -696,6 +696,7 @@ exercise.forEach(function(exerciseMode) {
       test('error creates error Response', function() {
         var r = Response.error()
         assert(r instanceof Response)
+        assert.equal(r.ok, false)
         assert.equal(r.status, 0)
         assert.equal(r.statusText, '')
         assert.equal(r.type, 'error')
