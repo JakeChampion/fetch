@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+## [3.6.20](https://github.com/JakeChampion/fetch/compare/v3.6.19...v3.6.20) (2023-12-13)
+
+
+### Bug Fixes
+
+* Response.error().ok === false ([#1412](https://github.com/JakeChampion/fetch/issues/1412)) ([27e1c75](https://github.com/JakeChampion/fetch/commit/27e1c75f830f0b70a40b511e03652776951aca75))
+
 ## [3.6.19](https://github.com/JakeChampion/fetch/compare/v3.6.18...v3.6.19) (2023-09-11)
 
 
