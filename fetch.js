@@ -493,6 +493,7 @@ Response.prototype.clone = function() {
 
 Response.error = function() {
   var response = new Response(null, {status: 200, statusText: ''})
+  response.ok = false
   response.status = 0
   response.type = 'error'
   return response
