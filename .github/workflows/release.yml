@@ -13,7 +13,7 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: google-github-actions/release-please-action@a2d8d683f209466ee8c695cd994ae2cf08b1642d # v4.0.1
+      - uses: google-github-actions/release-please-action@cc61a07e2da466bebbc19b3a7dd01d6aecb20d1e # v4.0.2
         with:
           release-type: node
           package-name: release-please-action
