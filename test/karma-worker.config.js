@@ -1,3 +1,4 @@
+/* eslint-env node */
 const parentConfig = require('./karma.config')
 
 module.exports = function(config) {

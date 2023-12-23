@@ -1,3 +1,5 @@
+/* eslint-env mocha */
+/* globals chai assert FileReaderSync assert WHATWGFetch */
 var IEorEdge = /Edge\//.test(navigator.userAgent) || /MSIE/.test(navigator.userAgent)
 var Chrome = /Chrome\//.test(navigator.userAgent) && !IEorEdge
 var Safari = /Safari\//.test(navigator.userAgent) && !IEorEdge && !Chrome
@@ -104,7 +106,7 @@ if (!self.fetch.polyfill) {
 var slice = Array.prototype.slice
 
 function featureDependent(testOrSuite, condition) {
-  ;(condition ? testOrSuite : testOrSuite.skip).apply(this, slice.call(arguments, 2))
+  (condition ? testOrSuite : testOrSuite.skip).apply(this, slice.call(arguments, 2))
 }
 
 exercise.forEach(function(exerciseMode) {
@@ -201,6 +203,16 @@ exercise.forEach(function(exerciseMode) {
 
         assert.equal(headers.get('Content-Type'), 'text/xml')
         assert.equal(headers.get('Breaking-Bad'), '<3')
+        assert.throws(function() {
+          new Headers([
+            ['Content-Type'],
+          ])
+        }, TypeError)
+        assert.throws(function() {
+          new Headers([
+            ['Content-Type', 'a', 'b'],
+          ])
+        }, TypeError)
       })
       test('headers are case insensitive', function() {
         var headers = new Headers({Accept: 'application/json'})
@@ -621,6 +633,29 @@ exercise.forEach(function(exerciseMode) {
           Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}})
         })
       })
+      test('status outside inclusive range 200-599 ', function() {
+        assert.throws(function() {
+          new Response('', {status: 199})
+        })
+        for (var i = 0; i < 200; i++) {
+          assert.throws(function() {
+            new Response('', {status: i})
+          })
+        }
+        for (i = 999; i > 599; i--) {
+          assert.throws(function() {
+            new Response('', {status: i})
+          })
+        }
+        // A fetch with the url of a `file://` scheme may have a status 0 or
+        // similar in some operating systems. In the event that a status is found outside 
+        // the standard range of 200-599, and the url start with `file://`
+        // the status should return 200
+        assert.doesNotThrow(function() {
+          new Request('', {status: 0, request: {url: 'file://path/to/local/file'}})
+        })
+      })
+
       test('creates Headers object from raw headers', function() {
         var r = new Response('{"foo":"bar"}', {headers: {'content-type': 'application/json'}})
         assert.equal(r.headers instanceof Headers, true)
@@ -661,6 +696,7 @@ exercise.forEach(function(exerciseMode) {
       test('error creates error Response', function() {
         var r = Response.error()
         assert(r instanceof Response)
+        assert.equal(r.ok, false)
         assert.equal(r.status, 0)
         assert.equal(r.statusText, '')
         assert.equal(r.type, 'error')
@@ -978,6 +1014,15 @@ exercise.forEach(function(exerciseMode) {
             .catch(function(error) {
               assert(error instanceof TypeError, 'Promise rejected after body consumed')
             })
+        })
+
+        test('does not set bodyUsed to true if no body supplied', function() {
+          var response = new Response();
+          assert(response.text, 'Body does not implement text')
+          assert.equal(response.bodyUsed, false)
+          response.text()
+          assert.equal(response.bodyUsed, false)
+          return response.text()
         })
       })
     })

@@ -1,16 +1,16 @@
 {
   "name": "whatwg-fetch",
   "description": "A window.fetch polyfill.",
-  "version": "3.6.2",
+  "version": "3.6.20",
   "main": "./dist/fetch.umd.js",
   "module": "./fetch.js",
   "repository": "github/fetch",
   "license": "MIT",
   "devDependencies": {
     "abortcontroller-polyfill": "^1.1.9",
+    "auto-changelog": "^2.4.0",
     "chai": "^4.1.2",
     "eslint": "^7.20.0",
-    "eslint-plugin-github": "^4.1.1",
     "karma": "^3.0.0",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^2.2.0",
@@ -36,6 +36,7 @@
     "karma": "karma start ./test/karma.config.js --no-single-run --auto-watch",
     "prepare": "make dist/fetch.umd.js dist/fetch.umd.js.flow",
     "pretest": "make",
-    "test": "karma start ./test/karma.config.js && karma start ./test/karma-worker.config.js"
+    "test": "karma start ./test/karma.config.js && karma start ./test/karma-worker.config.js",
+    "version": "auto-changelog -p && git add CHANGELOG.md"
   }
 }
