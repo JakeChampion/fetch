@@ -528,7 +528,7 @@ export function fetch(input, init) {
     var request = new Request(input, init)
 
     if (request.signal && request.signal.aborted) {
-      return reject(new DOMException('Aborted', 'AbortError'))
+      return reject(request.signal.reason);
     }
 
     var xhr = new XMLHttpRequest()
@@ -570,7 +570,7 @@ export function fetch(input, init) {
 
     xhr.onabort = function() {
       setTimeout(function() {
-        reject(new DOMException('Aborted', 'AbortError'))
+        reject(request.signal ? request.signal.reason : new DOMException('Aborted', 'AbortError'))
       }, 0)
     }
 

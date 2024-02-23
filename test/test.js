@@ -1205,7 +1205,7 @@ exercise.forEach(function(exerciseMode) {
           assert.deepEqual(controller.signal, request.signal);
         })
 
-        test('initially aborted signal', function () {
+        test('initially aborted signal without reason', function () {
           var controller = new AbortController()
           controller.abort()
 
@@ -1221,8 +1221,24 @@ exercise.forEach(function(exerciseMode) {
             }
           )
         })
+        
+        test('initially aborted signal with reason', function () {
+          var controller = new AbortController()
+          controller.abort('Something bad happened')
 
-        test('initially aborted signal within Request', function() {
+          return fetch('/request', {
+            signal: controller.signal
+          }).then(
+            function() {
+              assert.ok(false)
+            },
+            function(error) {
+              assert.equal(error, 'Something bad happened')
+            }
+          )
+        })
+
+        test('initially aborted signal without reason within Request', function() {
           var controller = new AbortController()
           controller.abort()
 
@@ -1238,7 +1254,23 @@ exercise.forEach(function(exerciseMode) {
           )
         })
 
-        test('mid-request', function() {
+        test('initially aborted signal with reason within Request', function() {
+          var controller = new AbortController()
+          controller.abort('Something bad happened')
+
+          var request = new Request('/request', {signal: controller.signal})
+
+          return fetch(request).then(
+            function() {
+              assert.ok(false)
+            },
+            function(error) {
+              assert.equal(error, 'Something bad happened')
+            }
+          )
+        })
+
+        test('mid-request without reason', function() {
           var controller = new AbortController()
 
           setTimeout(function() {
@@ -1256,8 +1288,27 @@ exercise.forEach(function(exerciseMode) {
             }
           )
         })
+        
+        test('mid-request with reason', function() {
+          var controller = new AbortController()
 
-        test('mid-request within Request', function() {
+          setTimeout(function() {
+            controller.abort('Something bad happened')
+          }, 30)
+
+          return fetch('/slow?_=' + new Date().getTime(), {
+            signal: controller.signal
+          }).then(
+            function() {
+              assert.ok(false)
+            },
+            function(error) {
+              assert.equal(error, 'Something bad happened')
+            }
+          )
+        })
+
+        test('mid-request without reason within Request', function() {
           var controller = new AbortController()
           var request = new Request('/slow?_=' + new Date().getTime(), {signal: controller.signal})
 
@@ -1275,7 +1326,25 @@ exercise.forEach(function(exerciseMode) {
           )
         })
 
-        test('abort multiple with same signal', function() {
+        test('mid-request with reason within Request', function() {
+          var controller = new AbortController()
+          var request = new Request('/slow?_=' + new Date().getTime(), {signal: controller.signal})
+
+          setTimeout(function() {
+            controller.abort('Something bad happened')
+          }, 30)
+
+          return fetch(request).then(
+            function() {
+              assert.ok(false)
+            },
+            function(error) {
+              assert.equal(error, 'Something bad happened')
+            }
+          )
+        })
+
+        test('abort multiple without reason with same signal', function() {
           var controller = new AbortController()
 
           setTimeout(function() {
@@ -1301,6 +1370,37 @@ exercise.forEach(function(exerciseMode) {
               },
               function(error) {
                 assert.equal(error.name, 'AbortError')
+              }
+            )
+          ])
+        })
+
+        test('abort multiple with reason with same signal', function() {
+          var controller = new AbortController()
+
+          setTimeout(function() {
+            controller.abort('Something bad happened')
+          }, 30)
+
+          return Promise.all([
+            fetch('/slow?_=' + new Date().getTime(), {
+              signal: controller.signal
+            }).then(
+              function() {
+                assert.ok(false)
+              },
+              function(error) {
+                assert.equal(error, 'Something bad happened')
+              }
+            ),
+            fetch('/slow?_=' + new Date().getTime(), {
+              signal: controller.signal
+            }).then(
+              function() {
+                assert.ok(false)
+              },
+              function(error) {
+                assert.equal(error, 'Something bad happened')
               }
             )
           ])
