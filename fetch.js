@@ -591,7 +591,9 @@ export function fetch(input, init) {
     }
 
     if ('responseType' in xhr) {
-      if (support.blob) {
+      if (request.headers.get("Accept") &&  (request.headers.get("Accept").indexOf("application/json") !== -1 || request.headers.get("Accept").indexOf("text/plain") !== -1)) {
+        xhr.responseType = 'text';
+      } else if (support.blob) {
         xhr.responseType = 'blob'
       } else if (
         support.arrayBuffer
