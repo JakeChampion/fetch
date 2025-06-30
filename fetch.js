@@ -21,7 +21,8 @@ var support = {
       }
     })(),
   formData: 'FormData' in g,
-  arrayBuffer: 'ArrayBuffer' in g
+  arrayBuffer: 'ArrayBuffer' in g,
+  headers: 'Headers' in g && g.Headers,
 }
 
 function isDataView(obj) {
@@ -86,7 +87,7 @@ function iteratorFor(items) {
 export function Headers(headers) {
   this.map = {}
 
-  if (headers instanceof Headers) {
+  if (headers instanceof Headers || (support.headers && headers instanceof support.headers)) {
     headers.forEach(function(value, name) {
       this.append(name, value)
     }, this)

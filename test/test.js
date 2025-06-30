@@ -26,7 +26,8 @@ var support = {
   formData: 'FormData' in self,
   arrayBuffer: 'ArrayBuffer' in self,
   aborting: 'signal' in new Request(''),
-  permanentRedirect: !/Trident/.test(navigator.userAgent)
+  permanentRedirect: !/Trident/.test(navigator.userAgent),
+  headers: 'Headers' in self && self.Headers,
 }
 
 function readBlobAsText(blob) {
@@ -213,6 +214,16 @@ exercise.forEach(function(exerciseMode) {
             ['Content-Type', 'a', 'b'],
           ])
         }, TypeError)
+      })
+      featureDependent(test, support.headers, 'constructor copies headers from native Headers', function() {
+        var original = new support.headers()
+        original.append('Accept', 'application/json')
+        original.append('Accept', 'text/plain')
+        original.append('Content-Type', 'text/html')
+
+        var headers = new Headers(original)
+        assert.equal(headers.get('Accept'), 'application/json, text/plain')
+        assert.equal(headers.get('Content-type'), 'text/html')
       })
       test('headers are case insensitive', function() {
         var headers = new Headers({Accept: 'application/json'})
