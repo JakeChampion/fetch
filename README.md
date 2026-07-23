@@ -328,16 +328,38 @@ controller.abort()
 
 ## Browser Support
 
+This polyfill is intended for older browsers that lack a native `window.fetch`
+implementation:
+
 - Chrome
 - Firefox
 - Safari 6.1+
 - Internet Explorer 10+
 
-Note: modern browsers such as Chrome, Firefox, Microsoft Edge, and Safari contain native
-implementations of `window.fetch`, therefore the code from this polyfill doesn't
-have any effect on those browsers. If you believe you've encountered an error
-with how `window.fetch` is implemented in any of these browsers, you should file
-an issue with that browser vendor instead of this project.
+**Do not use this polyfill if you only target modern browsers.** All currently
+maintained browsers ship a native, standards-compliant `fetch`. Including
+`whatwg-fetch` in those environments is unnecessary and adds extra bundle size.
+
+Browsers where this polyfill is **not needed** (native `fetch` is available):
+
+| Browser | Minimum version with native `fetch` |
+| ------- | ----------------------------------- |
+| Chrome | 42+ |
+| Firefox | 39+ |
+| Edge (Chromium) | All versions |
+| Edge (Legacy) | 14+ |
+| Safari (macOS) | 10.1+ |
+| Safari (iOS) | 10.3+ |
+| Opera | 29+ |
+| Samsung Internet | 4.0+ |
+
+If your supported browser list only includes the versions above (or newer), do
+not install or import this polyfill.
+
+Note: in browsers that already provide native `window.fetch`, code from this
+polyfill does not take effect. If you believe you've encountered an error with
+how `window.fetch` is implemented in any of those browsers, you should file an
+issue with that browser vendor instead of this project.
 
 
   [fetch specification]: https://fetch.spec.whatwg.org
