@@ -1,0 +1,13 @@
+# The issue chooser is where a reporter decides how to file. SECURITY.md asks
+# that a vulnerability never be a public issue, so the private route has to be
+# visible here, next to the public templates, not only in a file the reporter
+# may never open.
+#
+# Blank issues stay enabled: a report that fits neither template is still
+# welcome, and this file only adds a route, it does not take one away.
+
+blank_issues_enabled: true
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/JakeChampion/fetch/security/advisories/new
+    about: Do not open a public issue. Report it privately here. See SECURITY.md.
