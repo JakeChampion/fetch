@@ -84,7 +84,7 @@ function iteratorFor(items) {
 }
 
 export function Headers(headers) {
-  this.map = {}
+  this.map = Object.create(null)
 
   if (headers instanceof Headers) {
     headers.forEach(function(value, name) {
@@ -108,7 +108,7 @@ Headers.prototype.append = function(name, value) {
   name = normalizeName(name)
   value = normalizeValue(value)
   var oldValue = this.map[name]
-  this.map[name] = oldValue ? oldValue + ', ' + value : value
+  this.map[name] = oldValue !== undefined ? oldValue + ', ' + value : value
 }
 
 Headers.prototype['delete'] = function(name) {
@@ -121,7 +121,7 @@ Headers.prototype.get = function(name) {
 }
 
 Headers.prototype.has = function(name) {
-  return this.map.hasOwnProperty(normalizeName(name))
+  return Object.prototype.hasOwnProperty.call(this.map, normalizeName(name))
 }
 
 Headers.prototype.set = function(name, value) {
@@ -130,7 +130,7 @@ Headers.prototype.set = function(name, value) {
 
 Headers.prototype.forEach = function(callback, thisArg) {
   for (var name in this.map) {
-    if (this.map.hasOwnProperty(name)) {
+    if (Object.prototype.hasOwnProperty.call(this.map, name)) {
       callback.call(thisArg, this.map[name], name, this)
     }
   }

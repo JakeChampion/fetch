@@ -184,6 +184,34 @@ exercise.forEach(function(exerciseMode) {
 
     // https://fetch.spec.whatwg.org/#headers-class
     suite('Headers', function() {
+      test('appends prototype-named headers without inherited values', function() {
+        ['__proto__', 'constructor'].forEach(function(name) {
+          var headers = new Headers([[name, 'first']])
+          assert.isTrue(headers.has(name))
+          assert.equal(headers.get(name), 'first')
+          headers.append(name, 'second')
+          assert.equal(headers.get(name), 'first, second')
+          assert.equal(new Headers(headers).get(name), 'first, second')
+        })
+      })
+      test('sets, enumerates, and deletes prototype-named headers', function() {
+        var headers = new Headers()
+        headers.set('__proto__', 'value')
+        var entries = []
+        headers.forEach(function(value, name) {
+          entries.push([name, value])
+        })
+        assert.deepEqual(entries, [['__proto__', 'value']])
+        headers.delete('__proto__')
+        assert.isFalse(headers.has('__proto__'))
+        assert.isNull(headers.get('__proto__'))
+      })
+      test('retains an existing empty value when appending', function() {
+        var headers = new Headers([['X-Test', '']])
+        headers.append('X-Test', 'next')
+        assert.equal(headers.get('X-Test'), ', next')
+      })
+
       test('constructor copies headers', function() {
         var original = new Headers()
         original.append('Accept', 'application/json')
